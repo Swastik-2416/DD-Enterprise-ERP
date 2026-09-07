@@ -19,8 +19,8 @@ import {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload?.length) {
     return (
-      <div className="bg-white border border-slate-200 rounded-xl shadow-lg p-3 text-sm">
-        <p className="font-semibold text-slate-800 mb-1">{label}</p>
+      <div className="bg-surface border border-outline-variant rounded-xl shadow-ambient p-3 text-sm">
+        <p className="font-semibold text-on-surface mb-1">{label}</p>
         {payload.map((p: any) => (
           <p key={p.name} style={{ color: p.color }}>
             {p.name}: {formatCurrency(p.value)}
@@ -51,8 +51,8 @@ export function DashboardPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-        <p className="text-sm text-slate-500 mt-0.5">Financial Year 2025–26 · As of {formatDate(new Date())}</p>
+        <h1 className="text-2xl font-bold text-on-surface">Dashboard</h1>
+        <p className="text-sm text-outline mt-0.5">Financial Year 2025–26 · As of {formatDate(new Date())}</p>
       </div>
 
       {/* Low stock alert banner */}
@@ -133,8 +133,8 @@ export function DashboardPage() {
       {/* Charts */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Revenue chart */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
-          <h2 className="text-sm font-semibold text-slate-800 mb-4">Monthly Revenue vs Purchases (FY 2025–26)</h2>
+        <div className="bg-surface rounded-xl border border-outline-variant p-5">
+          <h2 className="text-sm font-semibold text-on-surface mb-4">Monthly Revenue vs Purchases (FY 2025–26)</h2>
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={monthlySalesData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -149,17 +149,17 @@ export function DashboardPage() {
         </div>
 
         {/* Production orders */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
-          <h2 className="text-sm font-semibold text-slate-800 mb-4">Recent Production Orders</h2>
+        <div className="bg-surface rounded-xl border border-outline-variant p-5">
+          <h2 className="text-sm font-semibold text-on-surface mb-4">Recent Production Orders</h2>
           <div className="space-y-3">
             {mockProductionOrders.map(order => (
               <div key={order.id} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
                 <div>
-                  <p className="text-sm font-medium text-slate-800">{order.order_number}</p>
-                  <p className="text-xs text-slate-500">{formatDate(order.planned_date)} · {order.shift}</p>
+                  <p className="text-sm font-medium text-on-surface">{order.order_number}</p>
+                  <p className="text-xs text-outline">{formatDate(order.planned_date)} · {order.shift}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-on-surface">
                     {formatNumber(order.actual_qty ?? order.planned_qty, 0)} pcs
                   </p>
                   <StatusBadge status={order.status} />
@@ -173,27 +173,27 @@ export function DashboardPage() {
       {/* Outstanding tables */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Customer outstanding */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <div className="bg-surface rounded-xl border border-outline-variant p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-slate-800">Customer Outstanding</h2>
-            <span className="text-xs text-slate-500">Total: {formatCurrency(totalReceivables)}</span>
+            <h2 className="text-sm font-semibold text-on-surface">Customer Outstanding</h2>
+            <span className="text-xs text-outline">Total: {formatCurrency(totalReceivables)}</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-100">
-                  <th className="text-left py-2 text-xs font-medium text-slate-500">Customer</th>
-                  <th className="text-right py-2 text-xs font-medium text-slate-500">Outstanding</th>
+                  <th className="text-left py-2 text-xs font-medium text-outline">Customer</th>
+                  <th className="text-right py-2 text-xs font-medium text-outline">Outstanding</th>
                 </tr>
               </thead>
               <tbody>
                 {customerOutstanding.map(({ customer, outstanding }) => (
                   <tr key={customer.id} className="border-b border-slate-50 last:border-0">
                     <td className="py-2.5">
-                      <p className="font-medium text-slate-800 truncate max-w-[180px]">{customer.name}</p>
+                      <p className="font-medium text-on-surface truncate max-w-[180px]">{customer.name}</p>
                       <p className="text-xs text-slate-400">{customer.city}</p>
                     </td>
-                    <td className="py-2.5 text-right font-semibold text-red-600">
+                    <td className="py-2.5 text-right font-semibold text-error">
                       {formatCurrency(outstanding)}
                     </td>
                   </tr>
@@ -207,27 +207,27 @@ export function DashboardPage() {
         </div>
 
         {/* Supplier outstanding */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <div className="bg-surface rounded-xl border border-outline-variant p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-slate-800">Supplier Outstanding</h2>
-            <span className="text-xs text-slate-500">Total: {formatCurrency(totalPayables)}</span>
+            <h2 className="text-sm font-semibold text-on-surface">Supplier Outstanding</h2>
+            <span className="text-xs text-outline">Total: {formatCurrency(totalPayables)}</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-100">
-                  <th className="text-left py-2 text-xs font-medium text-slate-500">Supplier</th>
-                  <th className="text-right py-2 text-xs font-medium text-slate-500">Outstanding</th>
+                  <th className="text-left py-2 text-xs font-medium text-outline">Supplier</th>
+                  <th className="text-right py-2 text-xs font-medium text-outline">Outstanding</th>
                 </tr>
               </thead>
               <tbody>
                 {supplierOutstanding.map(({ supplier, outstanding }) => (
                   <tr key={supplier.id} className="border-b border-slate-50 last:border-0">
                     <td className="py-2.5">
-                      <p className="font-medium text-slate-800 truncate max-w-[180px]">{supplier.name}</p>
+                      <p className="font-medium text-on-surface truncate max-w-[180px]">{supplier.name}</p>
                       <p className="text-xs text-slate-400">{supplier.city}</p>
                     </td>
-                    <td className="py-2.5 text-right font-semibold text-red-600">
+                    <td className="py-2.5 text-right font-semibold text-error">
                       {formatCurrency(outstanding)}
                     </td>
                   </tr>
@@ -242,34 +242,34 @@ export function DashboardPage() {
       </div>
 
       {/* Low stock table */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5">
-        <h2 className="text-sm font-semibold text-slate-800 mb-4">
-          Low Stock Alerts <span className="ml-2 bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full">{lowStock.length}</span>
+      <div className="bg-surface rounded-xl border border-outline-variant p-5">
+        <h2 className="text-sm font-semibold text-on-surface mb-4">
+          Low Stock Alerts <span className="ml-2 bg-red-100 text-error text-xs px-2 py-0.5 rounded-full">{lowStock.length}</span>
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100">
-                <th className="text-left py-2 text-xs font-medium text-slate-500">Item</th>
-                <th className="text-right py-2 text-xs font-medium text-slate-500">On Hand</th>
-                <th className="text-right py-2 text-xs font-medium text-slate-500">Min Level</th>
-                <th className="text-right py-2 text-xs font-medium text-slate-500">Shortfall</th>
+                <th className="text-left py-2 text-xs font-medium text-outline">Item</th>
+                <th className="text-right py-2 text-xs font-medium text-outline">On Hand</th>
+                <th className="text-right py-2 text-xs font-medium text-outline">Min Level</th>
+                <th className="text-right py-2 text-xs font-medium text-outline">Shortfall</th>
               </tr>
             </thead>
             <tbody>
               {lowStock.map(item => (
-                <tr key={item.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50">
+                <tr key={item.id} className="border-b border-slate-50 last:border-0 hover:bg-background">
                   <td className="py-2.5">
-                    <p className="font-medium text-slate-800">{item.name}</p>
+                    <p className="font-medium text-on-surface">{item.name}</p>
                     <p className="text-xs text-slate-400">{item.sku}</p>
                   </td>
-                  <td className="py-2.5 text-right text-red-600 font-semibold">
+                  <td className="py-2.5 text-right text-error font-semibold">
                     {formatNumber(item.qty_on_hand, 0)}
                   </td>
-                  <td className="py-2.5 text-right text-slate-500">
+                  <td className="py-2.5 text-right text-outline">
                     {formatNumber(item.min_stock_level, 0)}
                   </td>
-                  <td className="py-2.5 text-right text-red-700 font-bold">
+                  <td className="py-2.5 text-right text-on-error-container font-bold">
                     {formatNumber(item.min_stock_level - item.qty_on_hand, 0)}
                   </td>
                 </tr>
@@ -281,19 +281,19 @@ export function DashboardPage() {
 
       {/* Recent transactions */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
-          <h2 className="text-sm font-semibold text-slate-800 mb-4">Recent Sales Invoices</h2>
+        <div className="bg-surface rounded-xl border border-outline-variant p-5">
+          <h2 className="text-sm font-semibold text-on-surface mb-4">Recent Sales Invoices</h2>
           <div className="space-y-2">
             {recentInvoices.map(inv => {
               const cust = getCustomerById(inv.customer_id)
               return (
                 <div key={inv.id} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
                   <div>
-                    <p className="text-sm font-medium text-slate-800">{inv.invoice_number}</p>
-                    <p className="text-xs text-slate-500">{cust?.name} · {formatDate(inv.date)}</p>
+                    <p className="text-sm font-medium text-on-surface">{inv.invoice_number}</p>
+                    <p className="text-xs text-outline">{cust?.name} · {formatDate(inv.date)}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-slate-900">{formatCurrency(inv.total_amount)}</p>
+                    <p className="text-sm font-semibold text-on-surface">{formatCurrency(inv.total_amount)}</p>
                     <StatusBadge status={inv.status} />
                   </div>
                 </div>
@@ -302,19 +302,19 @@ export function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
-          <h2 className="text-sm font-semibold text-slate-800 mb-4">Recent Purchase Invoices</h2>
+        <div className="bg-surface rounded-xl border border-outline-variant p-5">
+          <h2 className="text-sm font-semibold text-on-surface mb-4">Recent Purchase Invoices</h2>
           <div className="space-y-2">
             {recentPurchases.map(inv => {
               const sup = getSupplierById(inv.supplier_id)
               return (
                 <div key={inv.id} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
                   <div>
-                    <p className="text-sm font-medium text-slate-800">{inv.invoice_number}</p>
-                    <p className="text-xs text-slate-500">{sup?.name} · {formatDate(inv.date)}</p>
+                    <p className="text-sm font-medium text-on-surface">{inv.invoice_number}</p>
+                    <p className="text-xs text-outline">{sup?.name} · {formatDate(inv.date)}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-slate-900">{formatCurrency(inv.total_amount)}</p>
+                    <p className="text-sm font-semibold text-on-surface">{formatCurrency(inv.total_amount)}</p>
                     <StatusBadge status={inv.status} />
                   </div>
                 </div>

@@ -48,29 +48,29 @@ export function ProductionOrdersPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Planned Production</div>
-          <div className="text-2xl font-bold text-slate-900 mt-1">{formatNumber(totalPlanned)} <span className="text-xs font-normal text-slate-500">pcs</span></div>
-          <div className="text-xs text-slate-500 mt-1">Across {mockProductionOrders.length} scheduled orders</div>
+        <div className="bg-surface border border-outline-variant rounded-xl p-4">
+          <div className="text-xs font-semibold text-outline uppercase tracking-wider">Planned Production</div>
+          <div className="text-2xl font-bold text-on-surface mt-1">{formatNumber(totalPlanned)} <span className="text-xs font-normal text-outline">pcs</span></div>
+          <div className="text-xs text-outline mt-1">Across {mockProductionOrders.length} scheduled orders</div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Completed Output</div>
-          <div className="text-2xl font-bold text-emerald-600 mt-1">{formatNumber(totalActual)} <span className="text-xs font-normal text-slate-500">pcs</span></div>
+        <div className="bg-surface border border-outline-variant rounded-xl p-4">
+          <div className="text-xs font-semibold text-outline uppercase tracking-wider">Completed Output</div>
+          <div className="text-2xl font-bold text-emerald-600 mt-1">{formatNumber(totalActual)} <span className="text-xs font-normal text-outline">pcs</span></div>
           <div className="text-xs text-emerald-600 font-medium mt-1">
             {Math.round((totalActual / (totalPlanned || 1)) * 100)}% batch completion rate
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Batch Efficiency</div>
-          <div className="text-2xl font-bold text-blue-600 mt-1">99.4%</div>
+        <div className="bg-surface border border-outline-variant rounded-xl p-4">
+          <div className="text-xs font-semibold text-outline uppercase tracking-wider">Active Batch Efficiency</div>
+          <div className="text-2xl font-bold text-primary mt-1">99.4%</div>
           <div className="text-xs text-blue-500 mt-1">&lt;1% breakages / scrap recorded</div>
         </div>
       </div>
 
       {/* Filter row */}
-      <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row gap-3 items-center justify-between shadow-xs">
+      <div className="bg-surface border border-outline-variant rounded-xl p-4 flex flex-col md:flex-row gap-3 items-center justify-between shadow-xs">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
           <input
@@ -78,7 +78,7 @@ export function ProductionOrdersPage() {
             placeholder="Search order #, product name, or machine..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20"
+            className="w-full pl-9 pr-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20"
           />
         </div>
 
@@ -87,7 +87,7 @@ export function ProductionOrdersPage() {
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
             aria-label="Filter production orders by status"
-            className="w-full md:w-44 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden"
+            className="w-full md:w-44 px-3 py-2 border border-outline-variant rounded-lg text-sm focus:outline-hidden"
           >
             <option value="all">All Statuses</option>
             <option value="draft">Draft</option>
@@ -98,7 +98,7 @@ export function ProductionOrdersPage() {
       </div>
 
       {/* Production Orders Table */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+      <div className="bg-surface border border-outline-variant rounded-xl overflow-hidden shadow-xs">
         {filtered.length === 0 ? (
           <EmptyState
             icon={Factory}
@@ -109,7 +109,7 @@ export function ProductionOrdersPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50/80 border-b border-slate-200 text-xs uppercase font-semibold text-slate-600">
+              <thead className="bg-background/80 border-b border-outline-variant text-xs uppercase font-semibold text-on-surface-variant">
                 <tr>
                   <th className="py-3 px-4">Order #</th>
                   <th className="py-3 px-4">Planned Date</th>
@@ -128,24 +128,24 @@ export function ProductionOrdersPage() {
                   const fgItem = mockItems.find(i => i.id === bom?.finished_good_id)
 
                   return (
-                    <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="py-3 px-4 font-mono font-medium text-blue-600">{order.order_number}</td>
-                      <td className="py-3 px-4 text-slate-600 whitespace-nowrap">{formatDate(order.planned_date)}</td>
+                    <tr key={order.id} className="hover:bg-background/50 transition-colors">
+                      <td className="py-3 px-4 font-mono font-medium text-primary">{order.order_number}</td>
+                      <td className="py-3 px-4 text-on-surface-variant whitespace-nowrap">{formatDate(order.planned_date)}</td>
                       <td className="py-3 px-4">
-                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">
                           {order.shift || 'General'}
                         </span>
                       </td>
-                      <td className="py-3 px-4 font-medium text-slate-800">
+                      <td className="py-3 px-4 font-medium text-on-surface">
                         {fgItem?.name || 'Finished Paver Block'}
                       </td>
-                      <td className="py-3 px-4 text-right font-medium text-slate-700">
+                      <td className="py-3 px-4 text-right font-medium text-on-surface-variant">
                         {formatNumber(order.planned_qty)} pcs
                       </td>
-                      <td className="py-3 px-4 text-right font-bold text-slate-900">
+                      <td className="py-3 px-4 text-right font-bold text-on-surface">
                         {order.actual_qty ? `${formatNumber(order.actual_qty)} pcs` : '—'}
                       </td>
-                      <td className="py-3 px-4 text-xs text-slate-600">
+                      <td className="py-3 px-4 text-xs text-on-surface-variant">
                         <div>{order.machine_used || '—'}</div>
                         <div className="text-slate-400">{order.mould_used}</div>
                       </td>
@@ -177,23 +177,23 @@ export function ProductionOrdersPage() {
       {/* Log Output Modal */}
       {activeOrder && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-            <h3 className="text-lg font-bold text-slate-900 mb-1">Record Finished Goods Output</h3>
-            <p className="text-xs text-slate-500 mb-4">
+          <div className="bg-surface rounded-xl shadow-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-bold text-on-surface mb-1">Record Finished Goods Output</h3>
+            <p className="text-xs text-outline mb-4">
               Order {activeOrder.order_number} · Planned: {formatNumber(activeOrder.planned_qty)} pcs
             </p>
             <div className="space-y-4 text-sm">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Actual Good Pieces Produced</label>
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">Actual Good Pieces Produced</label>
                 <input
                   type="number"
                   defaultValue={activeOrder.planned_qty}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-lg font-bold text-slate-900"
+                  className="w-full px-3 py-2 border border-outline-variant rounded-lg text-lg font-bold text-on-surface"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Damaged / Rejected Pieces</label>
-                <input type="number" defaultValue="20" className="w-full px-3 py-2 border border-slate-200 rounded-lg" />
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">Damaged / Rejected Pieces</label>
+                <input type="number" defaultValue="20" className="w-full px-3 py-2 border border-outline-variant rounded-lg" />
               </div>
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800">
                 <AlertCircle className="h-4 w-4 inline mr-1 text-amber-600" />
@@ -204,7 +204,7 @@ export function ProductionOrdersPage() {
               <button
                 type="button"
                 onClick={() => setActiveOrder(null)}
-                className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50"
+                className="px-4 py-2 border border-outline-variant text-on-surface-variant text-sm font-medium rounded-lg hover:bg-background"
               >
                 Cancel
               </button>
@@ -226,15 +226,15 @@ export function ProductionOrdersPage() {
       {/* New Production Order Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6">
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Schedule Production Batch</h3>
-            <p className="text-sm text-slate-600 mb-4">
+          <div className="bg-surface rounded-xl shadow-xl max-w-lg w-full p-6">
+            <h3 className="text-lg font-bold text-on-surface mb-2">Schedule Production Batch</h3>
+            <p className="text-sm text-on-surface-variant mb-4">
               Select product BOM, planned pieces, machine and mould to schedule daily factory output.
             </p>
             <div className="space-y-3 text-sm">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Product Recipe (BOM)</label>
-                <select className="w-full px-3 py-2 border border-slate-200 rounded-lg">
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">Product Recipe (BOM)</label>
+                <select className="w-full px-3 py-2 border border-outline-variant rounded-lg">
                   {mockBOMs.map(b => {
                     const item = mockItems.find(i => i.id === b.finished_good_id)
                     return <option key={b.id} value={b.id}>{item?.name} (v{b.version})</option>
@@ -243,12 +243,12 @@ export function ProductionOrdersPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Planned Quantity</label>
-                  <input type="number" placeholder="5000" className="w-full px-3 py-2 border border-slate-200 rounded-lg" />
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Planned Quantity</label>
+                  <input type="number" placeholder="5000" className="w-full px-3 py-2 border border-outline-variant rounded-lg" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Shift</label>
-                  <select className="w-full px-3 py-2 border border-slate-200 rounded-lg">
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Shift</label>
+                  <select className="w-full px-3 py-2 border border-outline-variant rounded-lg">
                     <option>Morning Shift (8 AM - 4 PM)</option>
                     <option>Evening Shift (4 PM - 12 AM)</option>
                     <option>Night Shift (12 AM - 8 AM)</option>
@@ -256,15 +256,15 @@ export function ProductionOrdersPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Machine</label>
-                <input type="text" defaultValue="Paver Block Hydraulic Press #1" className="w-full px-3 py-2 border border-slate-200 rounded-lg" />
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">Machine</label>
+                <input type="text" defaultValue="Paver Block Hydraulic Press #1" className="w-full px-3 py-2 border border-outline-variant rounded-lg" />
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50"
+                className="px-4 py-2 border border-outline-variant text-on-surface-variant text-sm font-medium rounded-lg hover:bg-background"
               >
                 Cancel
               </button>
@@ -274,7 +274,7 @@ export function ProductionOrdersPage() {
                   alert('Demo note: Production order scheduled!')
                   setShowModal(false)
                 }}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-xs"
+                className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-medium rounded-lg shadow-xs"
               >
                 Create Order
               </button>

@@ -110,8 +110,8 @@ function NavGroup({ item, depth = 0 }: { item: NavItem; depth?: number }) {
             'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
             depth > 0 ? 'pl-9' : '',
             isActive
-              ? 'bg-blue-600 text-white'
-              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+              ? 'bg-primary text-white'
+              : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'
           )
         }
       >
@@ -127,8 +127,8 @@ function NavGroup({ item, depth = 0 }: { item: NavItem; depth?: number }) {
         onClick={() => setOpen(!open)}
         className={cn(
           'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-          'text-slate-700 hover:bg-slate-100',
-          isActive && 'text-blue-700 font-semibold'
+          'text-on-surface-variant hover:bg-surface-container',
+          isActive && 'text-primary font-semibold'
         )}
       >
         <item.icon className="h-4 w-4 shrink-0" />
@@ -167,35 +167,35 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 h-full bg-white border-r border-slate-200 z-40 flex flex-col sidebar-transition',
+          'fixed top-0 left-0 h-full bg-surface border-r border-outline-variant z-40 flex flex-col sidebar-transition',
           'w-[260px]',
           open ? 'translate-x-0' : '-translate-x-full',
           'lg:translate-x-0 lg:static lg:z-auto'
         )}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-slate-200 shrink-0">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-outline-variant shrink-0">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
               <Factory className="h-4 w-4 text-white" />
             </div>
             <div>
-              <div className="text-sm font-bold text-slate-900 leading-none">DD Enterprise</div>
-              <div className="text-xs text-slate-500">ERP System</div>
+              <div className="text-sm font-bold text-on-surface leading-none">DD Enterprise</div>
+              <div className="text-xs text-outline">ERP System</div>
             </div>
           </div>
-          <button onClick={onClose} className="lg:hidden p-1 hover:bg-slate-100 rounded">
+          <button onClick={onClose} className="lg:hidden p-1 hover:bg-surface-container rounded">
             <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Company info */}
-        <div className="px-4 py-2 bg-slate-50 border-b border-slate-200 shrink-0">
-          <p className="text-xs text-slate-500">Logged in as</p>
-          <p className="text-xs font-semibold text-slate-800 truncate">{user?.full_name}</p>
+        <div className="px-4 py-2 bg-background border-b border-outline-variant shrink-0">
+          <p className="text-xs text-outline">Logged in as</p>
+          <p className="text-xs font-semibold text-on-surface truncate">{user?.full_name}</p>
           <span className={cn(
             'inline-block text-xs px-2 py-0.5 rounded-full mt-0.5 font-medium',
-            user?.role === 'manager' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'
+            user?.role === 'manager' ? 'bg-primary/10 text-primary' : 'bg-amber-100 text-amber-700'
           )}>
             {user?.role === 'manager' ? 'Manager' : 'Accountant (Read-only)'}
           </span>
@@ -209,15 +209,15 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </nav>
 
         {/* Settings link */}
-        <div className="px-3 py-3 border-t border-slate-200 shrink-0">
+        <div className="px-3 py-3 border-t border-outline-variant shrink-0">
           <NavLink
             to="/settings"
             className={({ isActive }) =>
               cn(
                 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-blue-600 text-white'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  ? 'bg-primary text-white'
+                  : 'text-on-surface-variant hover:bg-surface-container'
               )
             }
           >

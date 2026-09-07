@@ -18,13 +18,13 @@ export function PageHeader({ title, subtitle, icon: Icon, actions, action }: Pag
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
       <div className="flex items-center gap-3">
         {Icon && (
-          <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center">
-            <Icon className="h-5 w-5 text-blue-600" />
+          <div className="h-10 w-10 rounded-xl bg-primary/5 flex items-center justify-center">
+            <Icon className="h-5 w-5 text-primary" />
           </div>
         )}
         <div>
-          <h1 className="text-xl font-bold text-slate-900">{title}</h1>
-          {subtitle && <p className="text-sm text-slate-500">{subtitle}</p>}
+          <h1 className="text-xl font-bold text-on-surface">{title}</h1>
+          {subtitle && <p className="text-sm text-outline">{subtitle}</p>}
         </div>
       </div>
       <div className="flex items-center gap-2 flex-wrap">
@@ -32,7 +32,7 @@ export function PageHeader({ title, subtitle, icon: Icon, actions, action }: Pag
           <button
             type="button"
             onClick={action.onClick}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-xs transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-medium rounded-lg shadow-xs transition-colors"
           >
             {action.icon && <action.icon className="h-4 w-4" />}
             {action.label}
@@ -54,9 +54,9 @@ interface KpiCardProps {
 }
 
 const COLOR_MAP = {
-  blue:   { bg: 'bg-blue-50',   icon: 'bg-blue-100 text-blue-600',   text: 'text-blue-700' },
+  blue:   { bg: 'bg-primary/5',   icon: 'bg-primary/10 text-primary',   text: 'text-primary' },
   green:  { bg: 'bg-green-50',  icon: 'bg-green-100 text-green-600',  text: 'text-green-700' },
-  red:    { bg: 'bg-red-50',    icon: 'bg-red-100 text-red-600',      text: 'text-red-700' },
+  red:    { bg: 'bg-error-container',    icon: 'bg-red-100 text-error',      text: 'text-on-error-container' },
   amber:  { bg: 'bg-amber-50',  icon: 'bg-amber-100 text-amber-600',  text: 'text-amber-700' },
   purple: { bg: 'bg-purple-50', icon: 'bg-purple-100 text-purple-600', text: 'text-purple-700' },
 }
@@ -64,14 +64,14 @@ const COLOR_MAP = {
 export function KpiCard({ title, value, subtitle, icon: Icon, trend, color = 'blue' }: KpiCardProps) {
   const colors = COLOR_MAP[color]
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow">
+    <div className="bg-surface rounded-xl border border-outline-variant p-5 hover:shadow-ambient transition-shadow">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
-          <p className="text-2xl font-bold text-slate-900 truncate">{value}</p>
+          <p className="text-sm font-medium text-outline mb-1">{title}</p>
+          <p className="text-2xl font-bold text-on-surface truncate">{value}</p>
           {subtitle && <p className="text-xs text-slate-400 mt-1">{subtitle}</p>}
           {trend && (
-            <p className={cn('text-xs font-medium mt-2', trend.positive ? 'text-green-600' : 'text-red-600')}>
+            <p className={cn('text-xs font-medium mt-2', trend.positive ? 'text-green-600' : 'text-error')}>
               {trend.positive ? '↑' : '↓'} {trend.value}
             </p>
           )}

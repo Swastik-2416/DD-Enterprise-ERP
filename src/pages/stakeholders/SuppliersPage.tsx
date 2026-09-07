@@ -27,7 +27,7 @@ export function SuppliersPage() {
         actions={isManager ? (
           <button
             onClick={() => { setEditSupplier(null); setShowForm(true) }}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Plus className="h-4 w-4" /> Add Supplier
           </button>
@@ -40,7 +40,7 @@ export function SuppliersPage() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search by name, city or GSTIN…"
-          className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full pl-9 pr-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
@@ -49,34 +49,34 @@ export function SuppliersPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map(supplier => (
-            <div key={supplier.id} className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow">
+            <div key={supplier.id} className="bg-surface rounded-xl border border-outline-variant p-5 hover:shadow-ambient transition-shadow">
               <div className="flex items-start justify-between gap-2 mb-3">
-                <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-                  <Building2 className="h-5 w-5 text-blue-600" />
+                <div className="h-10 w-10 rounded-xl bg-primary/5 flex items-center justify-center shrink-0">
+                  <Building2 className="h-5 w-5 text-primary" />
                 </div>
                 {isManager && (
                   <button
                     onClick={() => { setEditSupplier(supplier); setShowForm(true) }}
-                    className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-blue-600 transition-colors"
+                    className="p-1.5 hover:bg-surface-container rounded-lg text-slate-400 hover:text-primary transition-colors"
                   >
                     <Edit2 className="h-3.5 w-3.5" />
                   </button>
                 )}
               </div>
-              <h3 className="font-semibold text-slate-900 text-sm leading-tight mb-1">{supplier.name}</h3>
-              <p className="text-xs text-slate-500 mb-3">{supplier.address}, {supplier.city}</p>
+              <h3 className="font-semibold text-on-surface text-sm leading-tight mb-1">{supplier.name}</h3>
+              <p className="text-xs text-outline mb-3">{supplier.address}, {supplier.city}</p>
 
               <div className="space-y-1.5">
                 {supplier.gstin && (
                   <div className="flex items-center gap-2">
-                    <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">{supplier.gstin}</span>
+                    <span className="text-xs bg-surface-container text-on-surface-variant px-2 py-0.5 rounded font-mono">{supplier.gstin}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-2 text-xs text-slate-500">
+                <div className="flex items-center gap-2 text-xs text-outline">
                   <Phone className="h-3 w-3" /> {supplier.phone}
                 </div>
                 {supplier.email && (
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <div className="flex items-center gap-2 text-xs text-outline">
                     <Mail className="h-3 w-3" /> {supplier.email}
                   </div>
                 )}
@@ -86,7 +86,7 @@ export function SuppliersPage() {
               </div>
 
               <div className="mt-3 pt-3 border-t border-slate-100">
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${supplier.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${supplier.is_active ? 'bg-green-100 text-green-700' : 'bg-surface-container text-outline'}`}>
                   {supplier.is_active ? 'Active' : 'Inactive'}
                 </span>
               </div>
@@ -106,10 +106,10 @@ function SupplierFormModal({ supplier, onClose }: { supplier: Supplier | null; o
   const isEdit = !!supplier
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
-          <h2 className="text-lg font-bold text-slate-900">{isEdit ? 'Edit Supplier' : 'Add Supplier'}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg text-slate-500">✕</button>
+      <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-outline-variant">
+          <h2 className="text-lg font-bold text-on-surface">{isEdit ? 'Edit Supplier' : 'Add Supplier'}</h2>
+          <button onClick={onClose} className="p-2 hover:bg-surface-container rounded-lg text-outline">✕</button>
         </div>
         <div className="p-6 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -122,18 +122,18 @@ function SupplierFormModal({ supplier, onClose }: { supplier: Supplier | null; o
               { label: 'City *', key: 'city', placeholder: 'City' },
             ].map(f => (
               <div key={f.key}>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">{f.label}</label>
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">{f.label}</label>
                 <input defaultValue={(supplier as any)?.[f.key] ?? ''} placeholder={f.placeholder}
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
             ))}
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Address</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Address</label>
               <textarea defaultValue={supplier?.address ?? ''} rows={2}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+                className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
             </div>
             <div className="sm:col-span-2 border-t border-slate-100 pt-3">
-              <p className="text-xs font-semibold text-slate-600 mb-3">Bank Details</p>
+              <p className="text-xs font-semibold text-on-surface-variant mb-3">Bank Details</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
                   { label: 'Bank Name', key: 'bank_name', placeholder: 'HDFC Bank' },
@@ -141,17 +141,17 @@ function SupplierFormModal({ supplier, onClose }: { supplier: Supplier | null; o
                   { label: 'IFSC Code', key: 'bank_ifsc', placeholder: 'HDFC0001234' },
                 ].map(f => (
                   <div key={f.key}>
-                    <label className="block text-xs text-slate-500 mb-1">{f.label}</label>
+                    <label className="block text-xs text-outline mb-1">{f.label}</label>
                     <input defaultValue={(supplier as any)?.[f.key] ?? ''} placeholder={f.placeholder}
-                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                      className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                   </div>
                 ))}
               </div>
             </div>
           </div>
           <div className="flex justify-end gap-3 pt-2">
-            <button onClick={onClose} className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50">Cancel</button>
-            <button className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 font-medium">
+            <button onClick={onClose} className="px-4 py-2 text-sm text-on-surface-variant border border-outline-variant rounded-lg hover:bg-background">Cancel</button>
+            <button className="px-4 py-2 text-sm text-white bg-primary rounded-lg hover:bg-primary/90 font-medium">
               {isEdit ? 'Save Changes' : 'Add Supplier'}
             </button>
           </div>

@@ -51,30 +51,30 @@ export function InvoicesPage() {
 
       {/* Summary KPI row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Sales Invoiced</div>
-          <div className="text-2xl font-bold text-slate-900 mt-1">{formatCurrency(totalSales)}</div>
-          <div className="text-xs text-slate-500 mt-1">{mockInvoices.length} invoices generated</div>
+        <div className="bg-surface border border-outline-variant rounded-xl p-4">
+          <div className="text-xs font-semibold text-outline uppercase tracking-wider">Total Sales Invoiced</div>
+          <div className="text-2xl font-bold text-on-surface mt-1">{formatCurrency(totalSales)}</div>
+          <div className="text-xs text-outline mt-1">{mockInvoices.length} invoices generated</div>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Payment Received</div>
+        <div className="bg-surface border border-outline-variant rounded-xl p-4">
+          <div className="text-xs font-semibold text-outline uppercase tracking-wider">Payment Received</div>
           <div className="text-2xl font-bold text-emerald-600 mt-1">{formatCurrency(totalCollected)}</div>
           <div className="text-xs text-emerald-500 mt-1">Cleared via Bank/Cheque</div>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Receivables</div>
+        <div className="bg-surface border border-outline-variant rounded-xl p-4">
+          <div className="text-xs font-semibold text-outline uppercase tracking-wider">Pending Receivables</div>
           <div className="text-2xl font-bold text-amber-600 mt-1">{formatCurrency(totalOutstanding)}</div>
           <div className="text-xs text-amber-500 mt-1">Customer balance due</div>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">GST Output Liability</div>
-          <div className="text-2xl font-bold text-blue-600 mt-1">{formatCurrency(totalOutputGst)}</div>
+        <div className="bg-surface border border-outline-variant rounded-xl p-4">
+          <div className="text-xs font-semibold text-outline uppercase tracking-wider">GST Output Liability</div>
+          <div className="text-2xl font-bold text-primary mt-1">{formatCurrency(totalOutputGst)}</div>
           <div className="text-xs text-blue-500 mt-1">CGST 9% + SGST 9%</div>
         </div>
       </div>
 
       {/* Filters bar */}
-      <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row gap-3 items-center justify-between shadow-xs">
+      <div className="bg-surface border border-outline-variant rounded-xl p-4 flex flex-col md:flex-row gap-3 items-center justify-between shadow-xs">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
           <input
@@ -82,7 +82,7 @@ export function InvoicesPage() {
             placeholder="Search invoice #, customer name, notes..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            className="w-full pl-9 pr-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           />
         </div>
 
@@ -92,7 +92,7 @@ export function InvoicesPage() {
             value={typeFilter}
             onChange={e => setTypeFilter(e.target.value)}
             aria-label="Filter sales invoices by type"
-            className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            className="px-3 py-2 border border-outline-variant rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           >
             <option value="all">All Invoice Types</option>
             <option value="gst">GST Tax Invoice</option>
@@ -103,7 +103,7 @@ export function InvoicesPage() {
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
             aria-label="Filter sales invoices by status"
-            className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            className="px-3 py-2 border border-outline-variant rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           >
             <option value="all">All Statuses</option>
             <option value="draft">Draft</option>
@@ -114,7 +114,7 @@ export function InvoicesPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+      <div className="bg-surface border border-outline-variant rounded-xl overflow-hidden shadow-xs">
         {filtered.length === 0 ? (
           <EmptyState
             icon={ShoppingBag}
@@ -125,7 +125,7 @@ export function InvoicesPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50/80 border-b border-slate-200 text-xs uppercase font-semibold text-slate-600">
+              <thead className="bg-background/80 border-b border-outline-variant text-xs uppercase font-semibold text-on-surface-variant">
                 <tr>
                   <th className="py-3 px-4">Invoice #</th>
                   <th className="py-3 px-4">Type</th>
@@ -144,8 +144,8 @@ export function InvoicesPage() {
                   const customer = getCustomerById(inv.customer_id)
                   const balance = inv.total_amount - inv.paid_amount
                   return (
-                    <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="py-3 px-4 font-mono font-medium text-blue-600">{inv.invoice_number}</td>
+                    <tr key={inv.id} className="hover:bg-background/50 transition-colors">
+                      <td className="py-3 px-4 font-mono font-medium text-primary">{inv.invoice_number}</td>
                       <td className="py-3 px-4">
                         <span
                           className={cn(
@@ -156,18 +156,18 @@ export function InvoicesPage() {
                           {inv.type === 'gst' ? 'GST Tax' : 'Non-GST'}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-slate-600 whitespace-nowrap">{formatDate(inv.date)}</td>
+                      <td className="py-3 px-4 text-on-surface-variant whitespace-nowrap">{formatDate(inv.date)}</td>
                       <td className="py-3 px-4">
-                        <div className="font-medium text-slate-800">{customer?.name ?? 'Unknown'}</div>
+                        <div className="font-medium text-on-surface">{customer?.name ?? 'Unknown'}</div>
                         <div className="text-xs text-slate-400 font-mono">{customer?.gstin || 'Unregistered Buyer'}</div>
                       </td>
-                      <td className="py-3 px-4 text-right font-medium text-slate-700">
+                      <td className="py-3 px-4 text-right font-medium text-on-surface-variant">
                         {formatCurrency(inv.taxable_amount)}
                       </td>
-                      <td className="py-3 px-4 text-right text-slate-600">
+                      <td className="py-3 px-4 text-right text-on-surface-variant">
                         {formatCurrency(inv.cgst_amount + inv.sgst_amount)}
                       </td>
-                      <td className="py-3 px-4 text-right font-bold text-slate-900">
+                      <td className="py-3 px-4 text-right font-bold text-on-surface">
                         {formatCurrency(inv.total_amount)}
                       </td>
                       <td className="py-3 px-4 text-right">
@@ -183,7 +183,7 @@ export function InvoicesPage() {
                       <td className="py-3 px-4 text-center">
                         <button
                           onClick={() => setSelectedInvoice(inv)}
-                          className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-md transition-colors"
+                          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-primary bg-primary/5 hover:bg-primary/10 px-2.5 py-1.5 rounded-md transition-colors"
                         >
                           <Eye className="h-3.5 w-3.5" />
                           View
@@ -201,23 +201,23 @@ export function InvoicesPage() {
       {/* Invoice Detail Modal */}
       {selectedInvoice && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between">
+          <div className="bg-surface rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-outline-variant flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <h3 className="text-lg font-bold text-on-surface flex items-center gap-2">
                   <span>{selectedInvoice.invoice_number}</span>
                   <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
                     {selectedInvoice.type.toUpperCase()}
                   </span>
                   <StatusBadge status={selectedInvoice.status} />
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-outline mt-0.5">
                   Date: {formatDate(selectedInvoice.date)} · Due: {selectedInvoice.due_date ? formatDate(selectedInvoice.due_date) : 'Immediate'}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedInvoice(null)}
-                className="text-slate-400 hover:text-slate-600 text-xl font-bold p-1"
+                className="text-slate-400 hover:text-on-surface-variant text-xl font-bold p-1"
               >
                 ✕
               </button>
@@ -225,19 +225,19 @@ export function InvoicesPage() {
 
             <div className="p-6 space-y-6">
               {/* Customer Info */}
-              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                <div className="text-xs uppercase font-semibold text-slate-500 mb-1">Bill To / Consignee</div>
+              <div className="bg-background rounded-lg p-4 border border-outline-variant">
+                <div className="text-xs uppercase font-semibold text-outline mb-1">Bill To / Consignee</div>
                 {(() => {
                   const c = getCustomerById(selectedInvoice.customer_id)
                   return (
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
-                        <div className="font-semibold text-slate-800">{c?.name}</div>
-                        <div className="text-xs text-slate-500">{c?.address}, {c?.city}</div>
+                        <div className="font-semibold text-on-surface">{c?.name}</div>
+                        <div className="text-xs text-outline">{c?.address}, {c?.city}</div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xs text-slate-500 font-mono">GSTIN: {c?.gstin || 'Unregistered'}</div>
-                        <div className="text-xs text-slate-500">Phone: {c?.phone}</div>
+                        <div className="text-xs text-outline font-mono">GSTIN: {c?.gstin || 'Unregistered'}</div>
+                        <div className="text-xs text-outline">Phone: {c?.phone}</div>
                       </div>
                     </div>
                   )
@@ -246,38 +246,38 @@ export function InvoicesPage() {
 
               {/* Items & particulars */}
               <div className="space-y-2">
-                <div className="text-xs uppercase font-semibold text-slate-500">Invoice Items & Notes</div>
-                <div className="bg-slate-50/60 p-3 rounded-lg border border-slate-200 text-sm text-slate-800">
+                <div className="text-xs uppercase font-semibold text-outline">Invoice Items & Notes</div>
+                <div className="bg-background/60 p-3 rounded-lg border border-outline-variant text-sm text-on-surface">
                   {selectedInvoice.notes || 'Goods delivered per purchase order / delivery challan.'}
                 </div>
               </div>
 
               {/* Financial summary */}
               <div className="space-y-2">
-                <div className="text-xs uppercase font-semibold text-slate-500">Tax & Total Breakdown</div>
-                <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-2 text-sm">
-                  <div className="flex justify-between text-slate-600">
+                <div className="text-xs uppercase font-semibold text-outline">Tax & Total Breakdown</div>
+                <div className="bg-surface border border-outline-variant rounded-lg p-4 space-y-2 text-sm">
+                  <div className="flex justify-between text-on-surface-variant">
                     <span>Taxable Value:</span>
-                    <span className="font-medium text-slate-800">{formatCurrency(selectedInvoice.taxable_amount)}</span>
+                    <span className="font-medium text-on-surface">{formatCurrency(selectedInvoice.taxable_amount)}</span>
                   </div>
                   {selectedInvoice.type === 'gst' && (
                     <>
-                      <div className="flex justify-between text-slate-600">
+                      <div className="flex justify-between text-on-surface-variant">
                         <span>CGST (9%):</span>
-                        <span className="text-slate-800">{formatCurrency(selectedInvoice.cgst_amount)}</span>
+                        <span className="text-on-surface">{formatCurrency(selectedInvoice.cgst_amount)}</span>
                       </div>
-                      <div className="flex justify-between text-slate-600">
+                      <div className="flex justify-between text-on-surface-variant">
                         <span>SGST (9%):</span>
-                        <span className="text-slate-800">{formatCurrency(selectedInvoice.sgst_amount)}</span>
+                        <span className="text-on-surface">{formatCurrency(selectedInvoice.sgst_amount)}</span>
                       </div>
                     </>
                   )}
                   <div className="h-px bg-slate-200 my-2" />
-                  <div className="flex justify-between text-base font-bold text-slate-900">
+                  <div className="flex justify-between text-base font-bold text-on-surface">
                     <span>Invoice Grand Total:</span>
-                    <span className="text-blue-600">{formatCurrency(selectedInvoice.total_amount)}</span>
+                    <span className="text-primary">{formatCurrency(selectedInvoice.total_amount)}</span>
                   </div>
-                  <div className="flex justify-between text-sm font-medium text-slate-600 pt-1">
+                  <div className="flex justify-between text-sm font-medium text-on-surface-variant pt-1">
                     <span>Amount Paid:</span>
                     <span className="text-emerald-600">{formatCurrency(selectedInvoice.paid_amount)}</span>
                   </div>
@@ -292,7 +292,7 @@ export function InvoicesPage() {
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 border border-slate-200 text-slate-700 text-xs font-medium rounded-lg hover:bg-slate-50"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 border border-outline-variant text-on-surface-variant text-xs font-medium rounded-lg hover:bg-background"
                 >
                   <Printer className="h-3.5 w-3.5" />
                   Print / Download PDF
@@ -300,7 +300,7 @@ export function InvoicesPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedInvoice(null)}
-                  className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors"
+                  className="px-4 py-2 border border-outline-variant text-on-surface-variant text-sm font-medium rounded-lg hover:bg-background transition-colors"
                 >
                   Close
                 </button>
@@ -313,37 +313,37 @@ export function InvoicesPage() {
       {/* New Invoice Modal (Prototype) */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6">
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Create Sales Invoice (Demo)</h3>
-            <p className="text-sm text-slate-600 mb-4">
+          <div className="bg-surface rounded-xl shadow-xl max-w-lg w-full p-6">
+            <h3 className="text-lg font-bold text-on-surface mb-2">Create Sales Invoice (Demo)</h3>
+            <p className="text-sm text-on-surface-variant mb-4">
               Select customer, line items, and taxes will auto-calculate at 18% (9% CGST + 9% SGST). Finished goods inventory will automatically be decremented upon posting.
             </p>
             <div className="space-y-3 text-sm">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Customer</label>
-                <select className="w-full px-3 py-2 border border-slate-200 rounded-lg">
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">Customer</label>
+                <select className="w-full px-3 py-2 border border-outline-variant rounded-lg">
                   {mockCustomers.map(c => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Invoice Type</label>
-                <select className="w-full px-3 py-2 border border-slate-200 rounded-lg">
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">Invoice Type</label>
+                <select className="w-full px-3 py-2 border border-outline-variant rounded-lg">
                   <option value="gst">GST Tax Invoice (18%)</option>
                   <option value="non_gst">Non-GST Bill</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Taxable Amount (₹)</label>
-                <input type="number" placeholder="250000" className="w-full px-3 py-2 border border-slate-200 rounded-lg" />
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">Taxable Amount (₹)</label>
+                <input type="number" placeholder="250000" className="w-full px-3 py-2 border border-outline-variant rounded-lg" />
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50"
+                className="px-4 py-2 border border-outline-variant text-on-surface-variant text-sm font-medium rounded-lg hover:bg-background"
               >
                 Cancel
               </button>
@@ -353,7 +353,7 @@ export function InvoicesPage() {
                   alert('Demo note: New invoice would be created in Supabase with ledger entries!')
                   setShowCreateModal(false)
                 }}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-xs"
+                className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-medium rounded-lg shadow-xs"
               >
                 Save Invoice
               </button>

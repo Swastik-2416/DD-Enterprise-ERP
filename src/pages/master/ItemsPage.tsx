@@ -19,12 +19,12 @@ const TYPE_LABELS: Record<string, string> = {
 }
 
 const TYPE_COLORS: Record<string, string> = {
-  raw_material: 'bg-blue-100 text-blue-700',
+  raw_material: 'bg-primary/10 text-primary',
   finished_good: 'bg-green-100 text-green-700',
   mould: 'bg-purple-100 text-purple-700',
   machinery: 'bg-orange-100 text-orange-700',
   consumable: 'bg-pink-100 text-pink-700',
-  service: 'bg-slate-100 text-slate-600',
+  service: 'bg-surface-container text-on-surface-variant',
 }
 
 export function ItemsPage() {
@@ -62,7 +62,7 @@ export function ItemsPage() {
         actions={isManager ? (
           <button
             onClick={() => { setEditItem(null); setShowForm(true) }}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Plus className="h-4 w-4" /> Add Item
           </button>
@@ -77,13 +77,13 @@ export function ItemsPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by name or SKU…"
-            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-9 pr-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <select
           value={typeFilter}
           onChange={e => setTypeFilter(e.target.value)}
-          className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          className="px-3 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-surface"
         >
           <option value="all">All Types</option>
           {Object.entries(TYPE_LABELS).map(([k, v]) => (
@@ -96,30 +96,30 @@ export function ItemsPage() {
       {filtered.length === 0 ? (
         <EmptyState icon={Package} title="No items found" description="Try adjusting your search or filters." />
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-surface rounded-xl border border-outline-variant overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 border-b border-slate-200">
+              <thead className="bg-background border-b border-outline-variant">
                 <tr>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">SKU</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Name</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Type</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">HSN</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">GST%</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Rate</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Stock</th>
-                  <th className="text-center px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Status</th>
-                  {isManager && <th className="text-center px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Actions</th>}
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-outline uppercase tracking-wide">SKU</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-outline uppercase tracking-wide">Name</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-outline uppercase tracking-wide">Type</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-outline uppercase tracking-wide">HSN</th>
+                  <th className="text-right px-4 py-3 text-xs font-semibold text-outline uppercase tracking-wide">GST%</th>
+                  <th className="text-right px-4 py-3 text-xs font-semibold text-outline uppercase tracking-wide">Rate</th>
+                  <th className="text-right px-4 py-3 text-xs font-semibold text-outline uppercase tracking-wide">Stock</th>
+                  <th className="text-center px-4 py-3 text-xs font-semibold text-outline uppercase tracking-wide">Status</th>
+                  {isManager && <th className="text-center px-4 py-3 text-xs font-semibold text-outline uppercase tracking-wide">Actions</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filtered.map(item => {
                   const stock = getStock(item.id)
                   return (
-                    <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-4 py-3 font-mono text-xs text-slate-500">{item.sku}</td>
+                    <tr key={item.id} className="hover:bg-background transition-colors">
+                      <td className="px-4 py-3 font-mono text-xs text-outline">{item.sku}</td>
                       <td className="px-4 py-3">
-                        <p className="font-medium text-slate-900">{item.name}</p>
+                        <p className="font-medium text-on-surface">{item.name}</p>
                         <p className="text-xs text-slate-400">{getCategory(item.category_id)} · {getUnit(item.unit_id)}</p>
                       </td>
                       <td className="px-4 py-3">
@@ -127,22 +127,22 @@ export function ItemsPage() {
                           {TYPE_LABELS[item.type]}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-slate-500">{item.hsn_code ?? '—'}</td>
-                      <td className="px-4 py-3 text-right text-slate-700">{item.gst_rate}%</td>
-                      <td className="px-4 py-3 text-right text-slate-900 font-medium">
+                      <td className="px-4 py-3 text-outline">{item.hsn_code ?? '—'}</td>
+                      <td className="px-4 py-3 text-right text-on-surface-variant">{item.gst_rate}%</td>
+                      <td className="px-4 py-3 text-right text-on-surface font-medium">
                         {item.selling_rate > 0
                           ? formatCurrency(item.selling_rate) + ' / ' + getUnit(item.unit_id)
                           : formatCurrency(item.purchase_rate) + ' / ' + getUnit(item.unit_id)}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <p className={cn('font-semibold', stock < item.min_stock_level ? 'text-red-600' : 'text-slate-900')}>
+                        <p className={cn('font-semibold', stock < item.min_stock_level ? 'text-error' : 'text-on-surface')}>
                           {formatNumber(stock, 0)} {getUnit(item.unit_id)}
                         </p>
                         <StockBadge qty={stock} min={item.min_stock_level} />
                       </td>
                       <td className="px-4 py-3 text-center">
                         <span className={cn('inline-block px-2 py-0.5 rounded-full text-xs font-medium',
-                          item.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'
+                          item.is_active ? 'bg-green-100 text-green-700' : 'bg-surface-container text-outline'
                         )}>
                           {item.is_active ? 'Active' : 'Inactive'}
                         </span>
@@ -151,7 +151,7 @@ export function ItemsPage() {
                         <td className="px-4 py-3 text-center">
                           <button
                             onClick={() => { setEditItem(item); setShowForm(true) }}
-                            className="p-1.5 hover:bg-blue-50 rounded-lg text-blue-600 transition-colors"
+                            className="p-1.5 hover:bg-primary/10 rounded-lg text-primary transition-colors"
                             title="Edit"
                           >
                             <Edit2 className="h-3.5 w-3.5" />
@@ -164,7 +164,7 @@ export function ItemsPage() {
               </tbody>
             </table>
           </div>
-          <div className="px-4 py-3 border-t border-slate-100 bg-slate-50 text-xs text-slate-500">
+          <div className="px-4 py-3 border-t border-slate-100 bg-background text-xs text-outline">
             Showing {filtered.length} of {mockItems.length} items
           </div>
         </div>
@@ -182,63 +182,63 @@ function ItemFormModal({ item, onClose }: { item: Item | null; onClose: () => vo
   const isEdit = !!item
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
-          <h2 className="text-lg font-bold text-slate-900">{isEdit ? 'Edit Item' : 'Add New Item'}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500">✕</button>
+      <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-outline-variant">
+          <h2 className="text-lg font-bold text-on-surface">{isEdit ? 'Edit Item' : 'Add New Item'}</h2>
+          <button onClick={onClose} className="p-2 hover:bg-surface-container rounded-lg transition-colors text-outline">✕</button>
         </div>
         <div className="p-6 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">SKU *</label>
-              <input defaultValue={item?.sku} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. RM-001" />
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">SKU *</label>
+              <input defaultValue={item?.sku} className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. RM-001" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Item Name *</label>
-              <input defaultValue={item?.name} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Item name" />
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Item Name *</label>
+              <input defaultValue={item?.name} className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Item name" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Item Type *</label>
-              <select defaultValue={item?.type} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Item Type *</label>
+              <select defaultValue={item?.type} className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-surface">
                 {Object.entries(TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Unit *</label>
-              <select defaultValue={item?.unit_id} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Unit *</label>
+              <select defaultValue={item?.unit_id} className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-surface">
                 {mockUnits.map(u => <option key={u.id} value={u.id}>{u.name} ({u.symbol})</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">HSN / SAC Code</label>
-              <input defaultValue={item?.hsn_code ?? ''} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. 6810" />
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">HSN / SAC Code</label>
+              <input defaultValue={item?.hsn_code ?? ''} className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. 6810" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">GST Rate (%)</label>
-              <select defaultValue={item?.gst_rate} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">GST Rate (%)</label>
+              <select defaultValue={item?.gst_rate} className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-surface">
                 {[0, 5, 12, 18, 28].map(r => <option key={r} value={r}>{r}%</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Purchase Rate (₹)</label>
-              <input type="number" defaultValue={item?.purchase_rate} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.00" />
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Purchase Rate (₹)</label>
+              <input type="number" defaultValue={item?.purchase_rate} className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.00" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Selling Rate (₹)</label>
-              <input type="number" defaultValue={item?.selling_rate} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.00" />
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Selling Rate (₹)</label>
+              <input type="number" defaultValue={item?.selling_rate} className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.00" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Min Stock Level</label>
-              <input type="number" defaultValue={item?.min_stock_level} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Min Stock Level</label>
+              <input type="number" defaultValue={item?.min_stock_level} className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
-              <textarea defaultValue={item?.description ?? ''} rows={2} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Description</label>
+              <textarea defaultValue={item?.description ?? ''} rows={2} className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
             </div>
           </div>
           <div className="flex justify-end gap-3 pt-2">
-            <button onClick={onClose} className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
-            <button className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+            <button onClick={onClose} className="px-4 py-2 text-sm text-on-surface-variant border border-outline-variant rounded-lg hover:bg-background transition-colors">Cancel</button>
+            <button className="px-4 py-2 text-sm text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors font-medium">
               {isEdit ? 'Save Changes' : 'Add Item'}
             </button>
           </div>

@@ -49,25 +49,25 @@ export function PurchaseInvoicesPage() {
 
       {/* Summary KPI row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Taxable Value</div>
-          <div className="text-2xl font-bold text-slate-900 mt-1">{formatCurrency(totalTaxable)}</div>
-          <div className="text-xs text-slate-500 mt-1">{mockPurchaseInvoices.length} total bills</div>
+        <div className="bg-surface border border-outline-variant rounded-xl p-4">
+          <div className="text-xs font-semibold text-outline uppercase tracking-wider">Total Taxable Value</div>
+          <div className="text-2xl font-bold text-on-surface mt-1">{formatCurrency(totalTaxable)}</div>
+          <div className="text-xs text-outline mt-1">{mockPurchaseInvoices.length} total bills</div>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total GST (CGST + SGST)</div>
-          <div className="text-2xl font-bold text-blue-600 mt-1">{formatCurrency(totalTax)}</div>
+        <div className="bg-surface border border-outline-variant rounded-xl p-4">
+          <div className="text-xs font-semibold text-outline uppercase tracking-wider">Total GST (CGST + SGST)</div>
+          <div className="text-2xl font-bold text-primary mt-1">{formatCurrency(totalTax)}</div>
           <div className="text-xs text-blue-500 mt-1">Eligible Input Tax Credit</div>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Purchase Value</div>
-          <div className="text-2xl font-bold text-slate-900 mt-1">{formatCurrency(totalAmount)}</div>
+        <div className="bg-surface border border-outline-variant rounded-xl p-4">
+          <div className="text-xs font-semibold text-outline uppercase tracking-wider">Total Purchase Value</div>
+          <div className="text-2xl font-bold text-on-surface mt-1">{formatCurrency(totalAmount)}</div>
           <div className="text-xs text-emerald-600 font-medium mt-1">Intra-state transactions</div>
         </div>
       </div>
 
       {/* Filters bar */}
-      <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row gap-3 items-center justify-between shadow-xs">
+      <div className="bg-surface border border-outline-variant rounded-xl p-4 flex flex-col md:flex-row gap-3 items-center justify-between shadow-xs">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
           <input
@@ -75,7 +75,7 @@ export function PurchaseInvoicesPage() {
             placeholder="Search by invoice #, supplier, or items..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            className="w-full pl-9 pr-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           />
         </div>
 
@@ -85,7 +85,7 @@ export function PurchaseInvoicesPage() {
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
             aria-label="Filter purchase invoices by status"
-            className="w-full md:w-44 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            className="w-full md:w-44 px-3 py-2 border border-outline-variant rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           >
             <option value="all">All Statuses</option>
             <option value="draft">Draft</option>
@@ -98,7 +98,7 @@ export function PurchaseInvoicesPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+      <div className="bg-surface border border-outline-variant rounded-xl overflow-hidden shadow-xs">
         {filtered.length === 0 ? (
           <EmptyState
             icon={ShoppingCart}
@@ -109,7 +109,7 @@ export function PurchaseInvoicesPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50/80 border-b border-slate-200 text-xs uppercase font-semibold text-slate-600">
+              <thead className="bg-background/80 border-b border-outline-variant text-xs uppercase font-semibold text-on-surface-variant">
                 <tr>
                   <th className="py-3 px-4">Invoice #</th>
                   <th className="py-3 px-4">Date</th>
@@ -126,23 +126,23 @@ export function PurchaseInvoicesPage() {
                 {filtered.map(inv => {
                   const supplier = getSupplierById(inv.supplier_id)
                   return (
-                    <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="py-3 px-4 font-mono font-medium text-blue-600">{inv.invoice_number}</td>
-                      <td className="py-3 px-4 text-slate-600 whitespace-nowrap">{formatDate(inv.date)}</td>
+                    <tr key={inv.id} className="hover:bg-background/50 transition-colors">
+                      <td className="py-3 px-4 font-mono font-medium text-primary">{inv.invoice_number}</td>
+                      <td className="py-3 px-4 text-on-surface-variant whitespace-nowrap">{formatDate(inv.date)}</td>
                       <td className="py-3 px-4">
-                        <div className="font-medium text-slate-800">{supplier?.name ?? 'Unknown'}</div>
+                        <div className="font-medium text-on-surface">{supplier?.name ?? 'Unknown'}</div>
                         <div className="text-xs text-slate-400 font-mono">{supplier?.gstin || 'Unregistered'}</div>
                       </td>
-                      <td className="py-3 px-4 text-slate-600 font-mono text-xs">
+                      <td className="py-3 px-4 text-on-surface-variant font-mono text-xs">
                         {inv.supplier_invoice_number || '—'}
                       </td>
-                      <td className="py-3 px-4 text-right font-medium text-slate-700">
+                      <td className="py-3 px-4 text-right font-medium text-on-surface-variant">
                         {formatCurrency(inv.taxable_amount)}
                       </td>
-                      <td className="py-3 px-4 text-right text-slate-600">
+                      <td className="py-3 px-4 text-right text-on-surface-variant">
                         {formatCurrency(inv.cgst_amount + inv.sgst_amount)}
                       </td>
-                      <td className="py-3 px-4 text-right font-bold text-slate-900">
+                      <td className="py-3 px-4 text-right font-bold text-on-surface">
                         {formatCurrency(inv.total_amount)}
                       </td>
                       <td className="py-3 px-4 text-center">
@@ -151,7 +151,7 @@ export function PurchaseInvoicesPage() {
                       <td className="py-3 px-4 text-center">
                         <button
                           onClick={() => setSelectedInvoice(inv)}
-                          className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-md transition-colors"
+                          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-primary bg-primary/5 hover:bg-primary/10 px-2.5 py-1.5 rounded-md transition-colors"
                         >
                           <Eye className="h-3.5 w-3.5" />
                           View
@@ -169,20 +169,20 @@ export function PurchaseInvoicesPage() {
       {/* Invoice Detail Modal */}
       {selectedInvoice && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between">
+          <div className="bg-surface rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-outline-variant flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <h3 className="text-lg font-bold text-on-surface flex items-center gap-2">
                   <span>{selectedInvoice.invoice_number}</span>
                   <StatusBadge status={selectedInvoice.status} />
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-outline mt-0.5">
                   Dated: {formatDate(selectedInvoice.date)} · Due: {selectedInvoice.due_date ? formatDate(selectedInvoice.due_date) : 'Immediate'}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedInvoice(null)}
-                className="text-slate-400 hover:text-slate-600 text-xl font-bold p-1"
+                className="text-slate-400 hover:text-on-surface-variant text-xl font-bold p-1"
               >
                 ✕
               </button>
@@ -190,19 +190,19 @@ export function PurchaseInvoicesPage() {
 
             <div className="p-6 space-y-6">
               {/* Supplier Info */}
-              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                <div className="text-xs uppercase font-semibold text-slate-500 mb-1">Supplier Details</div>
+              <div className="bg-background rounded-lg p-4 border border-outline-variant">
+                <div className="text-xs uppercase font-semibold text-outline mb-1">Supplier Details</div>
                 {(() => {
                   const s = getSupplierById(selectedInvoice.supplier_id)
                   return (
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
-                        <div className="font-semibold text-slate-800">{s?.name}</div>
-                        <div className="text-xs text-slate-500">{s?.address}, {s?.city}</div>
+                        <div className="font-semibold text-on-surface">{s?.name}</div>
+                        <div className="text-xs text-outline">{s?.address}, {s?.city}</div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xs text-slate-500 font-mono">GSTIN: {s?.gstin || 'Unregistered'}</div>
-                        <div className="text-xs text-slate-500">Contact: {s?.phone}</div>
+                        <div className="text-xs text-outline font-mono">GSTIN: {s?.gstin || 'Unregistered'}</div>
+                        <div className="text-xs text-outline">Contact: {s?.phone}</div>
                       </div>
                     </div>
                   )
@@ -211,33 +211,33 @@ export function PurchaseInvoicesPage() {
 
               {/* Bill Details */}
               <div className="space-y-2">
-                <div className="text-xs uppercase font-semibold text-slate-500">Bill Breakdown</div>
-                <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-2 text-sm">
-                  <div className="flex justify-between text-slate-600">
+                <div className="text-xs uppercase font-semibold text-outline">Bill Breakdown</div>
+                <div className="bg-surface border border-outline-variant rounded-lg p-4 space-y-2 text-sm">
+                  <div className="flex justify-between text-on-surface-variant">
                     <span>Supplier Ref Bill No:</span>
-                    <span className="font-mono font-medium text-slate-800">{selectedInvoice.supplier_invoice_number || 'N/A'}</span>
+                    <span className="font-mono font-medium text-on-surface">{selectedInvoice.supplier_invoice_number || 'N/A'}</span>
                   </div>
-                  <div className="flex justify-between text-slate-600">
+                  <div className="flex justify-between text-on-surface-variant">
                     <span>Notes / Item description:</span>
-                    <span className="text-slate-800">{selectedInvoice.notes || '—'}</span>
+                    <span className="text-on-surface">{selectedInvoice.notes || '—'}</span>
                   </div>
                   <div className="h-px bg-slate-200 my-2" />
-                  <div className="flex justify-between text-slate-600">
+                  <div className="flex justify-between text-on-surface-variant">
                     <span>Taxable Value:</span>
-                    <span className="font-medium text-slate-800">{formatCurrency(selectedInvoice.taxable_amount)}</span>
+                    <span className="font-medium text-on-surface">{formatCurrency(selectedInvoice.taxable_amount)}</span>
                   </div>
-                  <div className="flex justify-between text-slate-600">
+                  <div className="flex justify-between text-on-surface-variant">
                     <span>CGST:</span>
-                    <span className="text-slate-800">{formatCurrency(selectedInvoice.cgst_amount)}</span>
+                    <span className="text-on-surface">{formatCurrency(selectedInvoice.cgst_amount)}</span>
                   </div>
-                  <div className="flex justify-between text-slate-600">
+                  <div className="flex justify-between text-on-surface-variant">
                     <span>SGST:</span>
-                    <span className="text-slate-800">{formatCurrency(selectedInvoice.sgst_amount)}</span>
+                    <span className="text-on-surface">{formatCurrency(selectedInvoice.sgst_amount)}</span>
                   </div>
                   <div className="h-px bg-slate-200 my-2" />
-                  <div className="flex justify-between text-base font-bold text-slate-900">
+                  <div className="flex justify-between text-base font-bold text-on-surface">
                     <span>Total Amount:</span>
-                    <span className="text-blue-600">{formatCurrency(selectedInvoice.total_amount)}</span>
+                    <span className="text-primary">{formatCurrency(selectedInvoice.total_amount)}</span>
                   </div>
                 </div>
               </div>
@@ -246,7 +246,7 @@ export function PurchaseInvoicesPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedInvoice(null)}
-                  className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors"
+                  className="px-4 py-2 border border-outline-variant text-on-surface-variant text-sm font-medium rounded-lg hover:bg-background transition-colors"
                 >
                   Close
                 </button>
@@ -259,32 +259,32 @@ export function PurchaseInvoicesPage() {
       {/* New Invoice Modal (Prototype Demonstration) */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6">
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Create Purchase Invoice (Demo)</h3>
-            <p className="text-sm text-slate-600 mb-4">
+          <div className="bg-surface rounded-xl shadow-xl max-w-lg w-full p-6">
+            <h3 className="text-lg font-bold text-on-surface mb-2">Create Purchase Invoice (Demo)</h3>
+            <p className="text-sm text-on-surface-variant mb-4">
               In prototype mode, mock records are pre-loaded. In production connected with Supabase, this form creates direct entries with auto-calculated CGST/SGST and inventory stock updates.
             </p>
             <div className="space-y-3 text-sm">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Select Supplier</label>
-                <select className="w-full px-3 py-2 border border-slate-200 rounded-lg">
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">Select Supplier</label>
+                <select className="w-full px-3 py-2 border border-outline-variant rounded-lg">
                   {mockSuppliers.map(s => (
                     <option key={s.id} value={s.id}>{s.name}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Supplier Invoice Number</label>
-                <input type="text" placeholder="e.g. UC/2526/9021" className="w-full px-3 py-2 border border-slate-200 rounded-lg" />
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">Supplier Invoice Number</label>
+                <input type="text" placeholder="e.g. UC/2526/9021" className="w-full px-3 py-2 border border-outline-variant rounded-lg" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Taxable Amount (₹)</label>
-                  <input type="number" placeholder="50000" className="w-full px-3 py-2 border border-slate-200 rounded-lg" />
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Taxable Amount (₹)</label>
+                  <input type="number" placeholder="50000" className="w-full px-3 py-2 border border-outline-variant rounded-lg" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">GST Rate</label>
-                  <select className="w-full px-3 py-2 border border-slate-200 rounded-lg">
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">GST Rate</label>
+                  <select className="w-full px-3 py-2 border border-outline-variant rounded-lg">
                     <option value="28">28% (Cement)</option>
                     <option value="5">5% (Sand/Aggregate)</option>
                     <option value="18">18% (Consumables)</option>
@@ -296,7 +296,7 @@ export function PurchaseInvoicesPage() {
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50"
+                className="px-4 py-2 border border-outline-variant text-on-surface-variant text-sm font-medium rounded-lg hover:bg-background"
               >
                 Cancel
               </button>
@@ -306,7 +306,7 @@ export function PurchaseInvoicesPage() {
                   alert('Demo note: New invoice would be posted to Supabase with automatic stock movement trigger!')
                   setShowCreateModal(false)
                 }}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-xs"
+                className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-medium rounded-lg shadow-xs"
               >
                 Save Draft
               </button>

@@ -24,9 +24,9 @@ export function UnitsPage() {
         }
       />
 
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs max-w-3xl">
+      <div className="bg-surface border border-outline-variant rounded-xl overflow-hidden shadow-xs max-w-3xl">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50/80 border-b border-slate-200 text-xs uppercase font-semibold text-slate-600">
+          <thead className="bg-background/80 border-b border-outline-variant text-xs uppercase font-semibold text-on-surface-variant">
             <tr>
               <th className="py-3 px-4">Unit Name</th>
               <th className="py-3 px-4">Symbol / UQC</th>
@@ -36,10 +36,10 @@ export function UnitsPage() {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {units.map(unit => (
-              <tr key={unit.id} className="hover:bg-slate-50/50">
-                <td className="py-3 px-4 font-semibold text-slate-800">{unit.name}</td>
-                <td className="py-3 px-4 font-mono font-bold text-blue-600">{unit.symbol}</td>
-                <td className="py-3 px-4 text-xs text-slate-500">
+              <tr key={unit.id} className="hover:bg-background/50">
+                <td className="py-3 px-4 font-semibold text-on-surface">{unit.name}</td>
+                <td className="py-3 px-4 font-mono font-bold text-primary">{unit.symbol}</td>
+                <td className="py-3 px-4 text-xs text-outline">
                   {unit.symbol === 'pcs' && 'Finished Paver Blocks & Kerb Stones'}
                   {unit.symbol === 'MT' && 'Coarse Aggregates & River/M-sand'}
                   {unit.symbol === 'bag' && 'Cement (50 kg bags)'}
