@@ -36,12 +36,12 @@ export function LoginPage() {
             <p className="text-on-surface-variant text-sm mt-1">Paver Block Manufacturing System</p>
           </div>
 
-          {/* Demo credentials banner */}
+          {/* Demo credentials banner
           <div className="bg-surface-container border border-outline-variant rounded-xl p-3 mb-6">
             <p className="text-xs font-semibold text-on-surface mb-1">Demo Credentials</p>
             <p className="text-xs text-on-surface-variant">Manager: <span className="font-mono text-primary font-medium">manager@ddblocks.com</span> / <span className="font-mono font-medium">manager123</span></p>
             <p className="text-xs text-on-surface-variant">Accountant: <span className="font-mono text-primary font-medium">accountant@ddblocks.com</span> / <span className="font-mono font-medium">accountant123</span></p>
-          </div>
+          </div> */}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
