@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { StatusBadge } from '@/components/shared/StatusBadge'
+import { DDInvoicePrintModal } from '@/components/invoices/DDInvoicePrintModal'
 import { formatCurrency, formatDate, amountInWords } from '@/lib/formatters'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
@@ -549,281 +550,40 @@ export function InvoicesPage() {
         )}
       </div>
 
-      {/* Invoice Detail / Printable Tax Invoice Modal */}
+      {/* Official DD Enterprise Tax Invoice Modal */}
       {selectedInvoice && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-surface rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-outline-variant my-8">
-            <div className="p-5 border-b border-outline-variant flex items-center justify-between sticky top-0 bg-surface z-10">
-              <div>
-                <h3 className="text-lg font-bold text-on-surface flex items-center gap-2">
-                  <span>{selectedInvoice.invoice_number}</span>
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 uppercase">
-                    {selectedInvoice.type}
-                  </span>
-                  <StatusBadge status={selectedInvoice.status} />
-                </h3>
-                <p className="text-xs text-outline mt-0.5">
-                  Date: {formatDate(selectedInvoice.date)} · Due:{' '}
-                  {selectedInvoice.due_date ? formatDate(selectedInvoice.due_date) : 'Immediate'}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-outline-variant text-on-surface-variant text-xs font-medium rounded-lg hover:bg-background"
-                >
-                  <Printer className="h-3.5 w-3.5" />
-                  Print / PDF
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedInvoice(null)}
-                  className="text-outline hover:text-on-surface text-xl font-bold p-1 rounded-lg"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-
-            <div className="p-6 space-y-6">
-              {/* Header: Company & Customer */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-background p-4 rounded-xl border border-outline-variant">
-                <div>
-                  <div className="text-xs uppercase font-bold tracking-wider text-outline mb-1">
-                    Billed By (Supplier)
-                  </div>
-                  <div className="font-bold text-on-surface text-base">DD Enterprise</div>
-                  <div className="text-xs text-outline">
-                    Manufacturer of Quality Paver Blocks & Precast Concrete Products
-                  </div>
-                  <div className="text-xs text-outline mt-1 font-mono">
-                    GSTIN: 19AAACD1234F1Z5 · State: West Bengal (19)
-                  </div>
-                </div>
-
-                <div className="sm:text-right">
-                  <div className="text-xs uppercase font-bold tracking-wider text-outline mb-1">
-                    Bill To / Consignee
-                  </div>
-                  <div className="font-bold text-on-surface text-base">
-                    {selectedInvoice.customer?.name}
-                  </div>
-                  <div className="text-xs text-outline">
-                    {selectedInvoice.customer?.address ? `${selectedInvoice.customer.address}, ` : ''}
-                    {selectedInvoice.customer?.city}
-                    {selectedInvoice.customer?.state ? `, ${selectedInvoice.customer.state}` : ''}
-                  </div>
-                  <div className="text-xs text-on-surface-variant font-mono mt-1">
-                    GSTIN: {selectedInvoice.customer?.gstin || 'Unregistered Buyer'}
-                  </div>
-                </div>
-              </div>
-
-              {/* Items Breakdown */}
-              <div className="space-y-2">
-                <div className="text-xs uppercase font-bold tracking-wider text-outline">
-                  Particulars & Items ({selectedLines.length})
-                </div>
-
-                {linesLoading ? (
-                  <div className="py-8 flex items-center justify-center">
-                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                  </div>
-                ) : selectedLines.length === 0 ? (
-                  <div className="p-4 text-center text-xs text-outline border border-outline-variant rounded-lg">
-                    No line items attached.
-                  </div>
-                ) : (
-                  <div className="border border-outline-variant rounded-xl overflow-hidden">
-                    <table className="w-full text-left text-xs">
-                      <thead className="bg-background border-b border-outline-variant font-semibold text-on-surface-variant">
-                        <tr>
-                          <th className="py-2.5 px-3">Product Description</th>
-                          <th className="py-2.5 px-3">HSN/SKU</th>
-                          <th className="py-2.5 px-3 text-right">Qty</th>
-                          <th className="py-2.5 px-3 text-right">Rate</th>
-                          <th className="py-2.5 px-3 text-right">Taxable</th>
-                          <th className="py-2.5 px-3 text-right">GST %</th>
-                          <th className="py-2.5 px-3 text-right">Total</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-outline-variant/60">
-                        {selectedLines.map(line => (
-                          <tr key={line.id} className="hover:bg-background/40">
-                            <td className="py-2.5 px-3 font-medium text-on-surface">
-                              {line.item?.name || line.description || 'Product'}
-                            </td>
-                            <td className="py-2.5 px-3 font-mono text-outline">
-                              {line.item?.sku || '6810'}
-                            </td>
-                            <td className="py-2.5 px-3 text-right font-medium">
-                              {line.qty} {line.item?.unit?.symbol || 'pcs'}
-                            </td>
-                            <td className="py-2.5 px-3 text-right">
-                              {formatCurrency(line.rate)}
-                            </td>
-                            <td className="py-2.5 px-3 text-right font-medium text-on-surface">
-                              {formatCurrency(line.taxable_amount)}
-                            </td>
-                            <td className="py-2.5 px-3 text-right text-outline">
-                              {line.gst_rate}%
-                            </td>
-                            <td className="py-2.5 px-3 text-right font-bold text-on-surface">
-                              {formatCurrency(line.line_total)}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-
-              {/* Financial Totals */}
-              <div className="bg-surface border border-outline-variant rounded-xl p-4 space-y-2 text-sm">
-                <div className="flex justify-between text-on-surface-variant">
-                  <span>Taxable Value:</span>
-                  <span className="font-semibold text-on-surface">
-                    {formatCurrency(selectedInvoice.taxable_amount)}
-                  </span>
-                </div>
-                {selectedInvoice.type === 'gst' && (
-                  <>
-                    <div className="flex justify-between text-on-surface-variant">
-                      <span>CGST (9%):</span>
-                      <span className="text-on-surface">
-                        {formatCurrency(selectedInvoice.cgst_amount)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-on-surface-variant">
-                      <span>SGST (9%):</span>
-                      <span className="text-on-surface">
-                        {formatCurrency(selectedInvoice.sgst_amount)}
-                      </span>
-                    </div>
-                  </>
-                )}
-                <div className="h-px bg-outline-variant/60 my-2" />
-                <div className="flex justify-between text-base font-bold text-on-surface">
-                  <span>Invoice Grand Total:</span>
-                  <span className="text-primary">
-                    {formatCurrency(selectedInvoice.total_amount)}
-                  </span>
-                </div>
-                <div className="text-xs text-outline italic">
-                  Amount in words: {amountInWords(selectedInvoice.total_amount)}
-                </div>
-                <div className="flex justify-between text-sm font-medium text-on-surface-variant pt-1 border-t border-outline-variant/40">
-                  <span>Amount Paid:</span>
-                  <span className="text-emerald-600 font-semibold">
-                    {formatCurrency(selectedInvoice.paid_amount)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm font-bold text-amber-600">
-                  <span>Balance Due:</span>
-                  <span>
-                    {formatCurrency(
-                      Math.max(0, selectedInvoice.total_amount - selectedInvoice.paid_amount)
-                    )}
-                  </span>
-                </div>
-              </div>
-
-              {/* Workflow Actions */}
-              {isManager && (
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-outline-variant">
-                  <div className="flex items-center gap-2">
-                    {selectedInvoice.status === 'draft' && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          updateStatusMutation.mutate({
-                            invoiceId: selectedInvoice.id,
-                            newStatus: 'submitted',
-                          })
-                        }
-                        disabled={updateStatusMutation.isPending}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5"
-                      >
-                        <ArrowRight className="h-3.5 w-3.5" />
-                        Submit for Approval
-                      </button>
-                    )}
-
-                    {selectedInvoice.status === 'submitted' && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          updateStatusMutation.mutate({
-                            invoiceId: selectedInvoice.id,
-                            newStatus: 'approved',
-                          })
-                        }
-                        disabled={updateStatusMutation.isPending}
-                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5"
-                      >
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        Approve Invoice
-                      </button>
-                    )}
-
-                    {selectedInvoice.status === 'approved' && (
-                      <button
-                        type="button"
-                        onClick={() => postInvoiceMutation.mutate(selectedInvoice)}
-                        disabled={postInvoiceMutation.isPending}
-                        className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5"
-                      >
-                        {postInvoiceMutation.isPending ? (
-                          <>
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            Posting & Deducting Stock...
-                          </>
-                        ) : (
-                          <>
-                            <Package className="h-3.5 w-3.5" />
-                            Post & Deduct Finished Stock
-                          </>
-                        )}
-                      </button>
-                    )}
-
-                    {selectedInvoice.status !== 'cancelled' && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (
-                            confirm(
-                              selectedInvoice.status === 'posted'
-                                ? 'Are you sure you want to cancel this posted invoice? This will restore the deducted finished goods to stock.'
-                                : 'Are you sure you want to cancel this invoice?'
-                            )
-                          ) {
-                            cancelInvoiceMutation.mutate(selectedInvoice)
-                          }
-                        }}
-                        disabled={cancelInvoiceMutation.isPending}
-                        className="px-3 py-2 text-xs font-semibold text-red-600 border border-red-200 rounded-lg hover:bg-red-50 flex items-center gap-1.5"
-                      >
-                        <XCircle className="h-3.5 w-3.5" />
-                        Cancel Invoice
-                      </button>
-                    )}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setSelectedInvoice(null)}
-                    className="px-4 py-2 border border-outline-variant text-on-surface-variant text-xs font-semibold rounded-lg hover:bg-background"
-                  >
-                    Close
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <DDInvoicePrintModal
+          invoice={selectedInvoice}
+          lines={selectedLines}
+          onClose={() => setSelectedInvoice(null)}
+          isManager={isManager}
+          isUpdating={updateStatusMutation.isPending}
+          isPosting={postInvoiceMutation.isPending}
+          onSubmitForApproval={() =>
+            updateStatusMutation.mutate({
+              invoiceId: selectedInvoice.id,
+              newStatus: 'submitted',
+            })
+          }
+          onApproveInvoice={() =>
+            updateStatusMutation.mutate({
+              invoiceId: selectedInvoice.id,
+              newStatus: 'approved',
+            })
+          }
+          onPostInvoice={() => postInvoiceMutation.mutate(selectedInvoice)}
+          onCancelInvoice={() => {
+            if (
+              confirm(
+                selectedInvoice.status === 'posted'
+                  ? 'Are you sure you want to cancel this posted invoice? This will restore the deducted finished goods to stock.'
+                  : 'Are you sure you want to cancel this invoice?'
+              )
+            ) {
+              cancelInvoiceMutation.mutate(selectedInvoice)
+            }
+          }}
+        />
       )}
 
       {/* Multi-line Create Invoice Modal */}
