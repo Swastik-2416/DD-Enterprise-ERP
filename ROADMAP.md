@@ -109,9 +109,9 @@
 ---
 
 ### 2.7 — Payments
-- [ ] **Record Inward Payment** — Record payments received from customers with mode (Cash, Cheque, NEFT, UPI, etc.)
-- [ ] **Record Outward Payment** — Record payments made to suppliers
-- [ ] **Invoice Allocation** — Link a payment to one or more invoices to accurately track outstanding balance
+- [x] **Record Inward Payment** — Record payments received from customers with mode (Cash, Cheque, NEFT, UPI, etc.)
+- [x] **Record Outward Payment** — Record payments made to suppliers
+- [x] **Invoice Allocation** — Link a payment to one or more invoices to accurately track outstanding balance
 - [ ] **Ledger View** — Customer/Supplier account statement: chronological list of all invoices and payments
 
 ---
