@@ -630,6 +630,9 @@ function CreateSalesInvoiceModal({
   const [type, setType] = useState<InvoiceType>('gst')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [dueDate, setDueDate] = useState('')
+  const [vehicleNumber, setVehicleNumber] = useState('')
+  const [lrNumber, setLrNumber] = useState('')
+  const [ewayNumber, setEwayNumber] = useState('')
   const [notes, setNotes] = useState('')
 
   // Sequence generator
@@ -742,6 +745,13 @@ function CreateSalesInvoiceModal({
     setIsSubmitting(true)
     try {
       // 1. Insert invoice header
+      const combinedNotes = [
+        vehicleNumber.trim() ? `Vehicle: ${vehicleNumber.trim()}` : null,
+        lrNumber.trim() ? `LR: ${lrNumber.trim()}` : null,
+        ewayNumber.trim() ? `Eway: ${ewayNumber.trim()}` : null,
+        notes.trim() || null,
+      ].filter(Boolean).join(' | ')
+
       const { data: newInvoice, error: invErr } = await (supabase
         .from('invoices') as any)
         .insert({
@@ -757,7 +767,7 @@ function CreateSalesInvoiceModal({
           total_amount: grandTotal,
           paid_amount: 0,
           status: 'draft',
-          notes: notes.trim() || null,
+          notes: combinedNotes || null,
           created_by: userId,
         })
         .select()
@@ -901,13 +911,52 @@ function CreateSalesInvoiceModal({
               />
             </div>
 
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs font-semibold text-on-surface-variant mb-1">
-                Delivery Site / Dispatch Memo
+                Vehicle Number <span className="text-outline font-normal">(Optional)</span>
               </label>
               <input
                 type="text"
-                placeholder="e.g. Site: City Center Flyover Project, Truck WB-39-1234"
+                placeholder="e.g. WB 25F 8077"
+                value={vehicleNumber}
+                onChange={e => setVehicleNumber(e.target.value)}
+                className="w-full px-3 py-2 text-sm uppercase font-mono bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">
+                L.R. Number <span className="text-outline font-normal">(Optional)</span>
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. LR-10492"
+                value={lrNumber}
+                onChange={e => setLrNumber(e.target.value)}
+                className="w-full px-3 py-2 text-sm bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">
+                E-Way Bill Number <span className="text-outline font-normal">(Optional)</span>
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. 231456789012"
+                value={ewayNumber}
+                onChange={e => setEwayNumber(e.target.value)}
+                className="w-full px-3 py-2 text-sm font-mono bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">
+                Delivery Site / Dispatch Memo <span className="text-outline font-normal">(Optional)</span>
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Site: Amdanga Bypass, Gate 2"
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
                 className="w-full px-3 py-2 text-sm bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"

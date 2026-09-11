@@ -41,13 +41,13 @@ export function DDInvoicePrintModal({
   // Dispatch details & overrides
   const [showTransportFields, setShowTransportFields] = useState(false)
   const [vehicleNo, setVehicleNo] = useState(
-    invoice.notes?.match(/Vehicle:\s*([^\s,]+)/i)?.[1] || 'WB 25F 8077'
+    invoice.notes?.match(/Vehicle:\s*([^,|;\n]+)/i)?.[1]?.trim() || ''
   )
   const [lrNo, setLrNo] = useState(
-    invoice.notes?.match(/LR:\s*([^\s,]+)/i)?.[1] || ''
+    invoice.notes?.match(/LR:\s*([^,|;\n]+)/i)?.[1]?.trim() || ''
   )
   const [ewayNo, setEwayNo] = useState(
-    invoice.notes?.match(/Eway:\s*([^\s,]+)/i)?.[1] || ''
+    invoice.notes?.match(/Eway:\s*([^,|;\n]+)/i)?.[1]?.trim() || ''
   )
   const [freightCharge, setFreightCharge] = useState<number>(0)
   const [unloadingCharge, setUnloadingCharge] = useState<number>(0)
@@ -88,9 +88,14 @@ export function DDInvoicePrintModal({
     )
   }, [itemsTaxableTotal, cgstTotal, sgstTotal, freightCharge, unloadingCharge, discountAmount])
 
-  // Print Action
+  // Print Action without browser URL/title header
   const handlePrint = () => {
+    const originalTitle = document.title
+    document.title = ''
     window.print()
+    setTimeout(() => {
+      document.title = originalTitle
+    }, 500)
   }
 
   // WhatsApp Action
@@ -168,7 +173,14 @@ export function DDInvoicePrintModal({
         @media print {
           @page {
             size: A4 portrait;
-            margin: 8mm;
+            margin: 0mm !important;
+          }
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #fff !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
           body * {
             visibility: hidden !important;
@@ -183,11 +195,12 @@ export function DDInvoicePrintModal({
             width: 100% !important;
             max-width: 100% !important;
             margin: 0 !important;
-            padding: 0 !important;
+            padding: 12mm 14mm !important;
             border: none !important;
             box-shadow: none !important;
             background: #fff !important;
             color: #000 !important;
+            box-sizing: border-box !important;
           }
           .no-print {
             display: none !important;
