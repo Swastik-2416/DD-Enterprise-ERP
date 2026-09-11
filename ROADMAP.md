@@ -88,12 +88,12 @@
 ---
 
 ### 2.5 — Procurement (Purchase Invoices)
-- [ ] **Create Purchase Invoice** — Multi-line form: select supplier, add items, auto-calculate GST (CGST + SGST)
-- [ ] **View / List Invoices** — Paginated table with search and date filters
-- [ ] **Edit Invoice** — Allow editing of draft invoices before they are submitted
-- [ ] **Submit → Approve workflow** — Status flow: `Draft → Submitted → Approved → Posted`
-- [ ] **Post Invoice** — Posting must automatically trigger a stock IN movement (increase stock balance)
-- [ ] **Cancel Invoice** — Cancelling must automatically reverse the stock movement
+- [x] **Create Purchase Invoice** — Multi-line form: select supplier, add items, auto-calculate GST (CGST + SGST)
+- [x] **View / List Invoices** — Paginated table with search and date filters
+- [x] **Edit Invoice** — Allow editing of draft invoices before they are submitted
+- [x] **Submit → Approve workflow** — Status flow: `Draft → Submitted → Approved → Posted`
+- [x] **Post Invoice** — Posting must automatically trigger a stock IN movement (increase stock balance)
+- [x] **Cancel Invoice** — Cancelling must automatically reverse the stock movement
 - [ ] **Purchase Returns** — Create a purchase return against an existing posted invoice to reduce stock
 
 ---
