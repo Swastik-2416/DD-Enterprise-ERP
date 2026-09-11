@@ -151,78 +151,35 @@
 
 ---
 
-## 🤖 Phase 3 — AI Copilot & Advanced Features (FUTURE)
+## 🚀 Phase 3 — Advanced Analytics, Alerts & Mobile Experience
 
-> Goal: Add a Gemini-powered AI assistant that allows staff to interact with the ERP using plain English commands. Also add advanced analytics, notifications, and a mobile experience.
+> Goal: Empower management with executive business intelligence, real-time alert notifications, and a responsive mobile/PWA experience for floor supervisors.
 
-**Estimated Timeline:** 6–10 weeks (begins after Phase 2 is complete)  
-**AI Engine:** Google Gemini API (Free Tier — $0/month for current usage levels)
-
----
-
-### 3.1 — AI Copilot Chat Interface
-- [ ] **Chat Widget** — Floating chat button in the bottom-right corner of every page
-- [ ] **Conversation History** — Chat context is saved per session so the AI remembers previous messages
-- [ ] **Voice Input** — Allow users to speak commands using the browser's built-in Web Speech API
-- [ ] **Typing Indicator** — "AI is thinking..." animation while waiting for the response
-- [ ] **Error Handling** — Graceful fallback message when the AI API is unavailable or quota is exceeded
+**Estimated Timeline:** 4–6 weeks (begins after Phase 2 is complete)
 
 ---
 
-### 3.2 — AI Function Calling (Real Actions)
-> The AI will be able to perform real database operations on behalf of the user using structured function calls.
-
-- [ ] **Add Stock** — *"Add 200 bags of cement to the main warehouse"*
-- [ ] **Create Customer** — *"Add a new customer: Ramesh Builders, phone 9876543210, from Pune"*
-- [ ] **Create Supplier** — *"Add a supplier: ShivShakti Cement, from Nagpur"*
-- [ ] **Create Purchase Invoice** — *"Record a purchase of 500 bags of cement from UltraTech at ₹320 per bag"*
-- [ ] **Create Sales Invoice** — *"Create an invoice for ABC Contractors for 1000 paver blocks at ₹25 each"*
-- [ ] **Record Payment** — *"Mark ₹50,000 received from ABC Contractors against Invoice #INV-0012"*
-- [ ] **Create Production Order** — *"Schedule production of 5000 paver blocks for tomorrow, morning shift"*
-- [ ] **Stock Adjustment** — *"Reduce cement stock by 10 bags due to damage"*
+### 3.1 — Executive Analytics & Business Intelligence
+- [ ] **Interactive Visual Analytics** — Revenue vs Expenses breakdown, monthly sales growth trends
+- [ ] **Top Customers Ranking** — Ranked list of clients by revenue generated this month/quarter
+- [ ] **Top Selling Paver Products** — Best-selling concrete items ranked by volume (sq.ft / pcs) and gross value
+- [ ] **Plant Production Efficiency** — Planned vs actual production output and machine utilization trends
+- [ ] **Cash Flow Summary Widget** — Real-time inflow (customer collections) vs outflow (vendor disbursements)
 
 ---
 
-### 3.3 — AI Query & Reporting
-> The AI fetches and summarizes live data from the database on request.
-
-- [ ] **Stock Query** — *"How many bags of cement do we have right now?"*
-- [ ] **Sales Query** — *"What were our total sales this week?"*
-- [ ] **Outstanding Query** — *"Which customers owe us money?"*
-- [ ] **Low Stock Query** — *"Which items are running low and need to be reordered?"*
-- [ ] **Profitability Query** — *"What is our gross profit this month?"*
-- [ ] **Natural Language Summary** — AI generates a short business health paragraph for the day/week
+### 3.2 — Notifications & Operational Alerts
+- [ ] **In-App Notification Center** — Actionable notifications for pending approvals, low raw material stock, and overdue receivables
+- [ ] **Email Alerts** — Automatic email notifications to managers when purchase bills or production orders require approval
+- [ ] **Low Stock Email Digest** — Daily automated morning digest of raw materials below safety thresholds
+- [ ] **WhatsApp Invoice Sharing** *(Optional)* — Share sales invoice PDFs directly to customer WhatsApp contacts
 
 ---
 
-### 3.4 — AI Safety & Confirmation
-- [ ] **Destructive action confirmation** — Before deleting or cancelling, AI asks: *"Are you sure you want to cancel Invoice #INV-0015? This will reverse the stock movement."*
-- [ ] **Role-based AI access** — Accountants cannot issue AI commands that require manager-level approval
-- [ ] **AI Action Audit Log** — Every action performed by the AI is recorded in the audit log with the tag `performed_by: AI Copilot`
-
----
-
-### 3.5 — Advanced Analytics Dashboard
-- [ ] **Interactive Charts** — Revenue vs Expenses bar chart, monthly sales trend line chart
-- [ ] **Top Customers** — Ranked list of customers by revenue generated this month/quarter
-- [ ] **Top Selling Items** — Best-selling products ranked by quantity and by total value
-- [ ] **Production Efficiency Chart** — Planned vs actual production quantities over time
-- [ ] **Cash Flow Widget** — Net summary of money in (customers) vs money out (suppliers) this month
-
----
-
-### 3.6 — Notifications & Alerts
-- [ ] **In-app Notifications** — Bell icon showing pending approvals, low stock alerts, overdue payments
-- [ ] **Email Alerts** — Notify the manager by email when a document is submitted for approval
-- [ ] **Low Stock Email Alert** — Automated daily email listing items below minimum stock level
-- [ ] **WhatsApp / SMS Alerts** *(Optional)* — Send invoice PDF links to customers via WhatsApp using Twilio or Meta Cloud API
-
----
-
-### 3.7 — Mobile & PWA
-- [ ] **Responsive Design Audit** — Ensure all pages are fully usable on mobile screen sizes
-- [ ] **Progressive Web App (PWA)** — Allow users to install the ERP as an icon on their phone's home screen
-- [ ] **Offline Caching (basic)** — Cache the dashboard data so it is viewable without internet for quick reference
+### 3.3 — Mobile & PWA
+- [ ] **Mobile Responsive Optimization** — Streamlined interface for factory floor supervisors on tablets and smartphones
+- [ ] **Progressive Web App (PWA)** — Installable ERP application on mobile home screens with offline splash
+- [ ] **Fast Offline View** — Cache dashboard and inventory balances for offline plant walk-throughs
 
 ---
 
@@ -234,10 +191,9 @@
 | Styling | Tailwind CSS | Rapid, consistent UI development |
 | Database & Auth | Supabase (PostgreSQL) | Managed, free tier, built-in auth and storage |
 | Hosting | Cloudflare Pages | Free, globally fast CDN with auto-deploy |
-| AI Engine | Google Gemini API (Free Tier) | Generous free quota, excellent function calling support |
-| PDF Generation | jsPDF or react-pdf | Client-side PDF without needing a backend server |
-| Charts | Recharts | Lightweight and React-native compatible |
-| Notifications | Supabase Edge Functions + Resend | Serverless email sending without a separate backend |
+| PDF Generation | jsPDF / Browser Print Engine | Client-side GST invoice printing without backend server overhead |
+| Charts | Recharts | Lightweight, interactive React SVG chart library |
+| Notifications | Supabase Edge Functions + Resend | Serverless email dispatch without managing server infrastructure |
 
 ---
 
