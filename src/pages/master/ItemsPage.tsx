@@ -318,14 +318,18 @@ function ItemFormModal({ item, companyId, onClose }: ItemFormProps) {
     mutationFn: async () => {
       if (!form.sku.trim()) throw new Error('SKU is required')
       if (!form.name.trim()) throw new Error('Item name is required')
-      if (!form.unit_id) throw new Error('Please select a unit')
-
+      if (!form.unit_id) throw new Error('Please select a unit of measure')
       const payload = {
         ...form,
         sku: form.sku.trim(),
         name: form.name.trim(),
+        category_id: form.category_id || null,
+        unit_id: form.unit_id || null,
         hsn_code: form.hsn_code.trim() || null,
         description: form.description.trim() || null,
+        purchase_rate: Number(form.purchase_rate) || 0,
+        selling_rate: Number(form.selling_rate) || 0,
+        min_stock_level: Number(form.min_stock_level) || 0,
         company_id: companyId,
       }
 
@@ -333,13 +337,26 @@ function ItemFormModal({ item, companyId, onClose }: ItemFormProps) {
         const { error } = await (supabase.from('items') as any).update(payload).eq('id', item.id)
         if (error) throw error
       } else {
-        const { error } = await (supabase.from('items') as any).insert(payload)
+        const { data: newItem, error } = await (supabase.from('items') as any).insert(payload).select().single()
         if (error) throw error
+
+        // Auto-seed initial stock balance for default warehouse
+        if (newItem?.id) {
+          await (supabase.from('stock_balances') as any).insert({
+            item_id: newItem.id,
+            warehouse_id: DEFAULT_WAREHOUSE_ID,
+            qty_on_hand: 0,
+          })
+        }
       }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['items', companyId] })
-      toast.success(isEdit ? 'Item updated' : 'Item added')
+      qc.invalidateQueries({ queryKey: ['stock_balances', companyId] })
+      qc.invalidateQueries({ queryKey: ['items_finished_goods', companyId] })
+      qc.invalidateQueries({ queryKey: ['items_raw_materials', companyId] })
+      qc.invalidateQueries({ queryKey: ['dashboard_items', companyId] })
+      toast.success(isEdit ? 'Item updated' : 'Item added successfully')
       onClose()
     },
     onError: (e: Error) => toast.error(e.message),
