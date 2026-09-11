@@ -135,7 +135,7 @@
 ---
 
 ### 2.10 — Reports
-- [ ] **GST Report** — Monthly GSTR-1 style report of outward supplies with CGST/SGST breakdown, exportable to Excel/CSV
+- [x] **GST Report** — Monthly GSTR-1 style report of outward supplies with CGST/SGST breakdown, exportable to Excel/CSV
 - [ ] **Purchase Register** — List all purchase invoices for a selected date range
 - [ ] **Sales Register** — List all sales invoices for a selected date range
 - [ ] **Profit & Loss (Basic)** — Revenue (sales) minus Cost of Goods Sold (purchases + production cost)
