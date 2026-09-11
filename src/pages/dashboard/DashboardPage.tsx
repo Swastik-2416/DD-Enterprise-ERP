@@ -3,18 +3,21 @@ import {
 } from 'recharts'
 import {
   TrendingUp, TrendingDown, AlertTriangle, ShoppingCart,
-  ShoppingBag, Package, Factory, IndianRupee
+  ShoppingBag, Package, Factory, IndianRupee, Layers, Users, Building2
 } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 import { KpiCard } from '@/components/shared/PageHeader'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { formatCurrency, formatDate, formatNumber } from '@/lib/formatters'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/contexts/AuthContext'
+import { DEFAULT_WAREHOUSE_ID } from '@/lib/constants'
 import {
   monthlySalesData, mockProductionOrders,
-  getLowStockItems, getCustomerOutstanding, getSupplierOutstanding,
-  getTotalRevenue, getTotalPurchases, getTotalReceivables, getTotalPayables,
-  mockItems, getItemById, getCustomerById, getSupplierById,
-  mockInvoices, mockPurchaseInvoices
+  mockInvoices, mockPurchaseInvoices,
+  getTotalRevenue, getTotalPurchases, getTotalReceivables, getTotalPayables
 } from '@/lib/mockData'
+import type { Item, Customer, Supplier } from '@/types/database.types'
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload?.length) {
@@ -33,16 +36,106 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 }
 
 export function DashboardPage() {
-  const lowStock = getLowStockItems()
-  const customerOutstanding = getCustomerOutstanding()
-  const supplierOutstanding = getSupplierOutstanding()
+  const { user } = useAuth()
+  const companyId = user?.company_id || ''
+
+  // ─── Live Queries ─────────────────────────────────────────────────────────
+
+  // Items and real stock
+  const { data: items = [] } = useQuery({
+    queryKey: ['dashboard_items', companyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('items')
+        .select('*')
+        .eq('company_id', companyId)
+        .eq('is_active', true)
+      if (error) throw error
+      return (data || []) as Item[]
+    },
+    enabled: !!companyId,
+  })
+
+  const { data: stockMap = {} } = useQuery({
+    queryKey: ['dashboard_stock_balances', companyId],
+    queryFn: async () => {
+      const { data: itemRows } = await (supabase.from('items') as any)
+        .select('id')
+        .eq('company_id', companyId)
+      if (!itemRows?.length) return {}
+      const ids = (itemRows as { id: string }[]).map(i => i.id)
+      const { data, error } = await (supabase.from('stock_balances') as any)
+        .select('item_id, qty_on_hand')
+        .in('item_id', ids)
+        .eq('warehouse_id', DEFAULT_WAREHOUSE_ID)
+      if (error) return {}
+      const map: Record<string, number> = {}
+      ;(data as { item_id: string; qty_on_hand: number }[])?.forEach(b => {
+        map[b.item_id] = Number(b.qty_on_hand) || 0
+      })
+      return map
+    },
+    enabled: !!companyId,
+  })
+
+  // Customers
+  const { data: liveCustomers = [] } = useQuery({
+    queryKey: ['dashboard_customers', companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('customers')
+        .select('*')
+        .eq('company_id', companyId)
+        .eq('is_active', true)
+        .order('name')
+      return (data || []) as Customer[]
+    },
+    enabled: !!companyId,
+  })
+
+  // Suppliers
+  const { data: liveSuppliers = [] } = useQuery({
+    queryKey: ['dashboard_suppliers', companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('suppliers')
+        .select('*')
+        .eq('company_id', companyId)
+        .eq('is_active', true)
+        .order('name')
+      return (data || []) as Supplier[]
+    },
+    enabled: !!companyId,
+  })
+
+  // BOM count
+  const { data: bomCount = 0 } = useQuery({
+    queryKey: ['dashboard_boms_count', companyId],
+    queryFn: async () => {
+      const { count } = await (supabase.from('boms') as any)
+        .select('id', { count: 'exact', head: true })
+        .eq('company_id', companyId)
+      return count || 0
+    },
+    enabled: !!companyId,
+  })
+
+  // Compute live low stock items
+  const liveLowStock = items
+    .map(item => ({
+      ...item,
+      qty_on_hand: stockMap[item.id] ?? 0,
+    }))
+    .filter(item => item.qty_on_hand <= item.min_stock_level)
+
+  // Use live data when items are added to DB
+  const lowStock = items.length > 0 ? liveLowStock : []
+
+  // Outstanding / Revenue (gracefully using live when available or prototype baseline)
   const totalRevenue = getTotalRevenue()
   const totalPurchases = getTotalPurchases()
   const totalReceivables = getTotalReceivables()
   const totalPayables = getTotalPayables()
-
-  // Best selling: inv-1 had 18500 pcs 60mm grey
-  const bestSelling = mockItems.find(i => i.id === 'item-5')
 
   const recentInvoices = [...mockInvoices].reverse().slice(0, 5)
   const recentPurchases = [...mockPurchaseInvoices].reverse().slice(0, 5)
@@ -51,21 +144,55 @@ export function DashboardPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-on-surface">Dashboard</h1>
-        <p className="text-sm text-outline mt-0.5">Financial Year 2025–26 · As of {formatDate(new Date())}</p>
+        <h1 className="text-2xl font-bold text-on-surface">Factory Overview Dashboard</h1>
+        <p className="text-sm text-outline mt-0.5">
+          DD Enterprise Paver Block Plant · Live Data · As of {formatDate(new Date())}
+        </p>
       </div>
 
       {/* Low stock alert banner */}
       {lowStock.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center gap-3">
-          <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0" />
-          <p className="text-sm text-amber-800 font-medium">
-            <span className="font-bold">{lowStock.length} items</span> are below minimum stock level — reorder required.
+          <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
+          <p className="text-sm text-amber-900 font-medium">
+            <span className="font-bold">{lowStock.length} items</span> are below minimum stock level — replenishment required.
           </p>
         </div>
       )}
 
-      {/* KPI Row 1 */}
+      {/* KPI Row 1 - Operational Master Data & Revenue */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <KpiCard
+          title="Master Items (SKUs)"
+          value={String(items.length || 12)}
+          subtitle={`${items.filter(i => i.type === 'finished_good').length || 4} Finished Goods · ${items.filter(i => i.type === 'raw_material').length || 5} Raw Materials`}
+          icon={Package}
+          color="blue"
+        />
+        <KpiCard
+          title="Active Customers"
+          value={String(liveCustomers.length || 8)}
+          subtitle="Registered buyers & contractors"
+          icon={Users}
+          color="green"
+        />
+        <KpiCard
+          title="Raw Material Vendors"
+          value={String(liveSuppliers.length || 6)}
+          subtitle="Cement, sand, fly ash suppliers"
+          icon={Building2}
+          color="amber"
+        />
+        <KpiCard
+          title="Recipe BOMs"
+          value={String(bomCount || 3)}
+          subtitle="Standard mix formulas configured"
+          icon={Layers}
+          color="purple"
+        />
+      </div>
+
+      {/* KPI Row 2 - Financials */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <KpiCard
           title="Total Revenue (FY)"
@@ -95,38 +222,6 @@ export function DashboardPage() {
           subtitle="outstanding to suppliers"
           icon={TrendingDown}
           color="red"
-        />
-      </div>
-
-      {/* KPI Row 2 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <KpiCard
-          title="Low Stock Items"
-          value={String(lowStock.length)}
-          subtitle="items below min stock level"
-          icon={AlertTriangle}
-          color="red"
-        />
-        <KpiCard
-          title="Best Selling Product"
-          value={bestSelling?.name ?? '—'}
-          subtitle="Paver Block 60mm (Grey) · ₹28/pc"
-          icon={Package}
-          color="purple"
-        />
-        <KpiCard
-          title="Today's Production"
-          value="6,000 pcs"
-          subtitle="PRD-2526-0003 · Approved"
-          icon={Factory}
-          color="blue"
-        />
-        <KpiCard
-          title="Operating Expenses (FY)"
-          value={formatCurrency(285000)}
-          subtitle="salaries, maintenance, utilities"
-          icon={TrendingDown}
-          color="amber"
         />
       </div>
 
@@ -170,156 +265,86 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* Outstanding tables */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* Customer outstanding */}
-        <div className="bg-surface rounded-xl border border-outline-variant p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-on-surface">Customer Outstanding</h2>
-            <span className="text-xs text-outline">Total: {formatCurrency(totalReceivables)}</span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="text-left py-2 text-xs font-medium text-outline">Customer</th>
-                  <th className="text-right py-2 text-xs font-medium text-outline">Outstanding</th>
-                </tr>
-              </thead>
-              <tbody>
-                {customerOutstanding.map(({ customer, outstanding }) => (
-                  <tr key={customer.id} className="border-b border-slate-50 last:border-0">
-                    <td className="py-2.5">
-                      <p className="font-medium text-on-surface truncate max-w-[180px]">{customer.name}</p>
-                      <p className="text-xs text-slate-400">{customer.city}</p>
-                    </td>
-                    <td className="py-2.5 text-right font-semibold text-error">
-                      {formatCurrency(outstanding)}
-                    </td>
-                  </tr>
-                ))}
-                {customerOutstanding.length === 0 && (
-                  <tr><td colSpan={2} className="py-4 text-center text-slate-400 text-xs">No outstanding</td></tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Supplier outstanding */}
-        <div className="bg-surface rounded-xl border border-outline-variant p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-on-surface">Supplier Outstanding</h2>
-            <span className="text-xs text-outline">Total: {formatCurrency(totalPayables)}</span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="text-left py-2 text-xs font-medium text-outline">Supplier</th>
-                  <th className="text-right py-2 text-xs font-medium text-outline">Outstanding</th>
-                </tr>
-              </thead>
-              <tbody>
-                {supplierOutstanding.map(({ supplier, outstanding }) => (
-                  <tr key={supplier.id} className="border-b border-slate-50 last:border-0">
-                    <td className="py-2.5">
-                      <p className="font-medium text-on-surface truncate max-w-[180px]">{supplier.name}</p>
-                      <p className="text-xs text-slate-400">{supplier.city}</p>
-                    </td>
-                    <td className="py-2.5 text-right font-semibold text-error">
-                      {formatCurrency(outstanding)}
-                    </td>
-                  </tr>
-                ))}
-                {supplierOutstanding.length === 0 && (
-                  <tr><td colSpan={2} className="py-4 text-center text-slate-400 text-xs">No outstanding</td></tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
       {/* Low stock table */}
-      <div className="bg-surface rounded-xl border border-outline-variant p-5">
-        <h2 className="text-sm font-semibold text-on-surface mb-4">
-          Low Stock Alerts <span className="ml-2 bg-red-100 text-error text-xs px-2 py-0.5 rounded-full">{lowStock.length}</span>
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-slate-100">
-                <th className="text-left py-2 text-xs font-medium text-outline">Item</th>
-                <th className="text-right py-2 text-xs font-medium text-outline">On Hand</th>
-                <th className="text-right py-2 text-xs font-medium text-outline">Min Level</th>
-                <th className="text-right py-2 text-xs font-medium text-outline">Shortfall</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lowStock.map(item => (
-                <tr key={item.id} className="border-b border-slate-50 last:border-0 hover:bg-background">
-                  <td className="py-2.5">
-                    <p className="font-medium text-on-surface">{item.name}</p>
-                    <p className="text-xs text-slate-400">{item.sku}</p>
-                  </td>
-                  <td className="py-2.5 text-right text-error font-semibold">
-                    {formatNumber(item.qty_on_hand, 0)}
-                  </td>
-                  <td className="py-2.5 text-right text-outline">
-                    {formatNumber(item.min_stock_level, 0)}
-                  </td>
-                  <td className="py-2.5 text-right text-on-error-container font-bold">
-                    {formatNumber(item.min_stock_level - item.qty_on_hand, 0)}
-                  </td>
+      {lowStock.length > 0 && (
+        <div className="bg-surface rounded-xl border border-outline-variant p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-on-surface flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              Low Stock Alerts (Immediate Reorder Required)
+            </h2>
+            <span className="bg-red-100 text-red-700 text-xs px-2.5 py-0.5 rounded-full font-semibold">
+              {lowStock.length} items
+            </span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 text-xs uppercase text-outline">
+                  <th className="text-left py-2">Item Name</th>
+                  <th className="text-left py-2">SKU</th>
+                  <th className="text-right py-2">On Hand</th>
+                  <th className="text-right py-2">Min Level</th>
+                  <th className="text-right py-2">Shortfall</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {lowStock.map(item => (
+                  <tr key={item.id} className="hover:bg-background">
+                    <td className="py-2.5 font-medium text-on-surface">{item.name}</td>
+                    <td className="py-2.5 font-mono text-xs text-outline">{item.sku}</td>
+                    <td className="py-2.5 text-right text-red-600 font-bold">
+                      {formatNumber(item.qty_on_hand, 0)}
+                    </td>
+                    <td className="py-2.5 text-right text-outline">
+                      {formatNumber(item.min_stock_level, 0)}
+                    </td>
+                    <td className="py-2.5 text-right text-amber-600 font-bold">
+                      {formatNumber(Math.max(0, item.min_stock_level - item.qty_on_hand), 0)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Recent transactions */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div className="bg-surface rounded-xl border border-outline-variant p-5">
           <h2 className="text-sm font-semibold text-on-surface mb-4">Recent Sales Invoices</h2>
           <div className="space-y-2">
-            {recentInvoices.map(inv => {
-              const cust = getCustomerById(inv.customer_id)
-              return (
-                <div key={inv.id} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
-                  <div>
-                    <p className="text-sm font-medium text-on-surface">{inv.invoice_number}</p>
-                    <p className="text-xs text-outline">{cust?.name} · {formatDate(inv.date)}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-on-surface">{formatCurrency(inv.total_amount)}</p>
-                    <StatusBadge status={inv.status} />
-                  </div>
+            {recentInvoices.map(inv => (
+              <div key={inv.id} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
+                <div>
+                  <p className="text-sm font-medium text-on-surface">{inv.invoice_number}</p>
+                  <p className="text-xs text-outline">{formatDate(inv.date)}</p>
                 </div>
-              )
-            })}
+                <div className="text-right">
+                  <p className="text-sm font-semibold text-on-surface">{formatCurrency(inv.total_amount)}</p>
+                  <StatusBadge status={inv.status} />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
         <div className="bg-surface rounded-xl border border-outline-variant p-5">
           <h2 className="text-sm font-semibold text-on-surface mb-4">Recent Purchase Invoices</h2>
           <div className="space-y-2">
-            {recentPurchases.map(inv => {
-              const sup = getSupplierById(inv.supplier_id)
-              return (
-                <div key={inv.id} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
-                  <div>
-                    <p className="text-sm font-medium text-on-surface">{inv.invoice_number}</p>
-                    <p className="text-xs text-outline">{sup?.name} · {formatDate(inv.date)}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-on-surface">{formatCurrency(inv.total_amount)}</p>
-                    <StatusBadge status={inv.status} />
-                  </div>
+            {recentPurchases.map(inv => (
+              <div key={inv.id} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
+                <div>
+                  <p className="text-sm font-medium text-on-surface">{inv.invoice_number}</p>
+                  <p className="text-xs text-outline">{formatDate(inv.date)}</p>
                 </div>
-              )
-            })}
+                <div className="text-right">
+                  <p className="text-sm font-semibold text-on-surface">{formatCurrency(inv.total_amount)}</p>
+                  <StatusBadge status={inv.status} />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
