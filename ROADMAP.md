@@ -72,18 +72,18 @@
 ---
 
 ### 2.3 — Master Data (Live CRUD)
-- [ ] **Item Categories** — Full Create, Read, Update, Delete (CRUD) wired to Supabase
-- [ ] **Units of Measurement** — Full CRUD wired to Supabase
-- [ ] **Items / SKUs** — Full CRUD with real-time form validation (HSN code, GST rate, purchase/selling rate, etc.)
-- [ ] **Bill of Materials (BOM)** — Create multi-line BOM, link raw materials to finished goods, set wastage %
+- [x] **Item Categories** — Full Create, Read, Update, Delete (CRUD) wired to Supabase
+- [x] **Units of Measurement** — Full CRUD wired to Supabase
+- [x] **Items / SKUs** — Full CRUD with real-time form validation (HSN code, GST rate, purchase/selling rate, etc.)
+- [x] **Bill of Materials (BOM)** — Create multi-line BOM, link raw materials to finished goods, set wastage %
 - [ ] **Warehouses** — Add support for named warehouses (currently defaulting to a placeholder ID)
 
 ---
 
 ### 2.4 — Suppliers & Customers (Live CRUD)
-- [ ] **Suppliers** — Full CRUD: add, edit, deactivate suppliers with bank details
-- [ ] **Customers** — Full CRUD: add, edit, deactivate customers with credit limit tracking
-- [ ] **Outstanding Balance** — Show each customer's and supplier's pending payment balance on their profile
+- [x] **Suppliers** — Full CRUD: add, edit, deactivate suppliers with bank details
+- [x] **Customers** — Full CRUD: add, edit, deactivate customers with credit limit tracking
+- [x] **Outstanding Balance** — Show each customer's and supplier's pending payment balance on their profile
 
 ---
 
