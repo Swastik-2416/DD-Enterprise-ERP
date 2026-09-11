@@ -126,10 +126,10 @@
 ---
 
 ### 2.9 — Manufacturing
-- [ ] **Create Production Order** — Select a BOM, set planned quantity and production date
-- [ ] **Submit → Approve → Execute workflow** — On execution: auto-deduct raw materials (with wastage %), auto-add finished goods to stock
-- [ ] **Actual vs Planned** — Record the actual quantity produced versus what was planned
-- [ ] **Machine & Mould tracking** — Log which machine and mould were used per production run
+- [x] **Create Production Order** — Select a BOM, set planned quantity and production date
+- [x] **Submit → Approve → Execute workflow** — On execution: auto-deduct raw materials (with wastage %), auto-add finished goods to stock
+- [x] **Actual vs Planned** — Record the actual quantity produced versus what was planned
+- [x] **Machine & Mould tracking** — Log which machine and mould were used per production run
 - [ ] **Production Cost Report** — Calculate total raw material cost per production order
 
 ---
