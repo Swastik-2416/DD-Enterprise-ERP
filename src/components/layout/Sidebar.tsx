@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Package, ShoppingCart, Factory, ShoppingBag,
   CreditCard, Users, UserCheck, TrendingUp, Truck, BarChart3,
-  ChevronDown, ChevronRight, Building2, Settings, Menu, X
+  ChevronDown, ChevronRight, Building2, Settings, Menu, X, Clock
 } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { APP_NAME } from '@/lib/constants'
@@ -79,6 +79,7 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Finance', icon: TrendingUp, children: [
       { label: 'Customer Ledger', icon: TrendingUp, path: '/finance/customer-ledger' },
       { label: 'Supplier Ledger', icon: TrendingUp, path: '/finance/supplier-ledger' },
+      { label: 'Outstanding Aging', icon: Clock, path: '/finance/aging' },
       { label: 'Expenses', icon: TrendingUp, path: '/finance/expenses' },
       { label: 'Other Income', icon: TrendingUp, path: '/finance/other-income' },
       { label: 'P&L Report', icon: TrendingUp, path: '/finance/pl-report' },
@@ -86,8 +87,8 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     label: 'Reports', icon: BarChart3, children: [
-      { label: 'Purchase Report', icon: BarChart3, path: '/reports/purchases' },
-      { label: 'Sales Report', icon: BarChart3, path: '/reports/sales' },
+      { label: 'Sales Register', icon: BarChart3, path: '/reports/sales' },
+      { label: 'Purchase Register', icon: BarChart3, path: '/reports/purchases' },
       { label: 'Stock Report', icon: BarChart3, path: '/reports/stock' },
       { label: 'Production Report', icon: BarChart3, path: '/reports/production' },
       { label: 'GST Summary', icon: BarChart3, path: '/reports/gst' },

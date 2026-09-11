@@ -17,6 +17,11 @@ import { PaymentsPage } from '@/pages/payments/PaymentsPage'
 import { ProductionOrdersPage } from '@/pages/manufacturing/ProductionOrdersPage'
 import { StockReportPage } from '@/pages/reports/StockReportPage'
 import { GstReportPage } from '@/pages/reports/GstReportPage'
+import { SalesRegisterPage } from '@/pages/reports/SalesRegisterPage'
+import { PurchaseRegisterPage } from '@/pages/reports/PurchaseRegisterPage'
+import { PartyLedgerPage } from '@/pages/finance/PartyLedgerPage'
+import { ProfitLossPage } from '@/pages/finance/ProfitLossPage'
+import { AgingReportPage } from '@/pages/finance/AgingReportPage'
 import { PlaceholderPage } from '@/pages/common/PlaceholderPage'
 
 export default function App() {
@@ -111,14 +116,9 @@ export default function App() {
           />
 
           {/* Finance */}
-          <Route
-            path="finance/customer-ledger"
-            element={<PlaceholderPage title="Customer Statement of Account" subtitle="Party-wise debit/credit ledger and payment reconciliation" />}
-          />
-          <Route
-            path="finance/supplier-ledger"
-            element={<PlaceholderPage title="Supplier Statement of Account" subtitle="Vendor-wise billing and payment reconciliation" />}
-          />
+          <Route path="finance/customer-ledger" element={<PartyLedgerPage partyType="customer" />} />
+          <Route path="finance/supplier-ledger" element={<PartyLedgerPage partyType="supplier" />} />
+          <Route path="finance/aging" element={<AgingReportPage />} />
           <Route
             path="finance/expenses"
             element={<PlaceholderPage title="Indirect Expenses" subtitle="Electricity, diesel for DG sets, machine repairs & factory maintenance" />}
@@ -127,14 +127,12 @@ export default function App() {
             path="finance/other-income"
             element={<PlaceholderPage title="Other Income" subtitle="Scrap sales, pallet deposits & miscellaneous receipts" />}
           />
-          <Route
-            path="finance/pl-report"
-            element={<PlaceholderPage title="Profit & Loss Statement" subtitle="Trading account, gross margin & net operational surplus" />}
-          />
+          <Route path="finance/pl-report" element={<ProfitLossPage />} />
 
           {/* Reports */}
-          <Route path="reports/purchases" element={<PurchaseInvoicesPage />} />
-          <Route path="reports/sales" element={<InvoicesPage />} />
+          <Route path="reports/purchases" element={<PurchaseRegisterPage />} />
+          <Route path="reports/sales" element={<SalesRegisterPage />} />
+          <Route path="reports/aging" element={<AgingReportPage />} />
           <Route path="reports/stock" element={<StockReportPage />} />
           <Route path="reports/production" element={<ProductionOrdersPage />} />
           <Route path="reports/gst" element={<GstReportPage />} />

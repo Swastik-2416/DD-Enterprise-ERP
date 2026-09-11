@@ -3,8 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   UserCheck, Plus, Search, Edit2, Phone, Mail,
   IndianRupee, Trash2, X, Loader2, MapPin, User,
-  AlertTriangle, ShieldAlert
+  AlertTriangle, ShieldAlert, ArrowRight
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { EmptyState } from '@/components/shared/EmptyState'
@@ -335,8 +336,14 @@ export function CustomersPage() {
                     </div>
                   )}
 
-                  {isManager && (
-                    <div className="mt-3 pt-2 border-t border-outline-variant/40 flex justify-end">
+                  <div className="mt-3 pt-2 border-t border-outline-variant/40 flex items-center justify-between">
+                    <Link
+                      to="/finance/customer-ledger"
+                      className="text-xs text-primary font-semibold hover:underline flex items-center gap-1"
+                    >
+                      Statement / Ledger <ArrowRight className="h-3 w-3" />
+                    </Link>
+                    {isManager && (
                       <button
                         type="button"
                         onClick={() => toggleActiveMutation.mutate(customer)}
@@ -345,8 +352,8 @@ export function CustomersPage() {
                       >
                         {customer.is_active ? 'Mark Inactive' : 'Mark Active'}
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             )

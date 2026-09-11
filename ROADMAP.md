@@ -112,7 +112,7 @@
 - [x] **Record Inward Payment** — Record payments received from customers with mode (Cash, Cheque, NEFT, UPI, etc.)
 - [x] **Record Outward Payment** — Record payments made to suppliers
 - [x] **Invoice Allocation** — Link a payment to one or more invoices to accurately track outstanding balance
-- [ ] **Ledger View** — Customer/Supplier account statement: chronological list of all invoices and payments
+- [x] **Ledger View** — Customer/Supplier account statement: chronological list of all invoices and payments
 
 ---
 
@@ -136,11 +136,11 @@
 
 ### 2.10 — Reports
 - [x] **GST Report** — Monthly GSTR-1 style report of outward supplies with CGST/SGST breakdown, exportable to Excel/CSV
-- [ ] **Purchase Register** — List all purchase invoices for a selected date range
-- [ ] **Sales Register** — List all sales invoices for a selected date range
-- [ ] **Profit & Loss (Basic)** — Revenue (sales) minus Cost of Goods Sold (purchases + production cost)
-- [ ] **Accounts Receivable (AR)** — Aged list of customers with pending outstanding balances
-- [ ] **Accounts Payable (AP)** — Aged list of suppliers with pending outstanding balances
+- [x] **Purchase Register** — List all purchase invoices for a selected date range with ITC calculation and CSV export
+- [x] **Sales Register** — List all sales invoices for a selected date range with CGST/SGST output breakdown and CSV export
+- [x] **Profit & Loss (Basic)** — Net Sales Turnover minus Direct Material Purchases (COGS) and Gross Margin %
+- [x] **Accounts Receivable (AR)** — Aged list of customers with pending outstanding balances (Current, 1-30d, 31-60d, 61-90d, >90d)
+- [x] **Accounts Payable (AP)** — Aged list of suppliers with pending outstanding balances
 
 ---
 
