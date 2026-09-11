@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Package, Plus, Search, Edit2, Loader2, X } from 'lucide-react'
+import { Package, Plus, Search, Edit2, Loader2, X, Sparkles } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { EmptyState } from '@/components/shared/EmptyState'
@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { cn } from '@/lib/cn'
 import { GST_RATES, DEFAULT_WAREHOUSE_ID } from '@/lib/constants'
+import { seedStandardUnitsAndCategories } from '@/lib/seedDefaults'
 import type { Item, ItemCategory, Unit, ItemType } from '@/types/database.types'
 
 const TYPE_LABELS: Record<ItemType, string> = {
@@ -362,6 +363,22 @@ function ItemFormModal({ item, companyId, onClose }: ItemFormProps) {
     onError: (e: Error) => toast.error(e.message),
   })
 
+  const [isSeeding, setIsSeeding] = useState(false)
+
+  const handleSeedDefaults = async () => {
+    setIsSeeding(true)
+    try {
+      const res = await seedStandardUnitsAndCategories(companyId)
+      await qc.invalidateQueries({ queryKey: ['categories', companyId] })
+      await qc.invalidateQueries({ queryKey: ['units', companyId] })
+      toast.success(`Loaded standard units & categories! (+${res.unitsAdded} units, +${res.categoriesAdded} categories)`)
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to load standard units & categories')
+    } finally {
+      setIsSeeding(false)
+    }
+  }
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -372,6 +389,30 @@ function ItemFormModal({ item, companyId, onClose }: ItemFormProps) {
           </button>
         </div>
         <div className="p-6 space-y-4">
+          {/* Quick Seed Defaults Banner if categories empty or units minimal */}
+          {(categories.length === 0 || units.length <= 1) && (
+            <div className="p-3.5 bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-xl text-xs text-blue-950 dark:text-blue-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-xs">
+              <div className="flex items-start sm:items-center gap-2.5">
+                <Sparkles className="h-4 w-4 text-blue-600 shrink-0 mt-0.5 sm:mt-0" />
+                <div>
+                  <p className="font-bold text-blue-900 dark:text-blue-100">Standard Concrete Plant Master Data</p>
+                  <p className="text-[11px] text-blue-700/90 dark:text-blue-300 mt-0.5">
+                    Pre-populate standard factory units (Bags, Kilograms, Tonnes, Sq.Ft) and paver categories.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                disabled={isSeeding}
+                onClick={handleSeedDefaults}
+                className="shrink-0 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold rounded-lg transition-colors shadow-xs flex items-center gap-1.5 text-xs"
+              >
+                {isSeeding ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                Load Factory Defaults
+              </button>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wide mb-1">SKU *</label>

@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Settings, Plus, Edit2, Trash2, X, Loader2 } from 'lucide-react'
+import { Settings, Plus, Edit2, Trash2, X, Loader2, Sparkles } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { seedStandardUnitsAndCategories } from '@/lib/seedDefaults'
 import type { Unit } from '@/types/database.types'
 
 // ─── Data hook ─────────────────────────────────────────────────────────────────
@@ -49,6 +50,21 @@ export function UnitsPage() {
     onError: (e: Error) => toast.error(e.message),
   })
 
+  const [isSeeding, setIsSeeding] = useState(false)
+
+  const handleSeed = async () => {
+    setIsSeeding(true)
+    try {
+      const res = await seedStandardUnitsAndCategories(companyId)
+      qc.invalidateQueries({ queryKey: ['units', companyId] })
+      toast.success(`Standard factory units added! (+${res.unitsAdded} units)`)
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to seed units')
+    } finally {
+      setIsSeeding(false)
+    }
+  }
+
   function openEdit(unit: Unit) { setEditUnit(unit); setShowForm(true) }
   function openAdd() { setEditUnit(null); setShowForm(true) }
 
@@ -60,12 +76,22 @@ export function UnitsPage() {
         icon={Settings}
         actions={
           isManager ? (
-            <button
-              onClick={openAdd}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              <Plus className="h-4 w-4" /> Add Unit
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleSeed}
+                disabled={isSeeding}
+                className="flex items-center gap-1.5 px-3 py-2 bg-surface border border-outline-variant text-on-surface text-sm font-medium rounded-lg hover:bg-surface-container transition-colors shadow-xs"
+              >
+                {isSeeding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 text-primary" />}
+                Load Standard Units
+              </button>
+              <button
+                onClick={openAdd}
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-xs"
+              >
+                <Plus className="h-4 w-4" /> Add Unit
+              </button>
+            </div>
           ) : undefined
         }
       />
