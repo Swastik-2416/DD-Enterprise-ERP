@@ -2,8 +2,9 @@ import { useState, useId } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Factory, Plus, Layers, Search, Edit2, Trash2,
-  X, Check, AlertCircle, Loader2, Sparkles, AlertTriangle
+  X, Check, AlertCircle, Loader2, Sparkles, AlertTriangle, ExternalLink
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { EmptyState } from '@/components/shared/EmptyState'
@@ -776,18 +777,37 @@ function RecipeModal({
               <label className="block text-xs font-semibold text-on-surface-variant mb-1">
                 Finished Good Product <span className="text-red-500">*</span>
               </label>
-              <select
-                value={finishedGoodId}
-                onChange={e => setFinishedGoodId(e.target.value)}
-                required
-                className="w-full px-3 py-2 text-sm bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              >
-                {finishedGoods.map(fg => (
-                  <option key={fg.id} value={fg.id}>
-                    {fg.name} ({fg.sku})
-                  </option>
-                ))}
-              </select>
+              {finishedGoods.length === 0 ? (
+                <div className="p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-lg text-xs text-amber-800 dark:text-amber-300 flex items-center justify-between gap-2">
+                  <div>
+                    <p className="font-bold">No Finished Goods Created Yet</p>
+                    <p className="text-[11px] text-amber-700/90 dark:text-amber-400 mt-0.5">
+                      Go to Master Data → Items and add an item with Item Type set to "Finished Good".
+                    </p>
+                  </div>
+                  <Link
+                    to="/master/items"
+                    target="_blank"
+                    className="shrink-0 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-1 shadow-xs"
+                  >
+                    Go to Items <ExternalLink className="h-3 w-3" />
+                  </Link>
+                </div>
+              ) : (
+                <select
+                  value={finishedGoodId}
+                  onChange={e => setFinishedGoodId(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 text-sm bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                >
+                  <option value="" disabled>-- Select Finished Good Product --</option>
+                  {finishedGoods.map(fg => (
+                    <option key={fg.id} value={fg.id}>
+                      {fg.name} ({fg.sku})
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
 
             <div>
@@ -849,18 +869,25 @@ function RecipeModal({
                   {lines.map((line, idx) => (
                     <tr key={line.id} className="hover:bg-background/40">
                       <td className="p-2">
-                        <select
-                          value={line.raw_material_id}
-                          onChange={e => handleLineChange(idx, 'raw_material_id', e.target.value)}
-                          required
-                          className="w-full px-2 py-1.5 text-xs bg-surface border border-outline-variant rounded-md focus:ring-1 focus:ring-primary"
-                        >
-                          {rawMaterials.map(rm => (
-                            <option key={rm.id} value={rm.id}>
-                              {rm.name} ({rm.sku})
-                            </option>
-                          ))}
-                        </select>
+                        {rawMaterials.length === 0 ? (
+                          <span className="text-[11px] text-amber-700 font-medium">
+                            No raw materials registered. Add items with Type "Raw Material".
+                          </span>
+                        ) : (
+                          <select
+                            value={line.raw_material_id}
+                            onChange={e => handleLineChange(idx, 'raw_material_id', e.target.value)}
+                            required
+                            className="w-full px-2 py-1.5 text-xs bg-surface border border-outline-variant rounded-md focus:ring-1 focus:ring-primary"
+                          >
+                            <option value="" disabled>-- Select Raw Material --</option>
+                            {rawMaterials.map(rm => (
+                              <option key={rm.id} value={rm.id}>
+                                {rm.name} ({rm.sku})
+                              </option>
+                            ))}
+                          </select>
+                        )}
                       </td>
                       <td className="p-2">
                         <select
