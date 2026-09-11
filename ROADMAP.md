@@ -117,10 +117,10 @@
 ---
 
 ### 2.8 — Inventory & Stock
-- [ ] **Stock Ledger** — View all stock movements per item (purchase, sale, production, adjustment)
-- [ ] **Current Stock Report** — Live view of quantity on hand for all items across all warehouses
-- [ ] **Stock Adjustment** — Manual entry to correct stock discrepancies with a reason/notes field
-- [ ] **Low Stock Alerts** — Highlight items that have fallen below their defined `min_stock_level`
+- [x] **Stock Ledger** — View all stock movements per item (purchase, sale, production, adjustment)
+- [x] **Current Stock Report** — Live view of quantity on hand for all items across all warehouses
+- [x] **Stock Adjustment** — Manual entry to correct stock discrepancies with a reason/notes field
+- [x] **Low Stock Alerts** — Highlight items that have fallen below their defined `min_stock_level`
 - [ ] **Warehouse Transfer** — Move stock from one warehouse to another with a movement record
 
 ---
