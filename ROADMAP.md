@@ -99,12 +99,12 @@
 ---
 
 ### 2.6 — Sales (Sales Invoices)
-- [ ] **Create Sales Invoice** — Multi-line form: select customer, add items, choose type (GST / Non-GST / Proforma)
-- [ ] **Auto invoice numbering** — Generate sequential invoice numbers per financial year (e.g., INV-2425-0001)
-- [ ] **View / List Invoices** — Paginated table with search and filter by status/customer
-- [ ] **Submit → Approve → Post workflow** — Posting must reduce stock automatically
+- [x] **Create Sales Invoice** — Multi-line form: select customer, add items, choose type (GST / Non-GST / Proforma)
+- [x] **Auto invoice numbering** — Generate sequential invoice numbers per financial year (e.g., INV-2425-0001)
+- [x] **View / List Invoices** — Paginated table with search and filter by status/customer
+- [x] **Submit → Approve → Post workflow** — Posting must reduce stock automatically
 - [ ] **Sales Returns** — Create a return/credit note against an existing invoice to add back stock
-- [ ] **Printable Invoice (PDF)** — Generate a professional GST-compliant PDF invoice with company logo and details
+- [x] **Printable Invoice (PDF)** — Generate a professional GST-compliant PDF invoice with company logo and details
 
 ---
 
