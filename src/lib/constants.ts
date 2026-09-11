@@ -1,5 +1,9 @@
 export const APP_NAME = 'DD Enterprise ERP'
 
+// Single-warehouse setup — DD Enterprise has one factory location
+// This UUID must match the row inserted in the warehouses/stock_balances setup SQL
+export const DEFAULT_WAREHOUSE_ID = '00000000-0000-0000-0000-000000000001'
+
 export const ROLES = {
   MANAGER: 'manager',
   ACCOUNTANT: 'accountant',
