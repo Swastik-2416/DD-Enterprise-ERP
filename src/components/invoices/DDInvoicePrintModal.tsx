@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react'
 import {
   Printer, Share2, MessageSquare, Mail, Copy, Check,
   X, ChevronDown, ChevronUp, Truck, Phone,
-  ArrowRight, CheckCircle2, XCircle, Package, Loader2, ExternalLink
+  ArrowRight, CheckCircle2, XCircle, Package, Loader2
 } from 'lucide-react'
 import { formatCurrency, formatDate, amountInWords } from '@/lib/formatters'
 import { StatusBadge } from '@/components/shared/StatusBadge'
@@ -38,7 +38,7 @@ export function DDInvoicePrintModal({
   const [copied, setCopied] = useState(false)
   const shareMenuRef = useRef<HTMLDivElement>(null)
 
-  // Dispatch details & overrides
+  // Dispatch details & overrides (NO hardcoded fallback)
   const [showTransportFields, setShowTransportFields] = useState(false)
   const [vehicleNo, setVehicleNo] = useState(
     invoice.notes?.match(/Vehicle:\s*([^,|;\n]+)/i)?.[1]?.trim() || ''
@@ -168,7 +168,7 @@ export function DDInvoicePrintModal({
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 overflow-hidden">
-      {/* Print Isolated CSS */}
+      {/* Print Isolated CSS: Zero Margin to Suppress Browser Headers & URLs */}
       <style>{`
         @media print {
           @page {
@@ -195,8 +195,8 @@ export function DDInvoicePrintModal({
             width: 100% !important;
             max-width: 100% !important;
             margin: 0 !important;
-            padding: 12mm 14mm !important;
-            border: none !important;
+            padding: 6mm 6mm !important;
+            border: 1.5px solid #000 !important;
             box-shadow: none !important;
             background: #fff !important;
             color: #000 !important;
@@ -208,7 +208,7 @@ export function DDInvoicePrintModal({
         }
       `}</style>
 
-      {/* Outer Modal Container */}
+      {/* Outer Modal Container: Structured to let Paper scroll fully without cutoff */}
       <div className="bg-surface rounded-2xl shadow-2xl max-w-4xl w-full h-[94vh] flex flex-col border border-outline-variant overflow-hidden">
         {/* Modal Top Nav (No print) */}
         <div className="px-5 py-3.5 bg-surface border-b border-outline-variant flex items-center justify-between shrink-0 no-print">
@@ -313,7 +313,7 @@ export function DDInvoicePrintModal({
                   type="text"
                   value={vehicleNo}
                   onChange={e => setVehicleNo(e.target.value)}
-                  placeholder="WB 25F 8077"
+                  placeholder="e.g. WB 25F 8077"
                   className="w-full mt-0.5 px-2 py-1 text-xs border border-outline-variant rounded bg-background"
                 />
               </div>
@@ -374,330 +374,377 @@ export function DDInvoicePrintModal({
           )}
         </div>
 
-        {/* Scrollable Paper Container: All contents stay fully inside the white sheet */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-slate-200/75 dark:bg-slate-950/80 flex justify-center">
-          {/* Printable Invoice Sheet: Modern, Clean, Professional */}
+        {/* Scrollable Paper Container: The full white page is scrollable and visible without truncation */}
+        <div className="flex-1 overflow-y-auto p-3 sm:p-6 bg-slate-200/75 dark:bg-slate-950/80 flex justify-center">
+          {/* Printable Invoice Sheet: Authentic D. D. ENTERPRISE Format */}
           <div
             id="printable-invoice"
-            className="bg-white text-slate-900 w-full max-w-[760px] shadow-xl rounded-md p-6 sm:p-8 border border-slate-200 flex flex-col box-border min-h-[980px]"
-            style={{ fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}
+            className="bg-white text-black w-full max-w-[780px] shadow-xl border-[1.5px] border-black text-[11px] leading-tight font-sans box-border"
+            style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}
           >
-            {/* 1. Header: DD Paver Logo, Company Credentials & Tax Invoice Badge */}
-            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pb-5 border-b border-slate-200">
-              {/* Left: Logo & Company Address */}
-              <div className="flex items-start gap-3.5 max-w-[480px]">
-                <img
-                  src="/logo.png"
-                  alt="DD PAVER"
-                  className="h-14 sm:h-16 w-auto object-contain shrink-0"
-                  onError={e => {
-                    ;(e.target as HTMLElement).style.display = 'none'
-                  }}
-                />
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-base sm:text-lg font-black tracking-tight text-slate-900 leading-tight">
-                      D. D. ENTERPRISE
-                    </h1>
-                  </div>
-                  <p className="text-[11px] text-slate-600 leading-tight">
-                    Khelia, Arkhali, Amdanga, Beside NH-34 (12)<br />
+            {/* 1. Document Top Title */}
+            <div className="px-3 py-1 flex items-center justify-between border-b-[1.5px] border-black">
+              <div className="w-20"></div>
+              <h1 className="text-base font-black tracking-widest text-center uppercase flex-1 text-black">
+                TAX INVOICE
+              </h1>
+              <div className="w-20 text-right font-bold text-[10px] uppercase text-black/80">
+                ORIGINAL
+              </div>
+            </div>
+
+            {/* 2. Header Grid: Company Info (Left) & Document Info (Right) */}
+            <div className="grid grid-cols-12 border-b-[1.5px] border-black">
+              {/* Left Column (60%): Company Details */}
+              <div className="col-span-7 p-2.5 flex items-start gap-3 border-r-[1.5px] border-black">
+                <div className="shrink-0 w-24 flex flex-col items-center justify-start pt-1">
+                  <img
+                    src="/logo.png"
+                    alt="DD PAVER"
+                    className="w-20 object-contain"
+                    onError={e => {
+                      ;(e.target as HTMLElement).style.display = 'none'
+                    }}
+                  />
+                  <span className="text-[7px] text-center font-bold tracking-tighter text-blue-900 mt-1 uppercase leading-tight">
+                    STRONGER BASE, BETTER SPACE
+                  </span>
+                </div>
+
+                <div className="space-y-0.5 flex-1 min-w-0">
+                  <h2 className="text-sm font-black tracking-wider uppercase text-black leading-none mb-1">
+                    D. D. ENTERPRISE
+                  </h2>
+                  <p className="text-[9px] text-black/90 leading-tight">
+                    Khelia, Arkhali, Amdanga<br />
+                    Beside National Highway 34 (12)<br />
                     North 24 Parganas, West Bengal - 743221
                   </p>
-                  <div className="pt-1 text-[10.5px] text-slate-700 space-y-0.5">
-                    <div className="font-semibold text-slate-900">
-                      GSTIN : <span className="font-mono font-bold text-blue-900">19AFDPD4677G1ZD</span>
-                    </div>
-                    <div className="text-[10px] text-slate-500">
-                      UDYAM: <span className="font-medium text-slate-700">UDYAM-WB-14-0057640</span> · BIS Lic: <span className="font-medium text-slate-700">CM/L-5100295395</span>
-                    </div>
-                    <div className="text-[10px] text-slate-500">
-                      Contact: <span className="font-medium text-slate-700">9433393977</span> · <span className="font-medium text-slate-700">info@ddenterprisepaverblock.co.in</span>
-                    </div>
-                  </div>
+                  <p className="font-bold text-[9.5px] text-black pt-0.5">
+                    GSTIN : <span className="font-mono">19AFDPD4677G1ZD</span>
+                  </p>
+                  <p className="text-[9px]">
+                    <span className="font-semibold">UDYAM Registration No.:</span> UDYAM-WB-14-0057640
+                  </p>
+                  <p className="text-[9px]">
+                    <span className="font-semibold">BIS ISI Licence No.:</span> CM/L-5100295395
+                  </p>
+                  <p className="text-[9px] pt-0.5">
+                    <span className="font-semibold">Name :</span> TAPAN DEY
+                  </p>
+                  <p className="text-[9px]">
+                    <span className="font-semibold">Phone :</span> 9433393977
+                  </p>
+                  <p className="text-[9px]">
+                    <span className="font-semibold">Email :</span> info@ddenterprisepaverblock.co.in
+                  </p>
+                  <p className="text-[9px]">
+                    <span className="font-semibold">Website :</span> www.ddpaver.co.in
+                  </p>
                 </div>
               </div>
 
-              {/* Right: Invoice Card */}
-              <div className="sm:text-right w-full sm:w-auto bg-slate-50 sm:bg-transparent p-3 sm:p-0 rounded-lg border sm:border-0 border-slate-200">
-                <div className="inline-block bg-slate-900 text-white font-black text-xs uppercase tracking-widest px-3 py-1 rounded-sm mb-2">
-                  TAX INVOICE
+              {/* Right Column (40%): Invoice Metadata */}
+              <div className="col-span-5 flex flex-col justify-between">
+                <div className="grid grid-cols-2 divide-x-[1.5px] divide-black border-b-[1.5px] border-black">
+                  <div className="p-2">
+                    <span className="text-[9px] text-black/70 block uppercase">Invoice No.</span>
+                    <strong className="text-xs font-black">{invoice.invoice_number}</strong>
+                  </div>
+                  <div className="p-2">
+                    <span className="text-[9px] text-black/70 block uppercase">Invoice Date</span>
+                    <span className="font-bold text-xs">{formatDate(invoice.date)}</span>
+                  </div>
                 </div>
-                <div className="space-y-1 text-xs">
-                  <div className="flex sm:justify-end gap-2 text-slate-600">
-                    <span className="font-medium">Invoice No:</span>
-                    <strong className="font-mono text-slate-900 font-bold">{invoice.invoice_number}</strong>
+
+                <div className="grid grid-cols-2 divide-x-[1.5px] divide-black border-b-[1.5px] border-black">
+                  <div className="p-2">
+                    <span className="text-[9px] text-black/70 block uppercase">Reverse Charge</span>
+                    <span className="font-bold text-xs">No</span>
                   </div>
-                  <div className="flex sm:justify-end gap-2 text-slate-600">
-                    <span className="font-medium">Date:</span>
-                    <strong className="text-slate-900 font-semibold">{formatDate(invoice.date)}</strong>
+                  <div className="p-2">
+                    <span className="text-[9px] text-black/70 block uppercase">L.R. No.</span>
+                    <span className="font-bold text-xs">{lrNo || '—'}</span>
                   </div>
-                  <div className="flex sm:justify-end gap-2 text-slate-600 text-[11px]">
-                    <span>Reverse Charge:</span>
-                    <span className="font-semibold text-slate-900">No</span>
+                </div>
+
+                <div className="grid grid-cols-2 divide-x-[1.5px] divide-black">
+                  <div className="p-2">
+                    <span className="text-[9px] text-black/70 block uppercase">E-Way No.</span>
+                    <span className="font-bold text-xs">{ewayNo || '—'}</span>
                   </div>
-                  {vehicleNo && (
-                    <div className="flex sm:justify-end gap-2 text-slate-600 text-[11px]">
-                      <span>Vehicle No:</span>
-                      <strong className="font-mono text-slate-900">{vehicleNo}</strong>
-                    </div>
-                  )}
-                  {lrNo && (
-                    <div className="flex sm:justify-end gap-2 text-slate-600 text-[11px]">
-                      <span>L.R. No:</span>
-                      <strong className="font-mono text-slate-900">{lrNo}</strong>
-                    </div>
-                  )}
-                  {ewayNo && (
-                    <div className="flex sm:justify-end gap-2 text-slate-600 text-[11px]">
-                      <span>E-Way Bill:</span>
-                      <strong className="font-mono text-slate-900">{ewayNo}</strong>
-                    </div>
-                  )}
+                  <div className="p-2">
+                    <span className="text-[9px] text-black/70 block uppercase">Vehicle Number</span>
+                    <strong className="text-xs font-black">{vehicleNo || '—'}</strong>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* 2. Customer / Bill To Card */}
-            <div className="my-4 bg-slate-50/70 border border-slate-200 rounded-lg p-3.5 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
-                  Billed To / Consignee
-                </span>
-                <h2 className="font-bold text-slate-900 text-sm">
-                  {invoice.customer?.name || 'Cash Customer'}
-                </h2>
-                <p className="text-slate-600 text-[11px] mt-0.5">
-                  {invoice.customer?.address ? `${invoice.customer.address}, ` : ''}
-                  {invoice.customer?.city || 'North 24 Parganas'}, {invoice.customer?.state || 'West Bengal'}
+            {/* 3. Customer Detail Box */}
+            <div className="p-2.5 border-b-[1.5px] border-black space-y-0.5">
+              <span className="text-[9px] font-bold uppercase text-black/70 tracking-wider">
+                Customer Detail
+              </span>
+              <h3 className="text-xs font-black uppercase text-black">
+                {invoice.customer?.name || 'CASH CUSTOMER'}
+              </h3>
+              {invoice.customer?.contact_person && (
+                <p className="text-[10px]">{invoice.customer.contact_person}</p>
+              )}
+              <p className="text-[9.5px] text-black/90">
+                {invoice.customer?.address ? `${invoice.customer.address}, ` : ''}
+                {invoice.customer?.city || 'North 24 Parganas'}, {invoice.customer?.state || 'West Bengal'}
+              </p>
+              <div className="flex flex-wrap gap-4 text-[9.5px] pt-0.5">
+                <p>
+                  <span className="font-semibold">Phone :</span> {invoice.customer?.phone || '—'}
                 </p>
-                {invoice.customer?.phone && (
-                  <p className="text-slate-600 text-[11px] mt-0.5">
-                    Phone: <span className="font-medium text-slate-800">{invoice.customer.phone}</span>
+                <p>
+                  <span className="font-semibold">Place of Supply :</span>{' '}
+                  {invoice.customer?.state ? `${invoice.customer.state} ( 19 )` : 'West Bengal ( 19 )'}
+                </p>
+                {invoice.customer?.gstin && (
+                  <p>
+                    <span className="font-semibold">GSTIN :</span> {invoice.customer.gstin}
                   </p>
                 )}
               </div>
-
-              <div className="sm:text-right space-y-1">
-                <div className="text-[11px]">
-                  <span className="text-slate-500">GSTIN / Unique ID: </span>
-                  <span className="font-mono font-bold text-slate-900">
-                    {invoice.customer?.gstin || 'Unregistered Consumer'}
-                  </span>
-                </div>
-                <div className="text-[11px]">
-                  <span className="text-slate-500">Place of Supply: </span>
-                  <span className="font-semibold text-slate-800">
-                    {invoice.customer?.state ? `${invoice.customer.state} (19)` : 'West Bengal (19)'}
-                  </span>
-                </div>
-                <div className="text-[11px]">
-                  <span className="text-slate-500">Supply Type: </span>
-                  <span className="font-semibold text-slate-800">Intrastate (CGST + SGST)</span>
-                </div>
-              </div>
             </div>
 
-            {/* 3. Products Table */}
-            <div className="border border-slate-200 rounded-lg overflow-hidden my-2">
-              <table className="w-full text-left text-xs border-collapse">
+            {/* 4. Products Table */}
+            <div className="border-b-[1.5px] border-black">
+              <table className="w-full text-left text-[10px] border-collapse">
                 <thead>
-                  <tr className="bg-slate-100/90 text-slate-700 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
-                    <th className="py-2 px-2.5 text-center w-8">#</th>
-                    <th className="py-2 px-3">Product Description</th>
-                    <th className="py-2 px-2 text-center w-16">HSN/SAC</th>
-                    <th className="py-2 px-2 text-right w-16">Qty</th>
-                    <th className="py-2 px-2 text-center w-12">UOM</th>
-                    <th className="py-2 px-3 text-right w-20">Rate (₹)</th>
-                    <th className="py-2 px-3 text-right w-24">Taxable (₹)</th>
+                  <tr className="border-b-[1.5px] border-black font-bold uppercase text-center text-[9px] bg-slate-50">
+                    <th className="py-1 px-1.5 border-r border-black w-7">No.</th>
+                    <th className="py-1 px-2 border-r border-black text-left">Product Name</th>
+                    <th className="py-1 px-1.5 border-r border-black w-14">HSN Code</th>
+                    <th className="py-1 px-1.5 border-r border-black w-14">Quantity</th>
+                    <th className="py-1 px-1 border-r border-black w-10">UOM</th>
+                    <th className="py-1 px-2 border-r border-black w-16 text-right">Price</th>
+                    <th className="py-1 px-2 w-24 text-right">Taxable Value</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody>
                   {lines.map((line, idx) => (
-                    <tr key={line.id} className="hover:bg-slate-50/50">
-                      <td className="py-2 px-2.5 text-center text-slate-400 font-mono text-[11px]">
+                    <tr key={line.id} className="align-top">
+                      <td className="py-1 px-1.5 border-r border-black text-center font-mono">
                         {idx + 1}
                       </td>
-                      <td className="py-2 px-3 font-medium text-slate-900">
+                      <td className="py-1 px-2 border-r border-black font-semibold text-black">
                         {line.item?.name || line.description || 'Concrete Paver Block'}
                         {line.description && line.description !== line.item?.name && (
-                          <span className="block text-[10.5px] text-slate-500 font-normal mt-0.5">
+                          <span className="block text-[9px] italic font-normal text-black/75">
                             {line.description}
                           </span>
                         )}
                       </td>
-                      <td className="py-2 px-2 text-center font-mono text-slate-600 text-[11px]">
+                      <td className="py-1 px-1.5 border-r border-black text-center font-mono text-[9.5px]">
                         {line.item?.hsn_code || '6810'}
                       </td>
-                      <td className="py-2 px-2 text-right font-bold text-slate-900">
+                      <td className="py-1 px-1.5 border-r border-black text-right font-bold">
                         {line.qty}
                       </td>
-                      <td className="py-2 px-2 text-center uppercase text-slate-600 text-[11px]">
+                      <td className="py-1 px-1 border-r border-black text-center uppercase font-medium">
                         {line.item?.unit?.symbol || 'PCS'}
                       </td>
-                      <td className="py-2 px-3 text-right font-mono text-slate-800">
+                      <td className="py-1 px-2 border-r border-black text-right font-mono">
                         {Number(line.rate).toFixed(2)}
                       </td>
-                      <td className="py-2 px-3 text-right font-mono font-semibold text-slate-900">
+                      <td className="py-1 px-2 text-right font-mono font-semibold">
                         {Number(line.taxable_amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                       </td>
                     </tr>
                   ))}
 
-                  {/* Clean row spacer if only 1 line item to maintain proportions */}
-                  {lines.length === 1 && (
-                    <tr className="h-6">
-                      <td colSpan={7} className="border-b border-transparent"></td>
+                  {/* Spacer Rows if lines < 2 to maintain form shape */}
+                  {Array.from({ length: Math.max(0, 2 - lines.length) }).map((_, i) => (
+                    <tr key={`spacer-${i}`} className="h-5">
+                      <td className="border-r border-black"></td>
+                      <td className="border-r border-black"></td>
+                      <td className="border-r border-black"></td>
+                      <td className="border-r border-black"></td>
+                      <td className="border-r border-black"></td>
+                      <td className="border-r border-black"></td>
+                      <td></td>
                     </tr>
-                  )}
+                  ))}
+
+                  {/* Surcharges & Tax Sub-block */}
+                  <tr className="border-t border-black">
+                    <td colSpan={5} className="border-r border-black"></td>
+                    <td colSpan={2} className="p-0">
+                      <table className="w-full text-right text-[10px]">
+                        <tbody>
+                          <tr className="border-b border-black/40">
+                            <td className="py-0.5 px-2 text-black/80 font-medium">Subtotal</td>
+                            <td className="py-0.5 px-2 font-mono font-bold w-24">
+                              {itemsTaxableTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                            </td>
+                          </tr>
+                          {freightCharge > 0 && (
+                            <tr className="border-b border-black/40">
+                              <td className="py-0.5 px-2 text-black/80">Freight Charge</td>
+                              <td className="py-0.5 px-2 font-mono">
+                                {freightCharge.toFixed(2)}
+                              </td>
+                            </tr>
+                          )}
+                          {unloadingCharge > 0 && (
+                            <tr className="border-b border-black/40">
+                              <td className="py-0.5 px-2 text-black/80">Unloading Charge</td>
+                              <td className="py-0.5 px-2 font-mono">
+                                {unloadingCharge.toFixed(2)}
+                              </td>
+                            </tr>
+                          )}
+                          {cgstTotal > 0 && (
+                            <tr className="border-b border-black/40">
+                              <td className="py-0.5 px-2 text-black/80">CGST (9%)</td>
+                              <td className="py-0.5 px-2 font-mono">
+                                {cgstTotal.toFixed(2)}
+                              </td>
+                            </tr>
+                          )}
+                          {sgstTotal > 0 && (
+                            <tr className="border-b border-black/40">
+                              <td className="py-0.5 px-2 text-black/80">SGST (9%)</td>
+                              <td className="py-0.5 px-2 font-mono">
+                                {sgstTotal.toFixed(2)}
+                              </td>
+                            </tr>
+                          )}
+                          {discountAmount > 0 && (
+                            <tr className="border-b border-black/40">
+                              <td className="py-0.5 px-2 text-black/80">Discount</td>
+                              <td className="py-0.5 px-2 font-mono text-red-600">
+                                -{discountAmount.toFixed(2)}
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+
+                  {/* Table Total Row */}
+                  <tr className="border-t-[1.5px] border-black font-bold text-xs bg-slate-50">
+                    <td colSpan={3} className="py-1 px-3 text-right uppercase tracking-wider border-r border-black">
+                      Total
+                    </td>
+                    <td className="py-1 px-1.5 text-right font-mono border-r border-black">
+                      {totalQty}
+                    </td>
+                    <td className="border-r border-black"></td>
+                    <td colSpan={2} className="py-1 px-2 text-right font-mono font-black text-sm">
+                      ₹ {grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
 
-            {/* 4. Totals and Financial Summary */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start my-3">
-              {/* Left Column: Amount in words & note */}
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3.5 space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
-                  Amount Chargeable (in words)
-                </span>
-                <p className="font-bold text-xs text-slate-900 uppercase leading-snug">
-                  {amountInWords(grandTotal)}
-                </p>
-                <span className="text-[10px] text-slate-400 block pt-1">(E & O.E.)</span>
+            {/* 5. Total in Words */}
+            <div className="p-2 border-b-[1.5px] border-black">
+              <div className="flex justify-between items-center text-[9px] text-black/70 uppercase font-semibold">
+                <span>Total in words</span>
+                <span>(E & O.E.)</span>
               </div>
-
-              {/* Right Column: Breakdown & Grand Total */}
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3.5 space-y-1.5 text-xs">
-                <div className="flex justify-between text-slate-600">
-                  <span>Items Taxable Amount:</span>
-                  <span className="font-mono font-medium text-slate-900">
-                    ₹ {itemsTaxableTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                  </span>
-                </div>
-
-                {freightCharge > 0 && (
-                  <div className="flex justify-between text-slate-600">
-                    <span>Freight / Transport:</span>
-                    <span className="font-mono font-medium text-slate-900">
-                      ₹ {freightCharge.toFixed(2)}
-                    </span>
-                  </div>
-                )}
-
-                {unloadingCharge > 0 && (
-                  <div className="flex justify-between text-slate-600">
-                    <span>Unloading Charges:</span>
-                    <span className="font-mono font-medium text-slate-900">
-                      ₹ {unloadingCharge.toFixed(2)}
-                    </span>
-                  </div>
-                )}
-
-                <div className="flex justify-between text-slate-600">
-                  <span>CGST (9%):</span>
-                  <span className="font-mono font-medium text-slate-900">
-                    ₹ {cgstTotal.toFixed(2)}
-                  </span>
-                </div>
-
-                <div className="flex justify-between text-slate-600">
-                  <span>SGST (9%):</span>
-                  <span className="font-mono font-medium text-slate-900">
-                    ₹ {sgstTotal.toFixed(2)}
-                  </span>
-                </div>
-
-                {discountAmount > 0 && (
-                  <div className="flex justify-between text-red-600">
-                    <span>Discount:</span>
-                    <span className="font-mono font-medium">
-                      - ₹ {discountAmount.toFixed(2)}
-                    </span>
-                  </div>
-                )}
-
-                <div className="pt-2 border-t border-slate-300 flex justify-between items-center text-sm font-bold text-slate-900">
-                  <span>Grand Total (Incl. Taxes):</span>
-                  <span className="text-base font-black text-blue-900 font-mono">
-                    ₹ {grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                  </span>
-                </div>
-              </div>
+              <p className="font-black text-[10.5px] tracking-wide uppercase mt-0.5">
+                {amountInWords(grandTotal)}
+              </p>
             </div>
 
-            {/* 5. HSN Tax Summary Table: Crisp and perfectly sized */}
-            <div className="my-2 border border-slate-200 rounded-lg overflow-hidden">
-              <table className="w-full text-[10px] text-center border-collapse">
+            {/* 6. HSN Summary Table */}
+            <div className="border-b-[1.5px] border-black">
+              <table className="w-full text-[9px] border-collapse text-center">
                 <thead>
-                  <tr className="bg-slate-100/90 font-bold uppercase text-slate-700 border-b border-slate-200">
-                    <th className="py-1.5 px-2 border-r border-slate-200">HSN Code</th>
-                    <th className="py-1.5 px-2 text-right border-r border-slate-200">Taxable Value</th>
-                    <th className="py-1.5 px-2 border-r border-slate-200">CGST Rate</th>
-                    <th className="py-1.5 px-2 text-right border-r border-slate-200">CGST Amount</th>
-                    <th className="py-1.5 px-2 border-r border-slate-200">SGST Rate</th>
-                    <th className="py-1.5 px-2 text-right border-r border-slate-200">SGST Amount</th>
-                    <th className="py-1.5 px-2 text-right">Total Tax Amount</th>
+                  <tr className="border-b border-black font-bold uppercase bg-slate-50">
+                    <th rowSpan={2} className="py-1 px-1 border-r border-black w-24">HSN Code</th>
+                    <th rowSpan={2} className="py-1 px-2 border-r border-black text-right w-24">Taxable Value</th>
+                    <th colSpan={2} className="py-0.5 px-1 border-r border-black">CGST</th>
+                    <th colSpan={2} className="py-0.5 px-1 border-r border-black">SGST</th>
+                    <th rowSpan={2} className="py-1 px-2 text-right w-24">Total</th>
+                  </tr>
+                  <tr className="border-b border-black font-semibold text-[8.5px]">
+                    <th className="py-0.5 px-1 border-r border-black w-10">%</th>
+                    <th className="py-0.5 px-1 border-r border-black text-right w-16">Amount</th>
+                    <th className="py-0.5 px-1 border-r border-black w-10">%</th>
+                    <th className="py-0.5 px-1 border-r border-black text-right w-16">Amount</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-slate-100 font-mono">
-                    <td className="py-1.5 px-2 border-r border-slate-100 font-semibold text-slate-800">6810</td>
-                    <td className="py-1.5 px-2 text-right border-r border-slate-100">
+                  <tr>
+                    <td className="py-1 px-1 border-r border-black font-mono">6810</td>
+                    <td className="py-1 px-2 border-r border-black text-right font-mono">
                       {itemsTaxableTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
-                    <td className="py-1.5 px-2 border-r border-slate-100">9%</td>
-                    <td className="py-1.5 px-2 text-right border-r border-slate-100">{cgstTotal.toFixed(2)}</td>
-                    <td className="py-1.5 px-2 border-r border-slate-100">9%</td>
-                    <td className="py-1.5 px-2 text-right border-r border-slate-100">{sgstTotal.toFixed(2)}</td>
-                    <td className="py-1.5 px-2 text-right font-bold text-slate-900">{totalTaxAmount.toFixed(2)}</td>
+                    <td className="py-1 px-1 border-r border-black">
+                      {cgstTotal > 0 ? '9%' : '0%'}
+                    </td>
+                    <td className="py-1 px-1 border-r border-black text-right font-mono">
+                      {cgstTotal.toFixed(2)}
+                    </td>
+                    <td className="py-1 px-1 border-r border-black">
+                      {sgstTotal > 0 ? '9%' : '0%'}
+                    </td>
+                    <td className="py-1 px-1 border-r border-black text-right font-mono">
+                      {sgstTotal.toFixed(2)}
+                    </td>
+                    <td className="py-1 px-2 text-right font-mono font-semibold">
+                      {totalTaxAmount.toFixed(2)}
+                    </td>
                   </tr>
-                  <tr className="bg-slate-50/70 font-bold text-slate-900">
-                    <td className="py-1.5 px-2 uppercase border-r border-slate-200">Total</td>
-                    <td className="py-1.5 px-2 text-right border-r border-slate-200 font-mono">
+                  <tr className="border-t border-black font-bold">
+                    <td className="py-1 px-1 border-r border-black uppercase text-right">Total</td>
+                    <td className="py-1 px-2 border-r border-black text-right font-mono">
                       {itemsTaxableTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
-                    <td className="border-r border-slate-200"></td>
-                    <td className="py-1.5 px-2 text-right border-r border-slate-200 font-mono">{cgstTotal.toFixed(2)}</td>
-                    <td className="border-r border-slate-200"></td>
-                    <td className="py-1.5 px-2 text-right border-r border-slate-200 font-mono">{sgstTotal.toFixed(2)}</td>
-                    <td className="py-1.5 px-2 text-right font-mono text-blue-900 font-black">
-                      ₹ {totalTaxAmount.toFixed(2)}
+                    <td className="border-r border-black"></td>
+                    <td className="py-1 px-1 border-r border-black text-right font-mono">
+                      {cgstTotal.toFixed(2)}
+                    </td>
+                    <td className="border-r border-black"></td>
+                    <td className="py-1 px-1 border-r border-black text-right font-mono">
+                      {sgstTotal.toFixed(2)}
+                    </td>
+                    <td className="py-1 px-2 text-right font-mono font-bold">
+                      {totalTaxAmount.toFixed(2)}
                     </td>
                   </tr>
                 </tbody>
               </table>
-              <div className="px-3 py-1 bg-slate-50 text-[10px] text-slate-600 border-t border-slate-200">
-                <span className="font-medium">Total Tax in Words: </span>
-                <strong className="uppercase text-slate-800">
+              <div className="px-2 py-1 border-t border-black text-[9px]">
+                <span className="font-semibold text-black/70">Total Tax in words: </span>
+                <strong className="uppercase">
                   {totalTaxAmount > 0 ? amountInWords(totalTaxAmount) : 'ZERO RUPEES ONLY'}
                 </strong>
               </div>
             </div>
 
-            {/* 6. Terms & Conditions and Signature: Pushed to bottom nicely */}
-            <div className="mt-auto pt-4 border-t border-slate-200 grid grid-cols-12 gap-4 text-xs">
-              <div className="col-span-7 space-y-1 text-[10px] text-slate-600 leading-snug">
-                <p className="font-bold uppercase text-slate-800 tracking-wider">
-                  Terms & Conditions
-                </p>
-                <ol className="list-decimal pl-3.5 space-y-0.5">
-                  <li>Subject to home Jurisdiction.</li>
-                  <li>Our Responsibility Ceases as soon as goods leave our Factory.</li>
-                  <li>Goods once sold will not be taken back.</li>
+            {/* 7. Terms & Signatures */}
+            <div className="grid grid-cols-12">
+              <div className="col-span-7 p-2 space-y-1 border-r-[1.5px] border-black text-[8.5px] leading-snug">
+                <p className="font-bold text-[9px] uppercase">Terms and Conditions :- D. D. ENTERPRISE</p>
+                <ol className="list-decimal pl-3 space-y-0.5 text-black/90">
+                  <li>Subject to our home Jurisdiction.</li>
+                  <li>Our Responsibility Ceases as soon as goods leaves our Factory.</li>
+                  <li>Goods once sold will not taken back.</li>
                   <li>Delivery Ex-Premises.</li>
                 </ol>
-                <p className="text-blue-900 font-semibold pt-1">
-                  ⭐ Review our Products & Services on Google: <span className="font-bold">D. D. ENTERPRISE</span>
-                </p>
+                <div className="pt-2">
+                  <p className="font-bold text-[8.5px] text-blue-900">Review our Product & Services on Google</p>
+                  <p className="font-bold text-[8.5px] uppercase text-black">
+                    D. D. ENTERPRISE - Paver Block, Chequered Tile & Roof Tile
+                  </p>
+                </div>
               </div>
 
-              <div className="col-span-5 flex flex-col justify-between items-end text-right">
-                <span className="text-[11px] font-bold text-slate-900 uppercase">
-                  For D. D. ENTERPRISE
-                </span>
-                <div className="pt-10 w-44 border-t border-slate-400 text-center">
-                  <p className="font-bold text-[10px] uppercase text-slate-800 tracking-wider">
+              <div className="col-span-5 p-2 flex flex-col justify-between text-right">
+                <span className="text-[8px] text-black/60">(E & O.E.)</span>
+                <div className="pt-10">
+                  <p className="font-bold text-[9.5px] uppercase tracking-wider text-black border-t border-black/40 pt-1">
                     Authorised Signatory
                   </p>
                 </div>
