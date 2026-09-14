@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react'
 import {
   Printer, Share2, MessageSquare, Mail, Copy, Check,
   X, ChevronDown, ChevronUp, Truck, Phone,
-  ArrowRight, CheckCircle2, XCircle, Package, Loader2
+  ArrowRight, CheckCircle2, XCircle, Package, Loader2, Maximize2, Minimize2
 } from 'lucide-react'
 import { formatCurrency, formatDate, amountInWords } from '@/lib/formatters'
 import { StatusBadge } from '@/components/shared/StatusBadge'
@@ -21,6 +21,12 @@ interface DDInvoicePrintModalProps {
   isUpdating?: boolean
 }
 
+type InvoiceCopy =
+  | 'ORIGINAL FOR RECIPIENT'
+  | 'DUPLICATE FOR TRANSPORTER'
+  | 'TRIPLICATE FOR SUPPLIER'
+  | 'OFFICE COPY'
+
 export function DDInvoicePrintModal({
   invoice,
   lines,
@@ -33,12 +39,18 @@ export function DDInvoicePrintModal({
   isPosting,
   isUpdating
 }: DDInvoicePrintModalProps) {
+  // Copy Type State (Dropdown)
+  const [copyType, setCopyType] = useState<InvoiceCopy>('ORIGINAL FOR RECIPIENT')
+
   // Share Menu Dropdown State
   const [showShareMenu, setShowShareMenu] = useState(false)
   const [copied, setCopied] = useState(false)
   const shareMenuRef = useRef<HTMLDivElement>(null)
 
-  // Dispatch details & overrides (NO hardcoded fallback)
+  // Zoom / Fit View Mode (Fit entire single sheet on screen vs 100% zoom)
+  const [fitToScreen, setFitToScreen] = useState(false)
+
+  // Dispatch details & overrides (Dynamic; NO hardcoded fallback)
   const [showTransportFields, setShowTransportFields] = useState(false)
   const [vehicleNo, setVehicleNo] = useState(
     invoice.notes?.match(/Vehicle:\s*([^,|;\n]+)/i)?.[1]?.trim() || ''
@@ -107,6 +119,7 @@ export function DDInvoicePrintModal({
       `Invoice No: ${invoice.invoice_number}\n` +
       `Date: ${formatDate(invoice.date)}\n` +
       `Customer: ${invoice.customer?.name || 'Valued Customer'}\n` +
+      `Copy: ${copyType}\n` +
       `Total Quantity: ${totalQty} pcs\n` +
       `Grand Total: ${formatCurrency(grandTotal)}\n` +
       `--------------------------------\n` +
@@ -167,13 +180,13 @@ export function DDInvoicePrintModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 overflow-hidden">
-      {/* Print Isolated CSS: Zero Margin to Suppress Browser Headers & URLs */}
+    <div className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 overflow-hidden">
+      {/* Print Isolated CSS: Crisp Solid Borders, Exactly 1 A4 Sheet */}
       <style>{`
         @media print {
           @page {
             size: A4 portrait;
-            margin: 0mm !important;
+            margin: 6mm !important;
           }
           html, body {
             margin: 0 !important;
@@ -195,12 +208,23 @@ export function DDInvoicePrintModal({
             width: 100% !important;
             max-width: 100% !important;
             margin: 0 !important;
-            padding: 6mm 6mm !important;
-            border: 1.5px solid #000 !important;
+            padding: 0 !important;
+            border: 2px solid #000 !important;
             box-shadow: none !important;
             background: #fff !important;
             color: #000 !important;
             box-sizing: border-box !important;
+            page-break-inside: avoid !important;
+            page-break-after: avoid !important;
+            transform: none !important;
+          }
+          #printable-invoice table {
+            border-collapse: collapse !important;
+            width: 100% !important;
+          }
+          #printable-invoice th,
+          #printable-invoice td {
+            border-color: #000 !important;
           }
           .no-print {
             display: none !important;
@@ -208,10 +232,10 @@ export function DDInvoicePrintModal({
         }
       `}</style>
 
-      {/* Outer Modal Container: Structured to let Paper scroll fully without cutoff */}
+      {/* Outer Modal Container */}
       <div className="bg-surface rounded-2xl shadow-2xl max-w-4xl w-full h-[94vh] flex flex-col border border-outline-variant overflow-hidden">
         {/* Modal Top Nav (No print) */}
-        <div className="px-5 py-3.5 bg-surface border-b border-outline-variant flex items-center justify-between shrink-0 no-print">
+        <div className="px-5 py-3 bg-surface border-b border-outline-variant flex items-center justify-between shrink-0 no-print">
           <div className="flex items-center gap-2.5">
             <h3 className="text-sm sm:text-base font-bold text-on-surface">Tax Invoice Preview</h3>
             <span className="text-xs font-mono bg-primary/10 text-primary font-semibold px-2 py-0.5 rounded-md">
@@ -220,13 +244,26 @@ export function DDInvoicePrintModal({
             <StatusBadge status={invoice.status} />
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Fit to screen toggle */}
+            <button
+              type="button"
+              onClick={() => setFitToScreen(!fitToScreen)}
+              title={fitToScreen ? "Show standard scale" : "Fit entire sheet on screen"}
+              className="px-2.5 py-1 text-xs font-medium text-outline hover:text-on-surface hover:bg-surface-container rounded-lg border border-outline-variant flex items-center gap-1 transition-colors"
+            >
+              {fitToScreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+              <span>{fitToScreen ? "100% View" : "Fit Page"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         {/* Workflow Approval / Posting Strip if Manager (No print) */}
@@ -314,7 +351,7 @@ export function DDInvoicePrintModal({
                   value={vehicleNo}
                   onChange={e => setVehicleNo(e.target.value)}
                   placeholder="e.g. WB 25F 8077"
-                  className="w-full mt-0.5 px-2 py-1 text-xs border border-outline-variant rounded bg-background"
+                  className="w-full mt-0.5 px-2 py-1 text-xs border border-outline-variant rounded bg-background uppercase font-mono"
                 />
               </div>
               <div>
@@ -334,7 +371,7 @@ export function DDInvoicePrintModal({
                   value={ewayNo}
                   onChange={e => setEwayNo(e.target.value)}
                   placeholder="E-Way Bill"
-                  className="w-full mt-0.5 px-2 py-1 text-xs border border-outline-variant rounded bg-background"
+                  className="w-full mt-0.5 px-2 py-1 text-xs border border-outline-variant rounded bg-background font-mono"
                 />
               </div>
               <div>
@@ -374,129 +411,124 @@ export function DDInvoicePrintModal({
           )}
         </div>
 
-        {/* Scrollable Paper Container: The full white page is scrollable and visible without truncation */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-6 bg-slate-200/75 dark:bg-slate-950/80 flex justify-center">
-          {/* Printable Invoice Sheet: Authentic D. D. ENTERPRISE Format */}
+        {/* Scrollable Paper Container: Single cohesive sheet with optional fit-to-page scale */}
+        <div className="flex-1 overflow-y-auto p-2 sm:p-5 bg-slate-200/80 dark:bg-slate-950 flex justify-center items-start">
+          {/* Printable Invoice Sheet: Unified 100% Solid Black Borders */}
           <div
             id="printable-invoice"
-            className="bg-white text-black w-full max-w-[780px] shadow-xl border-[1.5px] border-black text-[11px] leading-tight font-sans box-border"
+            className={`bg-white text-black w-full max-w-[760px] shadow-2xl border-2 border-black text-[9.5px] leading-tight font-sans box-border transition-transform origin-top ${
+              fitToScreen ? 'scale-[0.82] sm:scale-[0.88] -mb-16' : ''
+            }`}
             style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}
           >
-            {/* 1. Document Top Title */}
-            <div className="px-3 py-1 flex items-center justify-between border-b-[1.5px] border-black">
-              <div className="w-20"></div>
-              <h1 className="text-base font-black tracking-widest text-center uppercase flex-1 text-black">
+            {/* 1. Document Top Title Bar */}
+            <div className="px-3 py-1 flex items-center justify-between border-b border-black bg-white">
+              <div className="w-28"></div>
+              <h1 className="text-sm font-black tracking-widest text-center uppercase flex-1 text-black">
                 TAX INVOICE
               </h1>
-              <div className="w-20 text-right font-bold text-[10px] uppercase text-black/80">
-                ORIGINAL
+              <div className="w-48 text-right font-bold text-[9px] uppercase tracking-wider text-black">
+                {copyType}
               </div>
             </div>
 
             {/* 2. Header Grid: Company Info (Left) & Document Info (Right) */}
-            <div className="grid grid-cols-12 border-b-[1.5px] border-black">
-              {/* Left Column (60%): Company Details */}
-              <div className="col-span-7 p-2.5 flex items-start gap-3 border-r-[1.5px] border-black">
-                <div className="shrink-0 w-24 flex flex-col items-center justify-start pt-1">
+            <div className="grid grid-cols-12 border-b border-black">
+              {/* Left Column (58%): Company Details */}
+              <div className="col-span-7 p-2 flex items-start gap-2.5 border-r border-black">
+                <div className="shrink-0 w-20 flex flex-col items-center justify-start pt-0.5">
                   <img
                     src="/logo.png"
                     alt="DD PAVER"
-                    className="w-20 object-contain"
+                    className="w-18 h-auto object-contain"
                     onError={e => {
                       ;(e.target as HTMLElement).style.display = 'none'
                     }}
                   />
-                  <span className="text-[7px] text-center font-bold tracking-tighter text-blue-900 mt-1 uppercase leading-tight">
+                  <span className="text-[6.5px] text-center font-bold tracking-tighter text-blue-900 mt-0.5 uppercase leading-tight">
                     STRONGER BASE, BETTER SPACE
                   </span>
                 </div>
 
                 <div className="space-y-0.5 flex-1 min-w-0">
-                  <h2 className="text-sm font-black tracking-wider uppercase text-black leading-none mb-1">
+                  <h2 className="text-xs font-black tracking-wider uppercase text-black leading-none mb-0.5">
                     D. D. ENTERPRISE
                   </h2>
-                  <p className="text-[9px] text-black/90 leading-tight">
-                    Khelia, Arkhali, Amdanga<br />
-                    Beside National Highway 34 (12)<br />
+                  <p className="text-[8.5px] text-black leading-tight">
+                    Khelia, Arkhali, Amdanga, Beside NH-34 (12)<br />
                     North 24 Parganas, West Bengal - 743221
                   </p>
-                  <p className="font-bold text-[9.5px] text-black pt-0.5">
+                  <p className="font-bold text-[9px] text-black pt-0.5">
                     GSTIN : <span className="font-mono">19AFDPD4677G1ZD</span>
                   </p>
-                  <p className="text-[9px]">
-                    <span className="font-semibold">UDYAM Registration No.:</span> UDYAM-WB-14-0057640
+                  <p className="text-[8px]">
+                    <span className="font-semibold">UDYAM:</span> UDYAM-WB-14-0057640 · <span className="font-semibold">BIS Lic:</span> CM/L-5100295395
                   </p>
-                  <p className="text-[9px]">
-                    <span className="font-semibold">BIS ISI Licence No.:</span> CM/L-5100295395
+                  <p className="text-[8px]">
+                    <span className="font-semibold">Name:</span> TAPAN DEY · <span className="font-semibold">Phone:</span> 9433393977
                   </p>
-                  <p className="text-[9px] pt-0.5">
-                    <span className="font-semibold">Name :</span> TAPAN DEY
+                  <p className="text-[8px]">
+                    <span className="font-semibold">Email:</span> info@ddenterprisepaverblock.co.in
                   </p>
-                  <p className="text-[9px]">
-                    <span className="font-semibold">Phone :</span> 9433393977
-                  </p>
-                  <p className="text-[9px]">
-                    <span className="font-semibold">Email :</span> info@ddenterprisepaverblock.co.in
-                  </p>
-                  <p className="text-[9px]">
-                    <span className="font-semibold">Website :</span> www.ddpaver.co.in
+                  <p className="text-[8px]">
+                    <span className="font-semibold">Website:</span> www.ddpaver.co.in
                   </p>
                 </div>
               </div>
 
-              {/* Right Column (40%): Invoice Metadata */}
+              {/* Right Column (42%): Invoice Metadata */}
               <div className="col-span-5 flex flex-col justify-between">
-                <div className="grid grid-cols-2 divide-x-[1.5px] divide-black border-b-[1.5px] border-black">
-                  <div className="p-2">
-                    <span className="text-[9px] text-black/70 block uppercase">Invoice No.</span>
-                    <strong className="text-xs font-black">{invoice.invoice_number}</strong>
+                <div className="grid grid-cols-2 border-b border-black">
+                  <div className="p-1.5 border-r border-black">
+                    <span className="text-[8px] text-black/70 block uppercase font-medium">Invoice No.</span>
+                    <strong className="text-[10.5px] font-black">{invoice.invoice_number}</strong>
                   </div>
-                  <div className="p-2">
-                    <span className="text-[9px] text-black/70 block uppercase">Invoice Date</span>
-                    <span className="font-bold text-xs">{formatDate(invoice.date)}</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 divide-x-[1.5px] divide-black border-b-[1.5px] border-black">
-                  <div className="p-2">
-                    <span className="text-[9px] text-black/70 block uppercase">Reverse Charge</span>
-                    <span className="font-bold text-xs">No</span>
-                  </div>
-                  <div className="p-2">
-                    <span className="text-[9px] text-black/70 block uppercase">L.R. No.</span>
-                    <span className="font-bold text-xs">{lrNo || '—'}</span>
+                  <div className="p-1.5">
+                    <span className="text-[8px] text-black/70 block uppercase font-medium">Invoice Date</span>
+                    <span className="font-bold text-[10px]">{formatDate(invoice.date)}</span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 divide-x-[1.5px] divide-black">
-                  <div className="p-2">
-                    <span className="text-[9px] text-black/70 block uppercase">E-Way No.</span>
-                    <span className="font-bold text-xs">{ewayNo || '—'}</span>
+                <div className="grid grid-cols-2 border-b border-black">
+                  <div className="p-1.5 border-r border-black">
+                    <span className="text-[8px] text-black/70 block uppercase font-medium">Reverse Charge</span>
+                    <span className="font-bold text-[10px]">No</span>
                   </div>
-                  <div className="p-2">
-                    <span className="text-[9px] text-black/70 block uppercase">Vehicle Number</span>
-                    <strong className="text-xs font-black">{vehicleNo || '—'}</strong>
+                  <div className="p-1.5">
+                    <span className="text-[8px] text-black/70 block uppercase font-medium">L.R. No.</span>
+                    <span className="font-bold text-[10px] font-mono">{lrNo || '—'}</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2">
+                  <div className="p-1.5 border-r border-black">
+                    <span className="text-[8px] text-black/70 block uppercase font-medium">E-Way No.</span>
+                    <span className="font-bold text-[10px] font-mono">{ewayNo || '—'}</span>
+                  </div>
+                  <div className="p-1.5">
+                    <span className="text-[8px] text-black/70 block uppercase font-medium">Vehicle Number</span>
+                    <strong className="text-[10px] font-black font-mono">{vehicleNo || '—'}</strong>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* 3. Customer Detail Box */}
-            <div className="p-2.5 border-b-[1.5px] border-black space-y-0.5">
-              <span className="text-[9px] font-bold uppercase text-black/70 tracking-wider">
+            <div className="p-2 border-b border-black space-y-0.5">
+              <span className="text-[8px] font-bold uppercase text-black/70 tracking-wider">
                 Customer Detail
               </span>
-              <h3 className="text-xs font-black uppercase text-black">
+              <h3 className="text-[10.5px] font-black uppercase text-black">
                 {invoice.customer?.name || 'CASH CUSTOMER'}
               </h3>
               {invoice.customer?.contact_person && (
-                <p className="text-[10px]">{invoice.customer.contact_person}</p>
+                <p className="text-[8.5px]">{invoice.customer.contact_person}</p>
               )}
-              <p className="text-[9.5px] text-black/90">
+              <p className="text-[8.5px] text-black">
                 {invoice.customer?.address ? `${invoice.customer.address}, ` : ''}
                 {invoice.customer?.city || 'North 24 Parganas'}, {invoice.customer?.state || 'West Bengal'}
               </p>
-              <div className="flex flex-wrap gap-4 text-[9.5px] pt-0.5">
+              <div className="flex flex-wrap gap-4 text-[8.5px] pt-0.5">
                 <p>
                   <span className="font-semibold">Phone :</span> {invoice.customer?.phone || '—'}
                 </p>
@@ -512,38 +544,38 @@ export function DDInvoicePrintModal({
               </div>
             </div>
 
-            {/* 4. Products Table */}
-            <div className="border-b-[1.5px] border-black">
-              <table className="w-full text-left text-[10px] border-collapse">
+            {/* 4. Products Table (Single Table with Clean Continuous Borders) */}
+            <div className="border-b border-black">
+              <table className="w-full text-left text-[9px] border-collapse" style={{ borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr className="border-b-[1.5px] border-black font-bold uppercase text-center text-[9px] bg-slate-50">
-                    <th className="py-1 px-1.5 border-r border-black w-7">No.</th>
+                  <tr className="border-b border-black font-bold uppercase text-center text-[8px] bg-slate-50">
+                    <th className="py-1 px-1 border-r border-black w-6 text-center">No.</th>
                     <th className="py-1 px-2 border-r border-black text-left">Product Name</th>
-                    <th className="py-1 px-1.5 border-r border-black w-14">HSN Code</th>
-                    <th className="py-1 px-1.5 border-r border-black w-14">Quantity</th>
-                    <th className="py-1 px-1 border-r border-black w-10">UOM</th>
+                    <th className="py-1 px-1 border-r border-black w-14 text-center">HSN Code</th>
+                    <th className="py-1 px-1 border-r border-black w-12 text-right">Quantity</th>
+                    <th className="py-1 px-1 border-r border-black w-10 text-center">UOM</th>
                     <th className="py-1 px-2 border-r border-black w-16 text-right">Price</th>
                     <th className="py-1 px-2 w-24 text-right">Taxable Value</th>
                   </tr>
                 </thead>
                 <tbody>
                   {lines.map((line, idx) => (
-                    <tr key={line.id} className="align-top">
-                      <td className="py-1 px-1.5 border-r border-black text-center font-mono">
+                    <tr key={line.id} className="align-top border-b border-black">
+                      <td className="py-1 px-1 border-r border-black text-center font-mono">
                         {idx + 1}
                       </td>
                       <td className="py-1 px-2 border-r border-black font-semibold text-black">
                         {line.item?.name || line.description || 'Concrete Paver Block'}
                         {line.description && line.description !== line.item?.name && (
-                          <span className="block text-[9px] italic font-normal text-black/75">
+                          <span className="block text-[8px] italic font-normal text-black/75">
                             {line.description}
                           </span>
                         )}
                       </td>
-                      <td className="py-1 px-1.5 border-r border-black text-center font-mono text-[9.5px]">
+                      <td className="py-1 px-1 border-r border-black text-center font-mono text-[8.5px]">
                         {line.item?.hsn_code || '6810'}
                       </td>
-                      <td className="py-1 px-1.5 border-r border-black text-right font-bold">
+                      <td className="py-1 px-1 border-r border-black text-right font-bold font-mono">
                         {line.qty}
                       </td>
                       <td className="py-1 px-1 border-r border-black text-center uppercase font-medium">
@@ -558,86 +590,87 @@ export function DDInvoicePrintModal({
                     </tr>
                   ))}
 
-                  {/* Spacer Rows if lines < 2 to maintain form shape */}
-                  {Array.from({ length: Math.max(0, 2 - lines.length) }).map((_, i) => (
-                    <tr key={`spacer-${i}`} className="h-5">
-                      <td className="border-r border-black"></td>
-                      <td className="border-r border-black"></td>
-                      <td className="border-r border-black"></td>
-                      <td className="border-r border-black"></td>
-                      <td className="border-r border-black"></td>
-                      <td className="border-r border-black"></td>
-                      <td></td>
-                    </tr>
-                  ))}
-
-                  {/* Surcharges & Tax Sub-block */}
-                  <tr className="border-t border-black">
+                  {/* Subtotal Row */}
+                  <tr className="border-b border-black">
                     <td colSpan={5} className="border-r border-black"></td>
-                    <td colSpan={2} className="p-0">
-                      <table className="w-full text-right text-[10px]">
-                        <tbody>
-                          <tr className="border-b border-black/40">
-                            <td className="py-0.5 px-2 text-black/80 font-medium">Subtotal</td>
-                            <td className="py-0.5 px-2 font-mono font-bold w-24">
-                              {itemsTaxableTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                            </td>
-                          </tr>
-                          {freightCharge > 0 && (
-                            <tr className="border-b border-black/40">
-                              <td className="py-0.5 px-2 text-black/80">Freight Charge</td>
-                              <td className="py-0.5 px-2 font-mono">
-                                {freightCharge.toFixed(2)}
-                              </td>
-                            </tr>
-                          )}
-                          {unloadingCharge > 0 && (
-                            <tr className="border-b border-black/40">
-                              <td className="py-0.5 px-2 text-black/80">Unloading Charge</td>
-                              <td className="py-0.5 px-2 font-mono">
-                                {unloadingCharge.toFixed(2)}
-                              </td>
-                            </tr>
-                          )}
-                          {cgstTotal > 0 && (
-                            <tr className="border-b border-black/40">
-                              <td className="py-0.5 px-2 text-black/80">CGST (9%)</td>
-                              <td className="py-0.5 px-2 font-mono">
-                                {cgstTotal.toFixed(2)}
-                              </td>
-                            </tr>
-                          )}
-                          {sgstTotal > 0 && (
-                            <tr className="border-b border-black/40">
-                              <td className="py-0.5 px-2 text-black/80">SGST (9%)</td>
-                              <td className="py-0.5 px-2 font-mono">
-                                {sgstTotal.toFixed(2)}
-                              </td>
-                            </tr>
-                          )}
-                          {discountAmount > 0 && (
-                            <tr className="border-b border-black/40">
-                              <td className="py-0.5 px-2 text-black/80">Discount</td>
-                              <td className="py-0.5 px-2 font-mono text-red-600">
-                                -{discountAmount.toFixed(2)}
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
+                    <td className="py-0.5 px-2 border-r border-black text-right text-black font-medium">
+                      Subtotal
+                    </td>
+                    <td className="py-0.5 px-2 text-right font-mono font-bold">
+                      {itemsTaxableTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
                   </tr>
 
-                  {/* Table Total Row */}
-                  <tr className="border-t-[1.5px] border-black font-bold text-xs bg-slate-50">
-                    <td colSpan={3} className="py-1 px-3 text-right uppercase tracking-wider border-r border-black">
-                      Total
+                  {freightCharge > 0 && (
+                    <tr className="border-b border-black">
+                      <td colSpan={5} className="border-r border-black"></td>
+                      <td className="py-0.5 px-2 border-r border-black text-right text-black">
+                        Freight Charge
+                      </td>
+                      <td className="py-0.5 px-2 text-right font-mono">
+                        {freightCharge.toFixed(2)}
+                      </td>
+                    </tr>
+                  )}
+
+                  {unloadingCharge > 0 && (
+                    <tr className="border-b border-black">
+                      <td colSpan={5} className="border-r border-black"></td>
+                      <td className="py-0.5 px-2 border-r border-black text-right text-black">
+                        Unloading Charge
+                      </td>
+                      <td className="py-0.5 px-2 text-right font-mono">
+                        {unloadingCharge.toFixed(2)}
+                      </td>
+                    </tr>
+                  )}
+
+                  {cgstTotal > 0 && (
+                    <tr className="border-b border-black">
+                      <td colSpan={5} className="border-r border-black"></td>
+                      <td className="py-0.5 px-2 border-r border-black text-right text-black">
+                        CGST (9%)
+                      </td>
+                      <td className="py-0.5 px-2 text-right font-mono">
+                        {cgstTotal.toFixed(2)}
+                      </td>
+                    </tr>
+                  )}
+
+                  {sgstTotal > 0 && (
+                    <tr className="border-b border-black">
+                      <td colSpan={5} className="border-r border-black"></td>
+                      <td className="py-0.5 px-2 border-r border-black text-right text-black">
+                        SGST (9%)
+                      </td>
+                      <td className="py-0.5 px-2 text-right font-mono">
+                        {sgstTotal.toFixed(2)}
+                      </td>
+                    </tr>
+                  )}
+
+                  {discountAmount > 0 && (
+                    <tr className="border-b border-black">
+                      <td colSpan={5} className="border-r border-black"></td>
+                      <td className="py-0.5 px-2 border-r border-black text-right text-red-600">
+                        Discount
+                      </td>
+                      <td className="py-0.5 px-2 text-right font-mono text-red-600">
+                        -{discountAmount.toFixed(2)}
+                      </td>
+                    </tr>
+                  )}
+
+                  {/* Total Row */}
+                  <tr className="font-bold text-[10px] bg-slate-50">
+                    <td colSpan={3} className="py-1 px-2 text-right uppercase tracking-wider border-r border-black">
+                      TOTAL
                     </td>
-                    <td className="py-1 px-1.5 text-right font-mono border-r border-black">
+                    <td className="py-1 px-1 text-right font-mono border-r border-black">
                       {totalQty}
                     </td>
                     <td className="border-r border-black"></td>
-                    <td colSpan={2} className="py-1 px-2 text-right font-mono font-black text-sm">
+                    <td colSpan={2} className="py-1 px-2 text-right font-mono font-black text-xs">
                       ₹ {grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
                   </tr>
@@ -646,28 +679,28 @@ export function DDInvoicePrintModal({
             </div>
 
             {/* 5. Total in Words */}
-            <div className="p-2 border-b-[1.5px] border-black">
-              <div className="flex justify-between items-center text-[9px] text-black/70 uppercase font-semibold">
-                <span>Total in words</span>
+            <div className="p-1.5 border-b border-black">
+              <div className="flex justify-between items-center text-[7.5px] text-black/70 uppercase font-semibold">
+                <span>TOTAL IN WORDS</span>
                 <span>(E & O.E.)</span>
               </div>
-              <p className="font-black text-[10.5px] tracking-wide uppercase mt-0.5">
+              <p className="font-black text-[9px] tracking-wide uppercase mt-0.5">
                 {amountInWords(grandTotal)}
               </p>
             </div>
 
             {/* 6. HSN Summary Table */}
-            <div className="border-b-[1.5px] border-black">
-              <table className="w-full text-[9px] border-collapse text-center">
+            <div className="border-b border-black">
+              <table className="w-full text-[8px] border-collapse text-center" style={{ borderCollapse: 'collapse' }}>
                 <thead>
                   <tr className="border-b border-black font-bold uppercase bg-slate-50">
-                    <th rowSpan={2} className="py-1 px-1 border-r border-black w-24">HSN Code</th>
-                    <th rowSpan={2} className="py-1 px-2 border-r border-black text-right w-24">Taxable Value</th>
+                    <th rowSpan={2} className="py-0.5 px-1 border-r border-black w-24">HSN CODE</th>
+                    <th rowSpan={2} className="py-0.5 px-2 border-r border-black text-right w-24">TAXABLE VALUE</th>
                     <th colSpan={2} className="py-0.5 px-1 border-r border-black">CGST</th>
                     <th colSpan={2} className="py-0.5 px-1 border-r border-black">SGST</th>
-                    <th rowSpan={2} className="py-1 px-2 text-right w-24">Total</th>
+                    <th rowSpan={2} className="py-0.5 px-2 text-right w-24">TOTAL</th>
                   </tr>
-                  <tr className="border-b border-black font-semibold text-[8.5px]">
+                  <tr className="border-b border-black font-semibold text-[7.5px]">
                     <th className="py-0.5 px-1 border-r border-black w-10">%</th>
                     <th className="py-0.5 px-1 border-r border-black text-right w-16">Amount</th>
                     <th className="py-0.5 px-1 border-r border-black w-10">%</th>
@@ -675,47 +708,47 @@ export function DDInvoicePrintModal({
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="py-1 px-1 border-r border-black font-mono">6810</td>
-                    <td className="py-1 px-2 border-r border-black text-right font-mono">
+                  <tr className="border-b border-black">
+                    <td className="py-0.5 px-1 border-r border-black font-mono">6810</td>
+                    <td className="py-0.5 px-2 border-r border-black text-right font-mono">
                       {itemsTaxableTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
-                    <td className="py-1 px-1 border-r border-black">
+                    <td className="py-0.5 px-1 border-r border-black">
                       {cgstTotal > 0 ? '9%' : '0%'}
                     </td>
-                    <td className="py-1 px-1 border-r border-black text-right font-mono">
+                    <td className="py-0.5 px-1 border-r border-black text-right font-mono">
                       {cgstTotal.toFixed(2)}
                     </td>
-                    <td className="py-1 px-1 border-r border-black">
+                    <td className="py-0.5 px-1 border-r border-black">
                       {sgstTotal > 0 ? '9%' : '0%'}
                     </td>
-                    <td className="py-1 px-1 border-r border-black text-right font-mono">
+                    <td className="py-0.5 px-1 border-r border-black text-right font-mono">
                       {sgstTotal.toFixed(2)}
                     </td>
-                    <td className="py-1 px-2 text-right font-mono font-semibold">
+                    <td className="py-0.5 px-2 text-right font-mono font-semibold">
                       {totalTaxAmount.toFixed(2)}
                     </td>
                   </tr>
-                  <tr className="border-t border-black font-bold">
-                    <td className="py-1 px-1 border-r border-black uppercase text-right">Total</td>
-                    <td className="py-1 px-2 border-r border-black text-right font-mono">
+                  <tr className="font-bold">
+                    <td className="py-0.5 px-1 border-r border-black uppercase text-right">TOTAL</td>
+                    <td className="py-0.5 px-2 border-r border-black text-right font-mono">
                       {itemsTaxableTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
                     <td className="border-r border-black"></td>
-                    <td className="py-1 px-1 border-r border-black text-right font-mono">
+                    <td className="py-0.5 px-1 border-r border-black text-right font-mono">
                       {cgstTotal.toFixed(2)}
                     </td>
                     <td className="border-r border-black"></td>
-                    <td className="py-1 px-1 border-r border-black text-right font-mono">
+                    <td className="py-0.5 px-1 border-r border-black text-right font-mono">
                       {sgstTotal.toFixed(2)}
                     </td>
-                    <td className="py-1 px-2 text-right font-mono font-bold">
+                    <td className="py-0.5 px-2 text-right font-mono font-bold">
                       {totalTaxAmount.toFixed(2)}
                     </td>
                   </tr>
                 </tbody>
               </table>
-              <div className="px-2 py-1 border-t border-black text-[9px]">
+              <div className="px-2 py-0.5 border-t border-black text-[8px] bg-white">
                 <span className="font-semibold text-black/70">Total Tax in words: </span>
                 <strong className="uppercase">
                   {totalTaxAmount > 0 ? amountInWords(totalTaxAmount) : 'ZERO RUPEES ONLY'}
@@ -724,28 +757,28 @@ export function DDInvoicePrintModal({
             </div>
 
             {/* 7. Terms & Signatures */}
-            <div className="grid grid-cols-12">
-              <div className="col-span-7 p-2 space-y-1 border-r-[1.5px] border-black text-[8.5px] leading-snug">
-                <p className="font-bold text-[9px] uppercase">Terms and Conditions :- D. D. ENTERPRISE</p>
+            <div className="grid grid-cols-12 bg-white">
+              <div className="col-span-7 p-2 space-y-0.5 border-r border-black text-[7.5px] leading-snug">
+                <p className="font-bold text-[8px] uppercase">TERMS AND CONDITIONS :- D. D. ENTERPRISE</p>
                 <ol className="list-decimal pl-3 space-y-0.5 text-black/90">
                   <li>Subject to our home Jurisdiction.</li>
                   <li>Our Responsibility Ceases as soon as goods leaves our Factory.</li>
                   <li>Goods once sold will not taken back.</li>
                   <li>Delivery Ex-Premises.</li>
                 </ol>
-                <div className="pt-2">
-                  <p className="font-bold text-[8.5px] text-blue-900">Review our Product & Services on Google</p>
-                  <p className="font-bold text-[8.5px] uppercase text-black">
+                <div className="pt-0.5">
+                  <p className="font-bold text-[7.5px] text-blue-900">Review our Product & Services on Google</p>
+                  <p className="font-bold text-[7.5px] uppercase text-black">
                     D. D. ENTERPRISE - Paver Block, Chequered Tile & Roof Tile
                   </p>
                 </div>
               </div>
 
               <div className="col-span-5 p-2 flex flex-col justify-between text-right">
-                <span className="text-[8px] text-black/60">(E & O.E.)</span>
-                <div className="pt-10">
-                  <p className="font-bold text-[9.5px] uppercase tracking-wider text-black border-t border-black/40 pt-1">
-                    Authorised Signatory
+                <span className="text-[7px] text-black/60">(E & O.E.)</span>
+                <div className="pt-7">
+                  <p className="font-bold text-[8.5px] uppercase tracking-wider text-black border-t border-black pt-1">
+                    AUTHORISED SIGNATORY
                   </p>
                 </div>
               </div>
@@ -753,83 +786,101 @@ export function DDInvoicePrintModal({
           </div>
         </div>
 
-        {/* Bottom Controls Bar (No print): Strictly TWO sleek rounded buttons */}
-        <div className="px-6 py-4 bg-surface border-t border-outline-variant flex items-center justify-center gap-4 shrink-0 no-print relative">
-          {/* Share Action Dropdown / Popover */}
-          {showShareMenu && (
-            <div
-              ref={shareMenuRef}
-              className="absolute bottom-16 sm:bottom-18 bg-surface border border-outline-variant rounded-2xl shadow-2xl p-2.5 w-64 space-y-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150"
+        {/* Bottom Controls Bar (No print): Dropdown for Copy + 2 Rounded Buttons */}
+        <div className="px-6 py-3 bg-surface border-t border-outline-variant flex flex-wrap items-center justify-between gap-3 shrink-0 no-print relative">
+          {/* Left: Copy Type Dropdown */}
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold text-outline shrink-0">Copy Type:</label>
+            <select
+              value={copyType}
+              onChange={e => setCopyType(e.target.value as InvoiceCopy)}
+              className="text-xs font-bold py-2 px-3.5 rounded-full border border-outline-variant bg-surface text-on-surface shadow-xs cursor-pointer focus:ring-2 focus:ring-primary/20"
             >
-              <div className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-outline">
-                Share Invoice
+              <option value="ORIGINAL FOR RECIPIENT">Original (Recipient)</option>
+              <option value="DUPLICATE FOR TRANSPORTER">Duplicate (Transporter)</option>
+              <option value="TRIPLICATE FOR SUPPLIER">Transport / Triplicate</option>
+              <option value="OFFICE COPY">Office Copy</option>
+            </select>
+          </div>
+
+          {/* Right: Print & Share Buttons */}
+          <div className="flex items-center gap-3">
+            {/* Share Action Dropdown / Popover */}
+            {showShareMenu && (
+              <div
+                ref={shareMenuRef}
+                className="absolute right-6 bottom-16 bg-surface border border-outline-variant rounded-2xl shadow-2xl p-2.5 w-64 space-y-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150"
+              >
+                <div className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-outline">
+                  Share Invoice
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleWhatsApp}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-on-surface hover:bg-emerald-500/10 hover:text-emerald-600 rounded-xl transition-colors"
+                >
+                  <div className="h-7 w-7 rounded-lg bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0">
+                    <MessageSquare className="h-4 w-4" />
+                  </div>
+                  <span>WhatsApp</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleEmail}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-on-surface hover:bg-orange-500/10 hover:text-orange-600 rounded-xl transition-colors"
+                >
+                  <div className="h-7 w-7 rounded-lg bg-orange-500/15 text-orange-600 flex items-center justify-center shrink-0">
+                    <Mail className="h-4 w-4" />
+                  </div>
+                  <span>Email</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSMS}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-on-surface hover:bg-sky-500/10 hover:text-sky-600 rounded-xl transition-colors"
+                >
+                  <div className="h-7 w-7 rounded-lg bg-sky-500/15 text-sky-600 flex items-center justify-center shrink-0">
+                    <Phone className="h-4 w-4" />
+                  </div>
+                  <span>SMS</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCopySummary}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container rounded-xl transition-colors"
+                >
+                  <div className="h-7 w-7 rounded-lg bg-surface-container text-on-surface flex items-center justify-center shrink-0">
+                    {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
+                  </div>
+                  <span>{copied ? 'Copied to Clipboard!' : 'Copy Summary'}</span>
+                </button>
               </div>
+            )}
 
-              <button
-                type="button"
-                onClick={handleWhatsApp}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-on-surface hover:bg-emerald-500/10 hover:text-emerald-600 rounded-xl transition-colors"
-              >
-                <div className="h-7 w-7 rounded-lg bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0">
-                  <MessageSquare className="h-4 w-4" />
-                </div>
-                <span>WhatsApp</span>
-              </button>
+            {/* Button 1: Print (Sleek Rounded Button) */}
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="flex items-center justify-center gap-2 px-7 py-2 bg-slate-900 hover:bg-black text-white font-bold text-xs rounded-full shadow-md hover:shadow-lg transition-all active:scale-95"
+            >
+              <Printer className="h-4 w-4" />
+              <span>Print</span>
+            </button>
 
-              <button
-                type="button"
-                onClick={handleEmail}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-on-surface hover:bg-orange-500/10 hover:text-orange-600 rounded-xl transition-colors"
-              >
-                <div className="h-7 w-7 rounded-lg bg-orange-500/15 text-orange-600 flex items-center justify-center shrink-0">
-                  <Mail className="h-4 w-4" />
-                </div>
-                <span>Email</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleSMS}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-on-surface hover:bg-sky-500/10 hover:text-sky-600 rounded-xl transition-colors"
-              >
-                <div className="h-7 w-7 rounded-lg bg-sky-500/15 text-sky-600 flex items-center justify-center shrink-0">
-                  <Phone className="h-4 w-4" />
-                </div>
-                <span>SMS</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleCopySummary}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container rounded-xl transition-colors"
-              >
-                <div className="h-7 w-7 rounded-lg bg-surface-container text-on-surface flex items-center justify-center shrink-0">
-                  {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
-                </div>
-                <span>{copied ? 'Copied to Clipboard!' : 'Copy Summary'}</span>
-              </button>
-            </div>
-          )}
-
-          {/* Button 1: Print (Sleek Rounded Button) */}
-          <button
-            type="button"
-            onClick={handlePrint}
-            className="flex items-center justify-center gap-2 px-8 py-2.5 bg-slate-900 hover:bg-black text-white font-bold text-sm rounded-full shadow-md hover:shadow-lg transition-all active:scale-95"
-          >
-            <Printer className="h-4 w-4" />
-            <span>Print</span>
-          </button>
-
-          {/* Button 2: Share (Sleek Rounded Button with Dropdown Trigger) */}
-          <button
-            type="button"
-            onClick={() => setShowShareMenu(!showShareMenu)}
-            className="flex items-center justify-center gap-2 px-8 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold text-sm rounded-full shadow-md hover:shadow-lg transition-all active:scale-95"
-          >
-            <Share2 className="h-4 w-4" />
-            <span>Share</span>
-          </button>
+            {/* Button 2: Share (Sleek Rounded Button with Dropdown Trigger) */}
+            <button
+              type="button"
+              onClick={() => setShowShareMenu(!showShareMenu)}
+              className="flex items-center justify-center gap-2 px-7 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-full shadow-md hover:shadow-lg transition-all active:scale-95"
+            >
+              <Share2 className="h-4 w-4" />
+              <span>Share</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
