@@ -655,43 +655,15 @@ export function SimplifiedPurchaseInvoiceForm({
           </div>
         </div>
 
-        {/* Quick Actions Header */}
-        <div className="flex items-center gap-2 flex-wrap">
+        {/* Header Action */}
+        <div>
           <button
             type="button"
             onClick={onBack}
             disabled={isSubmitting}
-            className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-outline-variant hover:bg-background text-on-surface-variant transition-colors"
+            className="px-4 py-2 text-xs font-semibold rounded-xl border border-outline-variant hover:bg-background text-on-surface-variant transition-colors"
           >
             Cancel
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSave(true)}
-            disabled={isSubmitting}
-            className="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 shadow-xs transition-colors"
-            title="Save and open print voucher (Alt + P)"
-          >
-            <Printer className="h-4 w-4" />
-            Save & Print
-            <span className="ml-1 text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">P</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSave(false)}
-            disabled={isSubmitting}
-            className="px-5 py-2 text-xs font-bold rounded-xl bg-primary hover:bg-primary/90 text-white flex items-center gap-1.5 shadow-xs transition-colors"
-            title="Save invoice (Alt + S)"
-          >
-            {isSubmitting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
-            )}
-            Save
-            <span className="ml-1 text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">S</span>
           </button>
         </div>
       </div>
