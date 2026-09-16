@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  ShoppingCart, Plus, Search, Eye, Filter, Trash2,
-  X, Check, AlertCircle, Loader2, ArrowRight, CheckCircle2,
-  XCircle, FileText, Calendar, Building2, Package, Sparkles
+  ShoppingCart, Plus, Search, Eye, Filter,
+  Loader2, ArrowRight, CheckCircle2,
+  XCircle, Package, Printer, Edit2
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { PageHeader } from '@/components/shared/PageHeader'
@@ -12,8 +12,9 @@ import { StatusBadge } from '@/components/shared/StatusBadge'
 import { formatCurrency, formatDate } from '@/lib/formatters'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import { cn } from '@/lib/cn'
-import { DEFAULT_WAREHOUSE_ID, GST_RATES } from '@/lib/constants'
+import { DEFAULT_WAREHOUSE_ID } from '@/lib/constants'
+import { SimplifiedPurchaseInvoiceForm } from './SimplifiedPurchaseInvoiceForm'
+import { PurchaseInvoicePrintModal } from '@/components/invoices/PurchaseInvoicePrintModal'
 import type { PurchaseInvoice, PurchaseInvoiceLine, Supplier, Item, DocumentStatus } from '@/types/database.types'
 
 interface PurchaseInvoiceWithSupplier extends PurchaseInvoice {
@@ -22,14 +23,6 @@ interface PurchaseInvoiceWithSupplier extends PurchaseInvoice {
 
 interface PurchaseInvoiceLineWithItem extends PurchaseInvoiceLine {
   item: Item & { unit?: { symbol: string } }
-}
-
-interface InvoiceFormLine {
-  id: string
-  item_id: string
-  qty: number | ''
-  rate: number | ''
-  gst_rate: number
 }
 
 // ─── Data Hooks ─────────────────────────────────────────────────────────────
@@ -124,8 +117,9 @@ export function PurchaseInvoicesPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [selectedInvoice, setSelectedInvoice] = useState<PurchaseInvoiceWithSupplier | null>(null)
-  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [viewMode, setViewMode] = useState<'list' | 'form'>('list')
   const [editingInvoice, setEditingInvoice] = useState<PurchaseInvoiceWithSupplier | null>(null)
+  const [printingInvoice, setPrintingInvoice] = useState<PurchaseInvoiceWithSupplier | null>(null)
 
   const { data: invoices = [], isLoading: invoicesLoading } = usePurchaseInvoices(companyId)
   const { data: suppliers = [] } = useSuppliers(companyId)
@@ -134,6 +128,16 @@ export function PurchaseInvoicesPage() {
   // Selected invoice lines for detail modal
   const { data: selectedLines = [], isLoading: linesLoading } = usePurchaseInvoiceLines(
     selectedInvoice?.id || null
+  )
+
+  // Lines for printing
+  const { data: printLines = [] } = usePurchaseInvoiceLines(
+    printingInvoice?.id || null
+  )
+
+  // Lines for editing
+  const { data: editingLines = [] } = usePurchaseInvoiceLines(
+    editingInvoice?.id || null
   )
 
   const filtered = invoices.filter(inv => {
@@ -350,6 +354,36 @@ export function PurchaseInvoicesPage() {
     },
   })
 
+  // If in create or edit form view mode
+  if (viewMode === 'form') {
+    return (
+      <SimplifiedPurchaseInvoiceForm
+        companyId={companyId}
+        userId={userId}
+        existingInvoiceCount={invoices.length}
+        suppliers={suppliers}
+        items={items}
+        editingInvoice={editingInvoice}
+        existingLines={editingLines}
+        onBack={() => {
+          setViewMode('list')
+          setEditingInvoice(null)
+        }}
+        onSuccess={(savedInv, _, autoPrint) => {
+          setViewMode('list')
+          setEditingInvoice(null)
+          queryClient.invalidateQueries({ queryKey: ['purchase_invoices', companyId] })
+          queryClient.invalidateQueries({ queryKey: ['items', companyId] })
+          queryClient.invalidateQueries({ queryKey: ['items_for_purchase', companyId] })
+          queryClient.invalidateQueries({ queryKey: ['suppliers_list', companyId] })
+          if (autoPrint) {
+            setPrintingInvoice(savedInv as PurchaseInvoiceWithSupplier)
+          }
+        }}
+      />
+    )
+  }
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -362,7 +396,7 @@ export function PurchaseInvoicesPage() {
                 icon: Plus,
                 onClick: () => {
                   setEditingInvoice(null)
-                  setShowCreateModal(true)
+                  setViewMode('form')
                 },
               }
             : undefined
@@ -448,7 +482,7 @@ export function PurchaseInvoicesPage() {
                     label: 'Record First Purchase Bill',
                     onClick: () => {
                       setEditingInvoice(null)
-                      setShowCreateModal(true)
+                      setViewMode('form')
                     },
                   }
                 : undefined
@@ -503,14 +537,40 @@ export function PurchaseInvoicesPage() {
                       <StatusBadge status={inv.status} />
                     </td>
                     <td className="py-3 px-4 text-center">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedInvoice(inv)}
-                        className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 bg-primary/10 hover:bg-primary/20 px-2.5 py-1.5 rounded-md transition-colors"
-                      >
-                        <Eye className="h-3.5 w-3.5" />
-                        View
-                      </button>
+                      <div className="inline-flex items-center gap-1.5 justify-center">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedInvoice(inv)}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 bg-primary/10 hover:bg-primary/20 px-2.5 py-1.5 rounded-lg transition-colors"
+                          title="View Details"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          View
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPrintingInvoice(inv)}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2 py-1.5 rounded-lg transition-colors"
+                          title="Print Voucher (A4)"
+                        >
+                          <Printer className="h-3.5 w-3.5" />
+                          Print
+                        </button>
+                        {isManager && (inv.status === 'draft' || inv.status === 'submitted') && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingInvoice(inv)
+                              setViewMode('form')
+                            }}
+                            className="inline-flex items-center gap-1 text-xs font-medium text-on-surface-variant hover:text-on-surface bg-surface border border-outline-variant hover:bg-background px-2 py-1.5 rounded-lg transition-colors"
+                            title="Edit Bill"
+                          >
+                            <Edit2 className="h-3.5 w-3.5" />
+                            Edit
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -754,6 +814,31 @@ export function PurchaseInvoicesPage() {
                         Cancel Bill
                       </button>
                     )}
+
+                    <button
+                      type="button"
+                      onClick={() => setPrintingInvoice(selectedInvoice)}
+                      className="px-3.5 py-2 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded-lg flex items-center gap-1.5 transition-colors"
+                    >
+                      <Printer className="h-3.5 w-3.5" />
+                      Print Voucher
+                    </button>
+
+                    {isManager && (selectedInvoice.status === 'draft' || selectedInvoice.status === 'submitted') && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const inv = selectedInvoice
+                          setSelectedInvoice(null)
+                          setEditingInvoice(inv)
+                          setViewMode('form')
+                        }}
+                        className="px-3.5 py-2 text-xs font-semibold text-on-surface-variant bg-surface border border-outline-variant hover:bg-background rounded-lg flex items-center gap-1.5 transition-colors"
+                      >
+                        <Edit2 className="h-3.5 w-3.5" />
+                        Edit Bill
+                      </button>
+                    )}
                   </div>
 
                   <button
@@ -770,495 +855,14 @@ export function PurchaseInvoicesPage() {
         </div>
       )}
 
-      {/* Multi-line Create Invoice Modal */}
-      {showCreateModal && isManager && (
-        <CreateInvoiceModal
-          companyId={companyId}
-          userId={userId}
-          existingInvoiceCount={invoices.length}
-          suppliers={suppliers}
-          items={items}
-          onClose={() => setShowCreateModal(false)}
-          onSuccess={() => {
-            setShowCreateModal(false)
-            queryClient.invalidateQueries({ queryKey: ['purchase_invoices', companyId] })
-          }}
+      {/* Print Voucher Modal */}
+      {printingInvoice && (
+        <PurchaseInvoicePrintModal
+          invoice={printingInvoice}
+          lines={printLines}
+          onClose={() => setPrintingInvoice(null)}
         />
       )}
-    </div>
-  )
-}
-
-// ─── Create Invoice Modal ───────────────────────────────────────────────────
-
-interface CreateInvoiceModalProps {
-  companyId: string
-  userId: string
-  existingInvoiceCount: number
-  suppliers: Supplier[]
-  items: (Item & { unit?: { symbol: string } })[]
-  onClose: () => void
-  onSuccess: () => void
-}
-
-function CreateInvoiceModal({
-  companyId,
-  userId,
-  existingInvoiceCount,
-  suppliers,
-  items,
-  onClose,
-  onSuccess,
-}: CreateInvoiceModalProps) {
-  const [supplierId, setSupplierId] = useState(suppliers[0]?.id || '')
-  const [supplierInvoiceNumber, setSupplierInvoiceNumber] = useState('')
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
-  const [dueDate, setDueDate] = useState('')
-  const [notes, setNotes] = useState('')
-
-  // Sequence generator
-  const now = new Date()
-  const year = now.getFullYear() % 100
-  const nextYear = year + 1
-  const fy = `${year}${nextYear}`
-  const generatedNumber = `PUR-${fy}-${String(existingInvoiceCount + 1).padStart(4, '0')}`
-  const [invoiceNumber, setInvoiceNumber] = useState(generatedNumber)
-
-  // Dynamic lines
-  const firstItem = items[0]
-  const [lines, setLines] = useState<InvoiceFormLine[]>([
-    {
-      id: 'l-1',
-      item_id: firstItem?.id || '',
-      qty: 1,
-      rate: firstItem?.purchase_rate || 0,
-      gst_rate: firstItem?.gst_rate || 18,
-    },
-  ])
-
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // Line helpers
-  const handleAddLine = () => {
-    const defaultItem = items[0]
-    setLines(prev => [
-      ...prev,
-      {
-        id: `line-${Date.now()}-${Math.random()}`,
-        item_id: defaultItem?.id || '',
-        qty: 1,
-        rate: defaultItem?.purchase_rate || 0,
-        gst_rate: defaultItem?.gst_rate || 18,
-      },
-    ])
-  }
-
-  const handleRemoveLine = (idx: number) => {
-    setLines(prev => prev.filter((_, i) => i !== idx))
-  }
-
-  const handleLineChange = (idx: number, field: keyof InvoiceFormLine, val: any) => {
-    setLines(prev => {
-      const copy = [...prev]
-      copy[idx] = { ...copy[idx], [field]: val }
-      // If item changes, auto fill rate and gst_rate
-      if (field === 'item_id') {
-        const item = items.find(i => i.id === val)
-        if (item) {
-          copy[idx].rate = item.purchase_rate
-          copy[idx].gst_rate = item.gst_rate
-        }
-      }
-      return copy
-    })
-  }
-
-  // Calculate totals
-  let totalTaxable = 0
-  let totalCgst = 0
-  let totalSgst = 0
-
-  lines.forEach(l => {
-    const q = Number(l.qty) || 0
-    const r = Number(l.rate) || 0
-    const taxable = q * r
-    const tax = taxable * (l.gst_rate / 100)
-    totalTaxable += taxable
-    totalCgst += tax / 2
-    totalSgst += tax / 2
-  })
-
-  const grandTotal = totalTaxable + totalCgst + totalSgst
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!supplierId) {
-      toast.error('Please select a supplier')
-      return
-    }
-
-    if (lines.length === 0) {
-      toast.error('Please add at least one line item')
-      return
-    }
-
-    for (let i = 0; i < lines.length; i++) {
-      const l = lines[i]
-      if (!l.item_id) {
-        toast.error(`Please select an item on line ${i + 1}`)
-        return
-      }
-      if (l.qty === '' || Number(l.qty) <= 0) {
-        toast.error(`Please enter a valid quantity on line ${i + 1}`)
-        return
-      }
-      if (l.rate === '' || Number(l.rate) < 0) {
-        toast.error(`Please enter a valid rate on line ${i + 1}`)
-        return
-      }
-    }
-
-    setIsSubmitting(true)
-    try {
-      // 1. Insert invoice header
-      const { data: newInvoice, error: invErr } = await (supabase
-        .from('purchase_invoices') as any)
-        .insert({
-          company_id: companyId,
-          invoice_number: invoiceNumber.trim(),
-          supplier_invoice_number: supplierInvoiceNumber.trim() || null,
-          supplier_id: supplierId,
-          date: date,
-          due_date: dueDate || null,
-          taxable_amount: totalTaxable,
-          cgst_amount: totalCgst,
-          sgst_amount: totalSgst,
-          total_amount: grandTotal,
-          status: 'draft',
-          notes: notes.trim() || null,
-          created_by: userId,
-        })
-        .select()
-        .single()
-
-      if (invErr) throw invErr
-
-      // 2. Insert line items
-      const linesToInsert = lines.map(l => {
-        const q = Number(l.qty) || 0
-        const r = Number(l.rate) || 0
-        const taxable = q * r
-        const tax = taxable * (l.gst_rate / 100)
-        return {
-          invoice_id: newInvoice.id,
-          item_id: l.item_id,
-          qty: q,
-          rate: r,
-          taxable_amount: taxable,
-          gst_rate: l.gst_rate,
-          cgst_amount: tax / 2,
-          sgst_amount: tax / 2,
-          line_total: taxable + tax,
-        }
-      })
-
-      const { error: lineErr } = await (supabase.from('purchase_invoice_lines') as any)
-        .insert(linesToInsert)
-
-      if (lineErr) throw lineErr
-
-      toast.success('Purchase invoice draft created successfully')
-      onSuccess()
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to create purchase invoice')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <div className="bg-surface rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-outline-variant my-8">
-        <div className="flex items-center justify-between p-5 border-b border-outline-variant sticky top-0 bg-surface z-10">
-          <div>
-            <h2 className="text-lg font-bold text-on-surface">Record Purchase Invoice</h2>
-            <p className="text-xs text-outline mt-0.5">
-              Enter incoming vendor bill details, line item quantities, and GST rates
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1 rounded-lg text-outline hover:text-on-surface hover:bg-background"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Header row */}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-on-surface-variant mb-1">
-                Select Supplier <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={supplierId}
-                onChange={e => setSupplierId(e.target.value)}
-                required
-                className="w-full px-3 py-2 text-sm bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              >
-                {suppliers.map(s => (
-                  <option key={s.id} value={s.id}>
-                    {s.name} ({s.city})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-on-surface-variant mb-1">
-                System Invoice #
-              </label>
-              <input
-                type="text"
-                required
-                value={invoiceNumber}
-                onChange={e => setInvoiceNumber(e.target.value)}
-                className="w-full px-3 py-2 text-sm font-mono bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-on-surface-variant mb-1">
-                Vendor Bill / Ref #
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. UT/2526/9021"
-                value={supplierInvoiceNumber}
-                onChange={e => setSupplierInvoiceNumber(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-on-surface-variant mb-1">
-                Invoice Date <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                required
-                value={date}
-                onChange={e => setDate(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-on-surface-variant mb-1">
-                Due Date
-              </label>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={e => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-on-surface-variant mb-1">
-                Notes / Delivery Truck No
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. WB-41-9876, 500 bags Portland Cement"
-                value={notes}
-                onChange={e => setNotes(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              />
-            </div>
-          </div>
-
-          {/* Line Items Table */}
-          <div className="space-y-2 pt-2">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-bold uppercase tracking-wider text-outline">
-                Bill Items ({lines.length})
-              </label>
-              <button
-                type="button"
-                onClick={handleAddLine}
-                className="text-xs font-semibold text-primary hover:text-primary/80 flex items-center gap-1"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                Add Item Line
-              </button>
-            </div>
-
-            <div className="border border-outline-variant rounded-xl overflow-hidden bg-background/50">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-background border-b border-outline-variant font-semibold text-on-surface-variant">
-                  <tr>
-                    <th className="py-2.5 px-3">Item Name</th>
-                    <th className="py-2.5 px-2 w-24 text-right">Quantity</th>
-                    <th className="py-2.5 px-2 w-28 text-right">Rate (₹)</th>
-                    <th className="py-2.5 px-2 w-24 text-right">GST %</th>
-                    <th className="py-2.5 px-3 w-32 text-right">Line Total</th>
-                    <th className="py-2.5 px-2 w-10 text-center"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-outline-variant/60 bg-surface">
-                  {lines.map((line, idx) => {
-                    const q = Number(line.qty) || 0
-                    const r = Number(line.rate) || 0
-                    const taxable = q * r
-                    const tax = taxable * (line.gst_rate / 100)
-                    const total = taxable + tax
-
-                    return (
-                      <tr key={line.id} className="hover:bg-background/40">
-                        <td className="p-2">
-                          <select
-                            value={line.item_id}
-                            onChange={e => handleLineChange(idx, 'item_id', e.target.value)}
-                            required
-                            className="w-full px-2 py-1.5 text-xs bg-surface border border-outline-variant rounded-md focus:ring-1 focus:ring-primary"
-                          >
-                            {items.map(it => (
-                              <option key={it.id} value={it.id}>
-                                {it.name} ({it.sku})
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-                        <td className="p-2">
-                          <input
-                            type="number"
-                            step="any"
-                            min="0.001"
-                            value={line.qty}
-                            onChange={e =>
-                              handleLineChange(
-                                idx,
-                                'qty',
-                                e.target.value === '' ? '' : Number(e.target.value)
-                              )
-                            }
-                            required
-                            className="w-full px-2 py-1.5 text-xs text-right bg-surface border border-outline-variant rounded-md focus:ring-1 focus:ring-primary"
-                          />
-                        </td>
-                        <td className="p-2">
-                          <input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={line.rate}
-                            onChange={e =>
-                              handleLineChange(
-                                idx,
-                                'rate',
-                                e.target.value === '' ? '' : Number(e.target.value)
-                              )
-                            }
-                            required
-                            className="w-full px-2 py-1.5 text-xs text-right bg-surface border border-outline-variant rounded-md focus:ring-1 focus:ring-primary"
-                          />
-                        </td>
-                        <td className="p-2">
-                          <select
-                            value={line.gst_rate}
-                            onChange={e =>
-                              handleLineChange(idx, 'gst_rate', Number(e.target.value))
-                            }
-                            className="w-full px-2 py-1.5 text-xs bg-surface border border-outline-variant rounded-md focus:ring-1 focus:ring-primary text-right"
-                          >
-                            {GST_RATES.map(rate => (
-                              <option key={rate} value={rate}>
-                                {rate}%
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-                        <td className="p-2 text-right font-bold text-on-surface">
-                          {formatCurrency(total)}
-                        </td>
-                        <td className="p-2 text-center">
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveLine(idx)}
-                            disabled={lines.length === 1}
-                            className="p-1 text-outline hover:text-red-600 disabled:opacity-30 disabled:cursor-not-allowed rounded"
-                            title="Remove line"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Calculations Summary Box */}
-          <div className="bg-background rounded-xl p-4 border border-outline-variant flex flex-col sm:flex-row justify-between gap-4 text-xs">
-            <div className="space-y-1 text-outline">
-              <p>💡 Intra-state purchases calculate CGST (50%) and SGST (50%) automatically.</p>
-              <p>Posting this bill will automatically add these quantities to your warehouse stock.</p>
-            </div>
-            <div className="space-y-1.5 sm:w-64">
-              <div className="flex justify-between text-on-surface-variant">
-                <span>Taxable Amount:</span>
-                <span className="font-semibold text-on-surface">
-                  {formatCurrency(totalTaxable)}
-                </span>
-              </div>
-              <div className="flex justify-between text-on-surface-variant">
-                <span>Total GST:</span>
-                <span className="font-semibold text-on-surface">
-                  {formatCurrency(totalCgst + totalSgst)}
-                </span>
-              </div>
-              <div className="h-px bg-outline-variant/60 my-1" />
-              <div className="flex justify-between text-sm font-bold text-on-surface">
-                <span>Grand Total:</span>
-                <span className="text-primary">{formatCurrency(grandTotal)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex justify-end gap-3 pt-3 border-t border-outline-variant">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isSubmitting}
-              className="px-4 py-2 border border-outline-variant text-on-surface-variant text-sm font-medium rounded-lg hover:bg-background"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-5 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-medium rounded-lg shadow-xs flex items-center gap-2"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Saving Invoice...
-                </>
-              ) : (
-                'Save as Draft'
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
     </div>
   )
 }
