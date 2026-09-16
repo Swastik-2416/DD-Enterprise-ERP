@@ -366,8 +366,8 @@ export function DashboardPage() {
         />
       </div>
 
-      {/* Charts & Production */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      {/* Charts */}
+      <div className="w-full">
         {/* Real Revenue Chart */}
         <div className="bg-surface rounded-xl border border-outline-variant p-5 shadow-xs">
           <div className="flex items-center justify-between mb-4">
@@ -391,56 +391,6 @@ export function DashboardPage() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-
-        {/* Real Recent Production Orders */}
-        <div className="bg-surface rounded-xl border border-outline-variant p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-on-surface">Recent Production Batches</h2>
-            <Link
-              to="/manufacturing/production-orders"
-              className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
-            >
-              View All <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
-
-          {recentProduction.length === 0 ? (
-            <div className="py-12 text-center text-xs text-outline space-y-2">
-              <Factory className="h-8 w-8 text-outline mx-auto stroke-1" />
-              <p>No production batches scheduled yet.</p>
-              <Link
-                to="/manufacturing/production-orders"
-                className="inline-block px-3 py-1.5 bg-primary/10 text-primary font-semibold rounded-lg hover:bg-primary/20 transition-colors"
-              >
-                Schedule First Batch
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {recentProduction.map(order => (
-                <div
-                  key={order.id}
-                  className="flex items-center justify-between py-2 border-b border-outline-variant/60 last:border-0"
-                >
-                  <div>
-                    <p className="text-sm font-semibold text-on-surface">
-                      {order.bom?.finished_good?.name || order.order_number}
-                    </p>
-                    <p className="text-xs text-outline">
-                      {order.order_number} · {formatDate(order.planned_date)} · {order.shift || 'General Shift'}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-on-surface">
-                      {formatNumber(order.actual_qty ?? order.planned_qty, 0)} pcs
-                    </p>
-                    <StatusBadge status={order.status} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Low Stock Real Alert Table */}
@@ -449,7 +399,7 @@ export function DashboardPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-on-surface flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-amber-600" />
-              Low Stock Alerts (Replenishment Required)
+              Low Stock Alerts (Raw Materials & Finished Goods)
             </h2>
             <span className="bg-red-100 text-red-700 text-xs px-2.5 py-0.5 rounded-full font-semibold">
               {lowStock.length} items
@@ -460,6 +410,7 @@ export function DashboardPage() {
               <thead>
                 <tr className="border-b border-outline-variant/60 text-xs uppercase text-outline">
                   <th className="text-left py-2">Item Name</th>
+                  <th className="text-left py-2">Type</th>
                   <th className="text-left py-2">SKU</th>
                   <th className="text-right py-2">Current On Hand</th>
                   <th className="text-right py-2">Min Level</th>
@@ -470,6 +421,7 @@ export function DashboardPage() {
                 {lowStock.map(item => (
                   <tr key={item.id} className="hover:bg-background/50">
                     <td className="py-2.5 font-medium text-on-surface">{item.name}</td>
+                    <td className="py-2.5 text-xs text-outline capitalize">{item.type.replace('_', ' ')}</td>
                     <td className="py-2.5 font-mono text-xs text-outline">{item.sku}</td>
                     <td className="py-2.5 text-right text-red-600 font-bold">
                       {formatNumber(item.qty_on_hand, 0)}
@@ -488,102 +440,6 @@ export function DashboardPage() {
         </div>
       )}
 
-      {/* Recent Real Transactions */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* Sales Invoices */}
-        <div className="bg-surface rounded-xl border border-outline-variant p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-on-surface">Recent Sales Invoices</h2>
-            <Link
-              to="/sales/invoices"
-              className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
-            >
-              View All <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
-
-          {recentSales.length === 0 ? (
-            <div className="py-10 text-center text-xs text-outline space-y-2">
-              <p>No sales invoices created yet.</p>
-              <Link
-                to="/sales/invoices"
-                className="inline-block px-3 py-1.5 bg-primary/10 text-primary font-semibold rounded-lg hover:bg-primary/20 transition-colors"
-              >
-                Create First Sales Invoice
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {recentSales.map(inv => (
-                <div
-                  key={inv.id}
-                  className="flex items-center justify-between py-2 border-b border-outline-variant/60 last:border-0"
-                >
-                  <div>
-                    <p className="text-sm font-semibold text-on-surface">{inv.invoice_number}</p>
-                    <p className="text-xs text-outline">
-                      {inv.customer?.name || 'Customer'} · {formatDate(inv.date)}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-on-surface">
-                      {formatCurrency(inv.total_amount)}
-                    </p>
-                    <StatusBadge status={inv.status} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Purchase Invoices */}
-        <div className="bg-surface rounded-xl border border-outline-variant p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-on-surface">Recent Purchase Bills</h2>
-            <Link
-              to="/procurement/purchase-invoices"
-              className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
-            >
-              View All <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
-
-          {recentPurchases.length === 0 ? (
-            <div className="py-10 text-center text-xs text-outline space-y-2">
-              <p>No purchase bills recorded yet.</p>
-              <Link
-                to="/procurement/purchase-invoices"
-                className="inline-block px-3 py-1.5 bg-primary/10 text-primary font-semibold rounded-lg hover:bg-primary/20 transition-colors"
-              >
-                Record Purchase Bill
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {recentPurchases.map(inv => (
-                <div
-                  key={inv.id}
-                  className="flex items-center justify-between py-2 border-b border-outline-variant/60 last:border-0"
-                >
-                  <div>
-                    <p className="text-sm font-semibold text-on-surface">{inv.invoice_number}</p>
-                    <p className="text-xs text-outline">
-                      {inv.supplier?.name || 'Vendor'} · {formatDate(inv.date)}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-on-surface">
-                      {formatCurrency(inv.total_amount)}
-                    </p>
-                    <StatusBadge status={inv.status} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   )
 }
