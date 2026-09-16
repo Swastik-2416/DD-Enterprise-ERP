@@ -127,6 +127,8 @@ export interface Supplier {
   created_at: string
 }
 
+export type Vendor = Supplier
+
 export interface Customer {
   id: string
   company_id: string

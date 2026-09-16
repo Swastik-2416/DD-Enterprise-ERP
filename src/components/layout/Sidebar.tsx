@@ -28,7 +28,7 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     label: 'Stakeholders', icon: Users, children: [
-      { label: 'Suppliers', icon: Building2, path: '/stakeholders/suppliers' },
+      { label: 'Vendors', icon: Building2, path: '/stakeholders/vendors' },
       { label: 'Customers', icon: UserCheck, path: '/stakeholders/customers' },
       { label: 'Employees', icon: Users, path: '/stakeholders/employees' },
       { label: 'Labour', icon: Users, path: '/stakeholders/labour' },
@@ -60,7 +60,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: 'Payments', icon: CreditCard, children: [
       { label: 'Customer Receipts', icon: CreditCard, path: '/payments/inward' },
-      { label: 'Supplier Payments', icon: CreditCard, path: '/payments/outward' },
+      { label: 'Vendor Payments', icon: CreditCard, path: '/payments/outward' },
     ]
   },
   {
@@ -78,7 +78,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: 'Finance', icon: TrendingUp, children: [
       { label: 'Customer Ledger', icon: TrendingUp, path: '/finance/customer-ledger' },
-      { label: 'Supplier Ledger', icon: TrendingUp, path: '/finance/supplier-ledger' },
+      { label: 'Vendor Ledger', icon: TrendingUp, path: '/finance/vendor-ledger' },
       { label: 'Outstanding Aging', icon: Clock, path: '/finance/aging' },
       { label: 'Expenses', icon: TrendingUp, path: '/finance/expenses' },
       { label: 'Other Income', icon: TrendingUp, path: '/finance/other-income' },

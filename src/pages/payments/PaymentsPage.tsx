@@ -205,7 +205,7 @@ export function PaymentsPage({ defaultType }: PaymentsPageProps) {
         <div className="bg-surface border border-outline-variant rounded-xl p-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-outline uppercase tracking-wider">
-              Supplier Payments
+              Vendor Payments
             </span>
             <div className="h-7 w-7 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600">
               <ArrowUpRight className="h-4 w-4" />
@@ -275,7 +275,7 @@ export function PaymentsPage({ defaultType }: PaymentsPageProps) {
                 : 'text-on-surface-variant hover:text-on-surface'
             )}
           >
-            Supplier Payments
+            Vendor Payments
           </button>
         </div>
 
@@ -315,7 +315,7 @@ export function PaymentsPage({ defaultType }: PaymentsPageProps) {
           <EmptyState
             icon={CreditCard}
             title={search ? 'No payments match your search' : 'No payment vouchers recorded'}
-            description="Record incoming payments from client buyers or outgoing disbursements to raw material suppliers."
+            description="Record incoming payments from client buyers or outgoing disbursements to raw material vendors."
             action={
               isManager
                 ? {
@@ -346,7 +346,7 @@ export function PaymentsPage({ defaultType }: PaymentsPageProps) {
                   const partyName =
                     p.party_type === 'customer'
                       ? p.customer?.name ?? 'Customer'
-                      : p.supplier?.name ?? 'Supplier'
+                      : p.supplier?.name ?? 'Vendor'
 
                   return (
                     <tr key={p.id} className="hover:bg-background/50 transition-colors">
@@ -602,7 +602,7 @@ function RecordPaymentModal({
       return
     }
     if (partyType === 'supplier' && !supplierId) {
-      toast.error('Please select a supplier')
+      toast.error('Please select a vendor')
       return
     }
 
@@ -651,7 +651,7 @@ function RecordPaymentModal({
       toast.success(
         type === 'inward'
           ? 'Customer receipt voucher saved & allocated!'
-          : 'Supplier payment voucher saved!'
+          : 'Vendor payment voucher saved!'
       )
       onSuccess()
     } catch (err: any) {
@@ -696,7 +696,7 @@ function RecordPaymentModal({
                 className="w-full px-3 py-2 text-sm bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
               >
                 <option value="inward">Inward (Customer Receipt)</option>
-                <option value="outward">Outward (Supplier Payment)</option>
+                <option value="outward">Outward (Vendor Payment)</option>
               </select>
             </div>
 
@@ -716,7 +716,7 @@ function RecordPaymentModal({
           {/* Party Selection */}
           <div>
             <label className="block text-xs font-semibold text-on-surface-variant mb-1">
-              Select {partyType === 'customer' ? 'Customer' : 'Supplier'}{' '}
+              Select {partyType === 'customer' ? 'Customer' : 'Vendor'}{' '}
               <span className="text-red-500">*</span>
             </label>
             {partyType === 'customer' ? (

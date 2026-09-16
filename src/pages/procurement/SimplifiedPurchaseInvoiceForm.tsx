@@ -342,7 +342,7 @@ export function SimplifiedPurchaseInvoiceForm({
     if (isSubmitting) return
 
     if (!vendorName.trim()) {
-      toast.error('Please enter the Vendor / Supplier name (M/S)')
+      toast.error('Please enter the Vendor name (M/S)')
       vendorInputRef.current?.focus()
       return
     }
@@ -711,7 +711,7 @@ export function SimplifiedPurchaseInvoiceForm({
                   />
                   <div className="absolute left-0 right-0 top-full mt-1 bg-surface border border-outline-variant rounded-xl shadow-xl max-h-56 overflow-y-auto z-20 divide-y divide-outline-variant/40">
                     <div className="p-2 text-[11px] font-semibold text-outline uppercase tracking-wider bg-background/50">
-                      Existing Registered Suppliers ({filteredSuppliers.length})
+                      Existing Registered Vendors ({filteredSuppliers.length})
                     </div>
                     {filteredSuppliers.map(s => (
                       <button
@@ -878,7 +878,7 @@ export function SimplifiedPurchaseInvoiceForm({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-on-surface-variant mb-1">
-                  Supplier's Bill / Ref #
+                  Vendor's Bill / Ref #
                 </label>
                 <input
                   type="text"

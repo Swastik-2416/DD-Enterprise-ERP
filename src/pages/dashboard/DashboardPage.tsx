@@ -321,7 +321,7 @@ export function DashboardPage() {
         <KpiCard
           title="Raw Material Vendors"
           value={String(liveSuppliers.length)}
-          subtitle="Cement, sand, fly ash suppliers"
+          subtitle="Cement, sand, fly ash vendors"
           icon={Building2}
           color="amber"
         />
@@ -358,7 +358,7 @@ export function DashboardPage() {
           color="amber"
         />
         <KpiCard
-          title="Supplier Payables"
+          title="Vendor Payables"
           value={formatCurrency(totalPayables)}
           subtitle="outstanding to vendors"
           icon={TrendingDown}

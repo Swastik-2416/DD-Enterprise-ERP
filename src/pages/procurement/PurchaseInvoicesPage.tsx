@@ -440,7 +440,7 @@ export function PurchaseInvoicesPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-outline" />
           <input
             type="text"
-            placeholder="Search by invoice #, supplier, or items..."
+            placeholder="Search by invoice #, vendor, or items..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2 border border-outline-variant rounded-lg text-sm bg-surface focus:outline-hidden focus:ring-2 focus:ring-primary/20 focus:border-primary"
@@ -495,8 +495,8 @@ export function PurchaseInvoicesPage() {
                 <tr>
                   <th className="py-3 px-4">Invoice #</th>
                   <th className="py-3 px-4">Date</th>
-                  <th className="py-3 px-4">Supplier</th>
-                  <th className="py-3 px-4">Supplier Bill #</th>
+                  <th className="py-3 px-4">Vendor</th>
+                  <th className="py-3 px-4">Vendor Bill #</th>
                   <th className="py-3 px-4 text-right">Taxable</th>
                   <th className="py-3 px-4 text-right">CGST + SGST</th>
                   <th className="py-3 px-4 text-right">Total Amount</th>
@@ -608,7 +608,7 @@ export function PurchaseInvoicesPage() {
               {/* Supplier Info */}
               <div className="bg-background rounded-xl p-4 border border-outline-variant">
                 <div className="text-xs uppercase font-bold tracking-wider text-outline mb-2">
-                  Supplier / Vendor Details
+                  Vendor Details
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                   <div>
@@ -695,7 +695,7 @@ export function PurchaseInvoicesPage() {
               {/* Financial Totals */}
               <div className="bg-surface border border-outline-variant rounded-xl p-4 space-y-2 text-sm">
                 <div className="flex justify-between text-on-surface-variant">
-                  <span>Supplier Ref Bill No:</span>
+                  <span>Vendor Ref Bill No:</span>
                   <span className="font-mono font-medium text-on-surface">
                     {selectedInvoice.supplier_invoice_number || 'N/A'}
                   </span>

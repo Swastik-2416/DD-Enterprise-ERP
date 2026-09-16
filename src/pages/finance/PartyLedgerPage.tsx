@@ -329,7 +329,7 @@ export function PartyLedgerPage({ partyType }: PartyLedgerPageProps) {
         <div>
           <h1 className="text-2xl font-bold text-on-surface flex items-center gap-2">
             <FileText className="h-6 w-6 text-primary" />
-            {isCustomer ? 'Customer Statement of Account' : 'Supplier Statement of Account'}
+            {isCustomer ? 'Customer Statement of Account' : 'Vendor Statement of Account'}
           </h1>
           <p className="text-sm text-outline mt-0.5">
             {isCustomer
@@ -364,7 +364,7 @@ export function PartyLedgerPage({ partyType }: PartyLedgerPageProps) {
           {/* Party Selector */}
           <div className="md:col-span-2">
             <label className="block text-xs font-semibold uppercase tracking-wider text-outline mb-1.5">
-              Select {isCustomer ? 'Customer' : 'Supplier / Vendor'}
+              Select {isCustomer ? 'Customer' : 'Vendor'}
             </label>
             <div className="relative">
               <select
@@ -372,7 +372,7 @@ export function PartyLedgerPage({ partyType }: PartyLedgerPageProps) {
                 onChange={e => setSelectedPartyId(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 bg-surface-container/40 border border-outline-variant rounded-xl text-sm font-medium text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
               >
-                <option value="" disabled>-- Select a {isCustomer ? 'Customer' : 'Supplier'} --</option>
+                <option value="" disabled>-- Select a {isCustomer ? 'Customer' : 'Vendor'} --</option>
                 {parties.map(p => (
                   <option key={p.id} value={p.id}>
                     {p.name} {p.city ? `(${p.city})` : ''} {p.gstin ? `· GSTIN: ${p.gstin}` : ''}
@@ -489,7 +489,7 @@ export function PartyLedgerPage({ partyType }: PartyLedgerPageProps) {
               </p>
               <span className="text-[11px] text-outline">
                 {closingBalance > 0
-                  ? isCustomer ? 'Receivable from Customer' : 'Payable to Supplier'
+                  ? isCustomer ? 'Receivable from Customer' : 'Payable to Vendor'
                   : 'Settled / Nil'}
               </span>
             </div>
@@ -589,8 +589,8 @@ export function PartyLedgerPage({ partyType }: PartyLedgerPageProps) {
       ) : (
         <div className="bg-surface rounded-2xl border border-outline-variant p-12 text-center text-outline space-y-2">
           <Building2 className="h-10 w-10 mx-auto text-outline/50" />
-          <p className="text-base font-semibold text-on-surface">No {isCustomer ? 'Customers' : 'Suppliers'} Found</p>
-          <p className="text-xs">Create your first {isCustomer ? 'customer' : 'supplier'} to view their financial statement of account.</p>
+          <p className="text-base font-semibold text-on-surface">No {isCustomer ? 'Customers' : 'Vendors'} Found</p>
+          <p className="text-xs">Create your first {isCustomer ? 'customer' : 'vendor'} to view their financial statement of account.</p>
         </div>
       )}
     </div>

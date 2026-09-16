@@ -64,7 +64,7 @@ export function PurchaseInvoicePrintModal({
       `PURCHASE INVOICE: ${invoice.invoice_number}\n` +
       `Vendor: ${invoice.supplier?.name || 'Unknown'}\n` +
       `Date: ${formatDate(invoice.date)}\n` +
-      `Supplier Bill Ref: ${invoice.supplier_invoice_number || 'N/A'}\n` +
+      `Vendor Bill Ref: ${invoice.supplier_invoice_number || 'N/A'}\n` +
       `Total Value: ${formatCurrency(grandTotal)}\n` +
       `Payment Type: ${paymentType}`
     navigator.clipboard.writeText(text)
@@ -187,7 +187,7 @@ export function PurchaseInvoicePrintModal({
                   Vendor (M/S):
                 </div>
                 <div className="font-bold text-sm text-gray-900">
-                  {invoice.supplier?.name || 'Unregistered Supplier'}
+                  {invoice.supplier?.name || 'Unregistered Vendor'}
                 </div>
                 <div className="text-gray-600 mt-0.5 whitespace-pre-line">
                   {invoice.supplier?.address || 'Address not recorded'}
@@ -209,7 +209,7 @@ export function PurchaseInvoicePrintModal({
                   Bill & Inward Details:
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Supplier Ref Bill #:</span>
+                  <span className="text-gray-600">Vendor Ref Bill #:</span>
                   <span className="font-mono font-bold text-gray-900">{invoice.supplier_invoice_number || 'N/A'}</span>
                 </div>
                 <div className="flex justify-between">

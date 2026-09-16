@@ -111,13 +111,13 @@ export function SuppliersPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Suppliers"
+        title="Vendors"
         subtitle={`${suppliers.length} vendors registered · Cement, aggregates, sand, admixtures & equipment`}
         icon={Building2}
         action={
           isManager
             ? {
-                label: 'Add Supplier',
+                label: 'Add Vendor',
                 icon: Plus,
                 onClick: openAdd,
               }
@@ -164,12 +164,12 @@ export function SuppliersPage() {
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={Building2}
-          title={search ? 'No suppliers match your search' : 'No suppliers registered'}
+          title={search ? 'No vendors match your search' : 'No vendors registered'}
           description="Add raw material vendors (cement companies, quarry operators, transport) to record purchases."
           action={
             isManager
               ? {
-                  label: 'Add First Supplier',
+                  label: 'Add First Vendor',
                   onClick: openAdd,
                 }
               : undefined
@@ -320,10 +320,10 @@ export function SuppliersPage() {
           <div className="bg-surface rounded-xl shadow-xl max-w-md w-full p-6 border border-outline-variant">
             <div className="flex items-center gap-3 text-red-600 mb-3">
               <AlertTriangle className="h-6 w-6" />
-              <h3 className="text-lg font-bold text-on-surface">Delete Supplier?</h3>
+              <h3 className="text-lg font-bold text-on-surface">Delete Vendor?</h3>
             </div>
             <p className="text-sm text-on-surface-variant mb-4">
-              Are you sure you want to delete <strong className="text-on-surface">{deleteCandidate.name}</strong>? If this supplier has existing purchase bills, deleting will be blocked.
+              Are you sure you want to delete <strong className="text-on-surface">{deleteCandidate.name}</strong>? If this vendor has existing purchase bills, deleting will be blocked.
             </p>
             <div className="flex justify-end gap-3">
               <button
@@ -346,7 +346,7 @@ export function SuppliersPage() {
                     Deleting...
                   </>
                 ) : (
-                  'Delete Supplier'
+                  'Delete Vendor'
                 )}
               </button>
             </div>
@@ -356,6 +356,8 @@ export function SuppliersPage() {
     </div>
   )
 }
+
+export const VendorsPage = SuppliersPage
 
 // ─── Supplier Form Modal ────────────────────────────────────────────────────
 
@@ -371,33 +373,24 @@ function SupplierFormModal({ companyId, supplier, onClose, onSuccess }: Supplier
 
   const [name, setName] = useState(supplier?.name || '')
   const [gstin, setGstin] = useState(supplier?.gstin || '')
+  const [address, setAddress] = useState(supplier?.address || '')
+  const [city, setCity] = useState(supplier?.city || '')
+  const [state, setState] = useState(supplier?.state || 'West Bengal')
   const [phone, setPhone] = useState(supplier?.phone || '')
   const [email, setEmail] = useState(supplier?.email || '')
   const [contactPerson, setContactPerson] = useState(supplier?.contact_person || '')
-  const [city, setCity] = useState(supplier?.city || '')
-  const [state, setState] = useState(supplier?.state || 'West Bengal')
-  const [address, setAddress] = useState(supplier?.address || '')
-
-  // Bank
   const [bankName, setBankName] = useState(supplier?.bank_name || '')
   const [bankAccount, setBankAccount] = useState(supplier?.bank_account || '')
   const [bankIfsc, setBankIfsc] = useState(supplier?.bank_ifsc || '')
+  const [isActive, setIsActive] = useState(supplier?.is_active ?? true)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!name.trim()) {
-      toast.error('Supplier name is required')
-      return
-    }
-    if (!phone.trim()) {
-      toast.error('Phone number is required')
-      return
-    }
-    if (!city.trim()) {
-      toast.error('City is required')
+    if (!name.trim() || !phone.trim() || !address.trim() || !city.trim() || !state.trim()) {
+      toast.error('Please fill in all required fields')
       return
     }
 
@@ -407,16 +400,16 @@ function SupplierFormModal({ companyId, supplier, onClose, onSuccess }: Supplier
         company_id: companyId,
         name: name.trim(),
         gstin: gstin.trim().toUpperCase() || null,
+        address: address.trim(),
+        city: city.trim(),
+        state: state.trim(),
         phone: phone.trim(),
         email: email.trim() || null,
         contact_person: contactPerson.trim() || null,
-        city: city.trim(),
-        state: state.trim(),
-        address: address.trim(),
         bank_name: bankName.trim() || null,
         bank_account: bankAccount.trim() || null,
         bank_ifsc: bankIfsc.trim().toUpperCase() || null,
-        is_active: supplier ? supplier.is_active : true,
+        is_active: isActive,
       }
 
       if (isEdit && supplier) {
@@ -424,17 +417,17 @@ function SupplierFormModal({ companyId, supplier, onClose, onSuccess }: Supplier
           .update(payload)
           .eq('id', supplier.id)
         if (error) throw error
-        toast.success('Supplier updated successfully')
+        toast.success('Vendor updated successfully')
       } else {
         const { error } = await (supabase.from('suppliers') as any)
           .insert(payload)
         if (error) throw error
-        toast.success('Supplier added successfully')
+        toast.success('Vendor added successfully')
       }
 
       onSuccess()
     } catch (err: any) {
-      toast.error(err.message || 'Failed to save supplier')
+      toast.error(err.message || 'Failed to save vendor')
     } finally {
       setIsSubmitting(false)
     }
@@ -446,7 +439,7 @@ function SupplierFormModal({ companyId, supplier, onClose, onSuccess }: Supplier
         <div className="flex items-center justify-between p-5 border-b border-outline-variant sticky top-0 bg-surface z-10">
           <div>
             <h2 className="text-lg font-bold text-on-surface">
-              {isEdit ? 'Edit Supplier' : 'Add New Supplier'}
+              {isEdit ? 'Edit Vendor' : 'Add New Vendor'}
             </h2>
             <p className="text-xs text-outline mt-0.5">
               Enter raw material vendor details, contact info, and bank credentials
@@ -465,7 +458,7 @@ function SupplierFormModal({ companyId, supplier, onClose, onSuccess }: Supplier
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant mb-1">
-                Supplier / Company Name <span className="text-red-500">*</span>
+                Vendor / Company Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"

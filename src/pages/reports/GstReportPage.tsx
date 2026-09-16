@@ -96,7 +96,7 @@ export function GstReportPage() {
     })
 
     csvContent += '\r\n\r\nGSTR-3B INWARD SUPPLIES (PURCHASES / ITC)\r\n'
-    csvContent += 'Bill Number,Date,Supplier,Supplier GSTIN,Supplier Ref Bill,Taxable Value,Input CGST,Input SGST,Total\r\n'
+    csvContent += 'Bill Number,Date,Vendor,Vendor GSTIN,Vendor Ref Bill,Taxable Value,Input CGST,Input SGST,Total\r\n'
     postedPurchases.forEach(p => {
       csvContent += `"${p.invoice_number}","${p.date}","${p.supplier?.name || ''}","${p.supplier?.gstin || ''}","${p.supplier_invoice_number || ''}",${p.taxable_amount},${p.cgst_amount},${p.sgst_amount},${p.total_amount}\r\n`
     })
@@ -378,8 +378,8 @@ export function GstReportPage() {
                 <tr>
                   <th className="py-3 px-4">Purchase Bill #</th>
                   <th className="py-3 px-4">Date</th>
-                  <th className="py-3 px-4">Supplier & GSTIN</th>
-                  <th className="py-3 px-4">Supplier Bill Ref</th>
+                  <th className="py-3 px-4">Vendor & GSTIN</th>
+                  <th className="py-3 px-4">Vendor Bill Ref</th>
                   <th className="py-3 px-4 text-right">Taxable Value</th>
                   <th className="py-3 px-4 text-right">Input CGST</th>
                   <th className="py-3 px-4 text-right">Input SGST</th>

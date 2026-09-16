@@ -98,9 +98,9 @@ export function PurchaseRegisterPage() {
     const headers = [
       'Internal Bill #',
       'Bill Date',
-      'Supplier Name',
-      'Supplier Invoice #',
-      'Supplier GSTIN',
+      'Vendor Name',
+      'Vendor Invoice #',
+      'Vendor GSTIN',
       'Taxable Value (INR)',
       'Input CGST (INR)',
       'Input SGST (INR)',
@@ -185,7 +185,7 @@ export function PurchaseRegisterPage() {
           <p className="text-xl font-bold text-blue-700 mt-1">
             {formatCurrency(totals.total)}
           </p>
-          <span className="text-xs text-outline">Gross Supplier Invoices</span>
+          <span className="text-xs text-outline">Gross Vendor Invoices</span>
         </div>
 
         <div className="bg-surface rounded-2xl border border-outline-variant p-4 shadow-xs">
@@ -204,7 +204,7 @@ export function PurchaseRegisterPage() {
           <div className="lg:col-span-2 relative">
             <input
               type="text"
-              placeholder="Search bill #, supplier, vendor invoice #, GSTIN..."
+              placeholder="Search bill #, vendor, vendor invoice #, GSTIN..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3 py-2 bg-surface-container/40 border border-outline-variant rounded-xl text-sm font-medium text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
@@ -260,7 +260,7 @@ export function PurchaseRegisterPage() {
               <tr className="border-b border-outline-variant text-xs uppercase tracking-wider text-outline bg-surface-container/30">
                 <th className="py-3 px-4">Internal Bill #</th>
                 <th className="py-3 px-4">Date</th>
-                <th className="py-3 px-4">Supplier / Vendor</th>
+                <th className="py-3 px-4">Vendor</th>
                 <th className="py-3 px-4">Vendor Inv #</th>
                 <th className="py-3 px-4">GSTIN</th>
                 <th className="py-3 px-4 text-right">Taxable (₹)</th>

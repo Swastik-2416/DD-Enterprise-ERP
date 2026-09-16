@@ -42,6 +42,7 @@ export default function App() {
           <Route path="master/categories" element={<CategoriesPage />} />
 
           {/* Stakeholders */}
+          <Route path="stakeholders/vendors" element={<SuppliersPage />} />
           <Route path="stakeholders/suppliers" element={<SuppliersPage />} />
           <Route path="stakeholders/customers" element={<CustomersPage />} />
           <Route
@@ -117,6 +118,7 @@ export default function App() {
 
           {/* Finance */}
           <Route path="finance/customer-ledger" element={<PartyLedgerPage partyType="customer" />} />
+          <Route path="finance/vendor-ledger" element={<PartyLedgerPage partyType="supplier" />} />
           <Route path="finance/supplier-ledger" element={<PartyLedgerPage partyType="supplier" />} />
           <Route path="finance/aging" element={<AgingReportPage />} />
           <Route

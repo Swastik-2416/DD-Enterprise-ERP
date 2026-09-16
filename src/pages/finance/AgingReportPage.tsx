@@ -237,7 +237,7 @@ export function AgingReportPage() {
   // CSV Export
   const handleExportCSV = () => {
     const headers = [
-      isAR ? 'Customer Name' : 'Supplier Name',
+      isAR ? 'Customer Name' : 'Vendor Name',
       'City',
       'Phone',
       'Total Outstanding (INR)',
@@ -383,7 +383,7 @@ export function AgingReportPage() {
         <div className="relative max-w-md">
           <input
             type="text"
-            placeholder={`Search ${isAR ? 'customer' : 'supplier'} by name, city, phone...`}
+            placeholder={`Search ${isAR ? 'customer' : 'vendor'} by name, city, phone...`}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-3 py-2 bg-surface-container/40 border border-outline-variant rounded-xl text-sm font-medium text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
@@ -398,7 +398,7 @@ export function AgingReportPage() {
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-outline-variant text-xs uppercase tracking-wider text-outline bg-surface-container/30">
-                <th className="py-3 px-4">{isAR ? 'Customer' : 'Supplier'}</th>
+                <th className="py-3 px-4">{isAR ? 'Customer' : 'Vendor'}</th>
                 <th className="py-3 px-4">Contact</th>
                 <th className="py-3 px-4 text-right">Total Due (₹)</th>
                 <th className="py-3 px-4 text-right">Current (₹)</th>
@@ -415,7 +415,7 @@ export function AgingReportPage() {
                   <td colSpan={9} className="py-12 text-center text-outline space-y-2">
                     <p className="font-semibold text-on-surface">No outstanding balances found</p>
                     <p className="text-xs">
-                      All {isAR ? 'customer invoices' : 'supplier bills'} are fully settled with zero pending dues.
+                      All {isAR ? 'customer invoices' : 'vendor bills'} are fully settled with zero pending dues.
                     </p>
                   </td>
                 </tr>
@@ -455,7 +455,7 @@ export function AgingReportPage() {
                     </td>
                     <td className="py-3 px-4 text-center whitespace-nowrap">
                       <Link
-                        to={isAR ? '/finance/customer-ledger' : '/finance/supplier-ledger'}
+                        to={isAR ? '/finance/customer-ledger' : '/finance/vendor-ledger'}
                         className="inline-flex items-center gap-1 px-2.5 py-1 bg-surface-container text-xs font-semibold text-primary hover:bg-primary/10 rounded-lg transition-colors"
                       >
                         Statement <ChevronRight className="h-3 w-3" />
