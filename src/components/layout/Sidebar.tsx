@@ -30,7 +30,7 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Stakeholders', icon: Users, children: [
       { label: 'Vendors', icon: Building2, path: '/stakeholders/vendors' },
       { label: 'Customers', icon: UserCheck, path: '/stakeholders/customers' },
-      { label: 'Employees', icon: Users, path: '/stakeholders/employees' },
+      // { label: 'Employees', icon: Users, path: '/stakeholders/employees' },
       { label: 'Labour', icon: Users, path: '/stakeholders/labour' },
       { label: 'Transporters', icon: Truck, path: '/stakeholders/transporters' },
     ]

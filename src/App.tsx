@@ -12,6 +12,7 @@ import { CategoriesPage } from '@/pages/master/CategoriesPage'
 import { SuppliersPage } from '@/pages/stakeholders/SuppliersPage'
 import { CustomersPage } from '@/pages/stakeholders/CustomersPage'
 import { PurchaseInvoicesPage } from '@/pages/procurement/PurchaseInvoicesPage'
+import { GoodsReceiptsPage } from '@/pages/procurement/GoodsReceiptsPage'
 import { InvoicesPage } from '@/pages/sales/InvoicesPage'
 import { PaymentsPage } from '@/pages/payments/PaymentsPage'
 import { ProductionOrdersPage } from '@/pages/manufacturing/ProductionOrdersPage'
@@ -45,10 +46,10 @@ export default function App() {
           <Route path="stakeholders/vendors" element={<SuppliersPage />} />
           <Route path="stakeholders/suppliers" element={<SuppliersPage />} />
           <Route path="stakeholders/customers" element={<CustomersPage />} />
-          <Route
+          {/* <Route
             path="stakeholders/employees"
             element={<PlaceholderPage title="Employee Management" subtitle="Staff records, daily wages & monthly payroll registry" />}
-          />
+          /> */}
           <Route
             path="stakeholders/labour"
             element={<PlaceholderPage title="Labour Contractors" subtitle="Contractor records, piece-rate tracking and daily muster" />}
@@ -64,10 +65,7 @@ export default function App() {
             element={<PlaceholderPage title="Purchase Orders" subtitle="Raw material POs, cement & aggregate supply contracts" />}
           />
           <Route path="procurement/purchase-invoices" element={<PurchaseInvoicesPage />} />
-          <Route
-            path="procurement/goods-receipts"
-            element={<PlaceholderPage title="Goods Receipts (MRN)" subtitle="Gate entry inspection, weighbridge slips & inward delivery verification" />}
-          />
+          <Route path="procurement/goods-receipts" element={<GoodsReceiptsPage />} />
 
           {/* Manufacturing */}
           <Route path="manufacturing/production-orders" element={<ProductionOrdersPage />} />
