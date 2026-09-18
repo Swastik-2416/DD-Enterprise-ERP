@@ -700,12 +700,47 @@ export function PurchaseInvoicesPage() {
                     {selectedInvoice.supplier_invoice_number || 'N/A'}
                   </span>
                 </div>
-                {selectedInvoice.notes && (
-                  <div className="flex justify-between text-on-surface-variant">
-                    <span>Notes / Consignment:</span>
-                    <span className="text-on-surface font-medium">{selectedInvoice.notes}</span>
-                  </div>
-                )}
+                {selectedInvoice.notes && (() => {
+                  // Parse JSON metadata stored in notes field
+                  let meta: Record<string, string> | null = null
+                  try {
+                    if (selectedInvoice.notes.startsWith('{') && selectedInvoice.notes.endsWith('}'))
+                      meta = JSON.parse(selectedInvoice.notes)
+                  } catch { /* plain text */ }
+
+                  if (meta) {
+                    const rows = [
+                      meta.payment_type   ? { label: 'Payment Type',      val: meta.payment_type }   : null,
+                      meta.place_of_supply? { label: 'Place of Supply',   val: meta.place_of_supply } : null,
+                      meta.delivery_mode  ? { label: 'Delivery Mode',     val: meta.delivery_mode }  : null,
+                      meta.vehicle_no     ? { label: 'Vehicle No.',       val: meta.vehicle_no }     : null,
+                      meta.ship_to        ? { label: 'Ship To',           val: meta.ship_to }        : null,
+                      meta.invoice_type   ? { label: 'Invoice Type',      val: meta.invoice_type }   : null,
+                      meta.remarks        ? { label: 'Remarks',           val: meta.remarks }        : null,
+                      meta.terms_detail   ? { label: 'Terms',             val: meta.terms_detail }   : null,
+                      meta.display_notes  ? { label: 'Notes',             val: meta.display_notes }  : null,
+                    ].filter(Boolean) as { label: string; val: string }[]
+
+                    return rows.length > 0 ? (
+                      <>
+                        {rows.map(r => (
+                          <div key={r.label} className="flex justify-between gap-4 text-on-surface-variant">
+                            <span className="shrink-0">{r.label}:</span>
+                            <span className="text-on-surface font-medium text-right">{r.val}</span>
+                          </div>
+                        ))}
+                      </>
+                    ) : null
+                  }
+
+                  // Plain text notes — show as-is
+                  return (
+                    <div className="flex justify-between text-on-surface-variant">
+                      <span>Notes:</span>
+                      <span className="text-on-surface font-medium text-right">{selectedInvoice.notes}</span>
+                    </div>
+                  )
+                })()}
                 <div className="h-px bg-outline-variant/60 my-2" />
                 <div className="flex justify-between text-on-surface-variant">
                   <span>Taxable Value:</span>
