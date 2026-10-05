@@ -64,10 +64,7 @@ export default function App() {
             element={<PlaceholderPage title="Purchase Orders" subtitle="Raw material POs, cement & aggregate supply contracts" />}
           />
           <Route path="procurement/purchase-invoices" element={<PurchaseInvoicesPage />} />
-          <Route
-            path="procurement/goods-receipts"
-            element={<PlaceholderPage title="Goods Receipts (MRN)" subtitle="Gate entry inspection, weighbridge slips & inward delivery verification" />}
-          />
+          <Route path="procurement/goods-receipts" element={<GoodsReceiptsPage />} />
 
           {/* Manufacturing */}
           <Route path="manufacturing/production-orders" element={<ProductionOrdersPage />} />
