@@ -157,7 +157,7 @@
 ---
 
 ### 2.12 — Audit & Security
-- [ ] **Audit Log Viewer** — UI to browse the `audit_logs` table: who changed what record, and when
+- [x] **Audit Log Viewer** — UI to browse the `audit_logs` table: who changed what record, and when, with visual JSON diff inspector and CSV export
 - [ ] **Row Level Security (RLS)** — Enable and write Supabase RLS policies so each company's data is isolated
 - [ ] **Manager-only actions** — Restrict approval and posting actions strictly to the `manager` role in UI and database
 

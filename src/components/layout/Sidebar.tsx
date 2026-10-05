@@ -3,7 +3,8 @@ import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Package, ShoppingCart, Factory, ShoppingBag,
   CreditCard, Users, UserCheck, TrendingUp, Truck, BarChart3,
-  ChevronDown, ChevronRight, Building2, Settings, Menu, X, Clock
+  ChevronDown, ChevronRight, Building2, Settings, Menu, X, Clock,
+  ShieldCheck
 } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { APP_NAME } from '@/lib/constants'
@@ -95,6 +96,7 @@ const NAV_ITEMS: NavItem[] = [
       { label: 'Stock Report', icon: BarChart3, path: '/reports/stock' },
       { label: 'Production Report', icon: BarChart3, path: '/reports/production' },
       { label: 'GST Summary', icon: BarChart3, path: '/reports/gst' },
+      { label: 'Audit Trail', icon: ShieldCheck, path: '/settings/audit-logs' },
     ]
   },
 ]

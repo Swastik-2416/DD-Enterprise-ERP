@@ -1,4 +1,5 @@
 import { useState, useRef, type ChangeEvent } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Building2,
   FileText,
@@ -126,6 +127,14 @@ export function SettingsPage() {
         icon={Building2}
         actions={
           <div className="flex items-center gap-2">
+            <Link
+              to="/settings/audit-logs"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-primary hover:text-primary-hover bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors border border-primary/20"
+              title="Inspect System Audit Trail & Security Logs"
+            >
+              <ShieldCheck className="h-3.5 w-3.5" />
+              <span>Audit Trail</span>
+            </Link>
             <button
               type="button"
               onClick={handleResetDefaults}
