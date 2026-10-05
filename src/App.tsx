@@ -21,6 +21,7 @@ import { SalesOrdersPage } from '@/pages/sales/SalesOrdersPage'
 import { FreightRegisterPage } from '@/pages/transport/FreightRegisterPage'
 import { TransporterPaymentsPage } from '@/pages/transport/TransporterPaymentsPage'
 import { PaymentsPage } from '@/pages/payments/PaymentsPage'
+import { AttendancePage } from '@/pages/hr/AttendancePage'
 import { ProductionOrdersPage } from '@/pages/manufacturing/ProductionOrdersPage'
 import { ProductionReportPage } from '@/pages/reports/ProductionReportPage'
 import { StockReportPage } from '@/pages/reports/StockReportPage'
@@ -93,10 +94,7 @@ export default function App() {
           <Route path="payments/outward" element={<PaymentsPage defaultType="outward" />} />
 
           {/* HR & Payroll */}
-          <Route
-            path="hr/attendance"
-            element={<PlaceholderPage title="Daily Attendance" subtitle="Factory labour attendance muster and overtime hours tracking" />}
-          />
+          <Route path="hr/attendance" element={<AttendancePage />} />
           {/* <Route
             path="hr/payroll"
             element={<PlaceholderPage title="Payroll Register" subtitle="Monthly salary slips, wage calculations & cash advances" />}

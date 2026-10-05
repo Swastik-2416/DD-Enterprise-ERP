@@ -134,7 +134,7 @@
 - [x] **Submit → Approve → Execute workflow** — On execution: auto-deduct raw materials (with wastage %), auto-add finished goods to stock
 - [x] **Actual vs Planned** — Record the actual quantity produced versus what was planned
 - [x] **Machine & Mould tracking** — Log which machine and mould were used per production run
-- [ ] **Production Cost Report** — Calculate total raw material cost per production order
+- [x] **Production Cost Report** — Calculate total raw material cost per production order and comprehensive batch execution analytics
 
 ---
 
@@ -142,13 +142,21 @@
 - [x] **GST Report** — Monthly GSTR-1 style report of outward supplies with CGST/SGST breakdown, exportable to Excel/CSV
 - [x] **Purchase Register** — List all purchase invoices for a selected date range with ITC calculation and CSV export
 - [x] **Sales Register** — List all sales invoices for a selected date range with CGST/SGST output breakdown and CSV export
-- [x] **Profit & Loss (Basic)** — Net Sales Turnover minus Direct Material Purchases (COGS) and Gross Margin %
+- [x] **Profit & Loss (Basic & Indirect)** — Net Sales Turnover minus Direct Material Purchases (COGS), Indirect Overheads, Other Income, and Net Operating Profit
 - [x] **Accounts Receivable (AR)** — Aged list of customers with pending outstanding balances (Current, 1-30d, 31-60d, 61-90d, >90d)
 - [x] **Accounts Payable (AP)** — Aged list of suppliers with pending outstanding balances
 
 ---
 
-### 2.11 — Audit & Security
+### 2.11 — Factory Labour & Attendance
+- [x] **Daily Labour Muster Roll** — Daily attendance logging (`present`, `half_day`, `absent`) for factory staff (machine operators, pan mixers, curing boys, stackers/loaders)
+- [x] **Shift & Overtime (OT) Tracking** — Day / Night / Overtime shifts with hourly OT tracking
+- [x] **Auto Wage & Payout Calculation** — Base daily rate plus calculated OT payout per worker and total muster cost
+- [x] **Form D Muster Printout & CSV** — Compliant Indian factory Form D A4 muster sheet with signature blocks and spreadsheet export
+
+---
+
+### 2.12 — Audit & Security
 - [ ] **Audit Log Viewer** — UI to browse the `audit_logs` table: who changed what record, and when
 - [ ] **Row Level Security (RLS)** — Enable and write Supabase RLS policies so each company's data is isolated
 - [ ] **Manager-only actions** — Restrict approval and posting actions strictly to the `manager` role in UI and database
