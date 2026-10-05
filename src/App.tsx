@@ -11,6 +11,7 @@ import { UnitsPage } from '@/pages/master/UnitsPage'
 import { CategoriesPage } from '@/pages/master/CategoriesPage'
 import { SuppliersPage } from '@/pages/stakeholders/SuppliersPage'
 import { CustomersPage } from '@/pages/stakeholders/CustomersPage'
+import { PurchaseOrdersPage } from '@/pages/procurement/PurchaseOrdersPage'
 import { PurchaseInvoicesPage } from '@/pages/procurement/PurchaseInvoicesPage'
 import { GoodsReceiptsPage } from '@/pages/procurement/GoodsReceiptsPage'
 import { InvoicesPage } from '@/pages/sales/InvoicesPage'
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="master/categories" element={<CategoriesPage />} />
 
           {/* Stakeholders */}
+          <Route path="stakeholders/vendors" element={<SuppliersPage />} />
           <Route path="stakeholders/suppliers" element={<SuppliersPage />} />
           <Route path="stakeholders/customers" element={<CustomersPage />} />
           <Route
@@ -60,10 +62,7 @@ export default function App() {
           />
 
           {/* Procurement */}
-          <Route
-            path="procurement/purchase-orders"
-            element={<PlaceholderPage title="Purchase Orders" subtitle="Raw material POs, cement & aggregate supply contracts" />}
-          />
+          <Route path="procurement/purchase-orders" element={<PurchaseOrdersPage />} />
           <Route path="procurement/purchase-invoices" element={<PurchaseInvoicesPage />} />
           <Route path="procurement/goods-receipts" element={<GoodsReceiptsPage />} />
 
