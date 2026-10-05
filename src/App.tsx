@@ -16,6 +16,8 @@ import { PurchaseInvoicesPage } from '@/pages/procurement/PurchaseInvoicesPage'
 import { GoodsReceiptsPage } from '@/pages/procurement/GoodsReceiptsPage'
 import { InvoicesPage } from '@/pages/sales/InvoicesPage'
 import { DeliveryChallansPage } from '@/pages/sales/DeliveryChallansPage'
+import { QuotationsPage } from '@/pages/sales/QuotationsPage'
+import { SalesOrdersPage } from '@/pages/sales/SalesOrdersPage'
 import { FreightRegisterPage } from '@/pages/transport/FreightRegisterPage'
 import { TransporterPaymentsPage } from '@/pages/transport/TransporterPaymentsPage'
 import { PaymentsPage } from '@/pages/payments/PaymentsPage'
@@ -74,14 +76,8 @@ export default function App() {
           <Route path="manufacturing/fg-inventory" element={<StockReportPage />} />
 
           {/* Sales */}
-          <Route
-            path="sales/quotations"
-            element={<PlaceholderPage title="Sales Quotations" subtitle="Price estimates for contractors, builders, and government tenders" />}
-          />
-          <Route
-            path="sales/orders"
-            element={<PlaceholderPage title="Sales Orders" subtitle="Confirmed orders, production commitments & booking advances" />}
-          />
+          <Route path="sales/quotations" element={<QuotationsPage />} />
+          <Route path="sales/orders" element={<SalesOrdersPage />} />
           <Route path="sales/invoices" element={<InvoicesPage />} />
           <Route path="sales/delivery-challans" element={<DeliveryChallansPage />} />
           {/* <Route

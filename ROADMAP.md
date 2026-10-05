@@ -98,7 +98,9 @@
 
 ---
 
-### 2.6 — Sales (Sales Invoices)
+### 2.6 — Sales (Quotations, Orders & Invoices)
+- [x] **Sales Quotations** — Multi-line quotation proposal builder with paver block specifications, freight & laying terms, A4 print preview, and one-click conversion to Sales Order
+- [x] **Sales Orders** — Order tracking with booking advances, balance receivables, promised delivery dates, curing/casting production status per line item, and dispatch to Delivery Challan
 - [x] **Create Sales Invoice** — Multi-line form: select customer, add items, choose type (GST / Non-GST / Proforma)
 - [x] **Auto invoice numbering** — Generate sequential invoice numbers per financial year (e.g., INV-2425-0001)
 - [x] **View / List Invoices** — Paginated table with search and filter by status/customer
