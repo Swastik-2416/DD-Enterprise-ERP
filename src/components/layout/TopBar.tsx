@@ -24,7 +24,7 @@ export function TopBar({ onMenuClick, title }: TopBarProps) {
   }
 
   return (
-    <header className="h-16 bg-surface border-b border-outline-variant flex items-center justify-between px-4 lg:px-6 shrink-0">
+    <header className="h-16 glass sticky top-0 z-20 flex items-center justify-between px-4 lg:px-6 shrink-0 transition-shadow duration-200 hover:shadow-sm">
       <div className="flex items-center gap-4">
         <button
           onClick={onMenuClick}

@@ -115,11 +115,11 @@ function NavGroup({ item, depth = 0 }: { item: NavItem; depth?: number }) {
         end={item.path === '/'}
         className={({ isActive }) =>
           cn(
-            'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+            'flex items-center gap-3 px-3 py-2 text-sm transition-colors',
             depth > 0 ? 'pl-9' : '',
             isActive
-              ? 'bg-primary text-white'
-              : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'
+              ? 'border-l-2 border-primary bg-primary/10 text-primary font-semibold rounded-r-lg -ml-3 pl-[calc(0.75rem+2px)]'
+              : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-lg'
           )
         }
       >
@@ -129,12 +129,14 @@ function NavGroup({ item, depth = 0 }: { item: NavItem; depth?: number }) {
     )
   }
 
+  const contentRef = React.useRef<HTMLDivElement>(null)
+
   return (
     <div>
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+          'w-full flex items-center gap-3 px-3 py-2 rounded-r-lg text-sm transition-colors',
           'text-on-surface-variant hover:bg-surface-container',
           isActive && 'text-primary font-semibold'
         )}
@@ -143,13 +145,15 @@ function NavGroup({ item, depth = 0 }: { item: NavItem; depth?: number }) {
         <span className="flex-1 text-left truncate">{item.label}</span>
         {open ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
       </button>
-      {open && (
-        <div className="mt-1 space-y-0.5">
-          {item.children?.map(child => (
-            <NavGroup key={child.label} item={child} depth={depth + 1} />
-          ))}
-        </div>
-      )}
+      <div
+        ref={contentRef}
+        style={{ maxHeight: open ? `${contentRef.current?.scrollHeight || 500}px` : '0px' }}
+        className="accordion-content mt-1 space-y-0.5"
+      >
+        {item.children?.map(child => (
+          <NavGroup key={child.label} item={child} depth={depth + 1} />
+        ))}
+      </div>
     </div>
   )
 }
