@@ -3,6 +3,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { cn } from '@/lib/cn'
+import { useNotifications } from '@/contexts/NotificationContext'
+import { NotificationCenter } from '@/components/notifications/NotificationCenter'
 
 interface TopBarProps {
   onMenuClick: () => void
@@ -12,7 +14,9 @@ interface TopBarProps {
 export function TopBar({ onMenuClick, title }: TopBarProps) {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
+  const { unreadCount } = useNotifications()
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
 
   async function handleSignOut() {
     await signOut()
@@ -34,11 +38,26 @@ export function TopBar({ onMenuClick, title }: TopBarProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        {/* Notification bell (placeholder) */}
-        <button className="relative p-2 hover:bg-surface-container rounded-lg transition-colors">
-          <Bell className="h-5 w-5 text-on-surface-variant" />
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-error-container0 rounded-full" />
-        </button>
+        {/* Notification Bell with unread counter */}
+        <div className="relative">
+          <button
+            onClick={() => setNotifOpen(!notifOpen)}
+            className="relative p-2 hover:bg-surface-container rounded-lg transition-colors text-on-surface-variant"
+            title="Notifications & Operational Alerts"
+          >
+            <Bell className="h-5 w-5" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-600 text-[10px] font-bold text-white shadow-xs animate-pulse">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
+
+          <NotificationCenter
+            isOpen={notifOpen}
+            onClose={() => setNotifOpen(false)}
+          />
+        </div>
 
         {/* User menu */}
         <div className="relative">

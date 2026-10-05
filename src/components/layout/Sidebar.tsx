@@ -90,7 +90,6 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     label: 'Reports', icon: BarChart3, children: [
-      { label: 'Executive BI', icon: TrendingUp, path: '/analytics' },
       { label: 'Sales Register', icon: BarChart3, path: '/reports/sales' },
       { label: 'Purchase Register', icon: BarChart3, path: '/reports/purchases' },
       { label: 'Stock Report', icon: BarChart3, path: '/reports/stock' },

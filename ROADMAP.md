@@ -181,17 +181,17 @@
 ---
 
 ### 3.2 — Notifications & Operational Alerts
-- [ ] **In-App Notification Center** — Actionable notifications for pending approvals, low raw material stock, and overdue receivables
-- [ ] **Email Alerts** — Automatic email notifications to managers when purchase bills or production orders require approval
-- [ ] **Low Stock Email Digest** — Daily automated morning digest of raw materials below safety thresholds
-- [ ] **WhatsApp Invoice Sharing** *(Optional)* — Share sales invoice PDFs directly to customer WhatsApp contacts
+- [x] **In-App Notification Center** — Actionable notifications for pending approvals, low raw material stock, and overdue receivables with sound & unread badge
+- [x] **Email Alerts** — Automatic email notifications to managers when purchase bills or production orders require approval
+- [x] **Low Stock Email Digest** — Scheduled daily automated morning digest of raw materials below safety thresholds
+- [x] **WhatsApp Invoice Sharing** — Share sales invoice PDFs directly to customer WhatsApp contacts with pre-filled details
 
 ---
 
 ### 3.3 — Mobile & PWA
-- [ ] **Mobile Responsive Optimization** — Streamlined interface for factory floor supervisors on tablets and smartphones
-- [ ] **Progressive Web App (PWA)** — Installable ERP application on mobile home screens with offline splash
-- [ ] **Fast Offline View** — Cache dashboard and inventory balances for offline plant walk-throughs
+- [x] **Mobile Responsive Optimization** — Streamlined interface with dedicated bottom quick-nav for factory floor supervisors on tablets and smartphones
+- [x] **Progressive Web App (PWA)** — Installable ERP application on mobile home screens with web manifest, app icons, and standalone display
+- [x] **Fast Offline View** — Service worker shell caching and plant walk-through offline banner for unroofed curing yard operations
 
 ---
 

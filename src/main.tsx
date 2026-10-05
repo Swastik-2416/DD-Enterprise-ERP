@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { CompanyProvider } from '@/contexts/CompanyContext'
+import { NotificationProvider } from '@/contexts/NotificationContext'
 import App from './App'
 import './index.css'
 
@@ -23,7 +24,9 @@ createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <AuthProvider>
           <CompanyProvider>
-            <App />
+            <NotificationProvider>
+              <App />
+            </NotificationProvider>
           </CompanyProvider>
           <Toaster
             position="top-right"
@@ -47,3 +50,10 @@ createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </StrictMode>,
 )
+
+// Register PWA Service Worker in production
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {})
+  })
+}
