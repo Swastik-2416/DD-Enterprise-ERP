@@ -9,6 +9,8 @@ import { ItemsPage } from '@/pages/master/ItemsPage'
 import { BomPage } from '@/pages/master/BomPage'
 import { UnitsPage } from '@/pages/master/UnitsPage'
 import { CategoriesPage } from '@/pages/master/CategoriesPage'
+import { WarehousesPage } from '@/pages/master/WarehousesPage'
+import { WarehouseTransfersPage } from '@/pages/inventory/WarehouseTransfersPage'
 import { SuppliersPage } from '@/pages/stakeholders/SuppliersPage'
 import { CustomersPage } from '@/pages/stakeholders/CustomersPage'
 import { PurchaseOrdersPage } from '@/pages/procurement/PurchaseOrdersPage'
@@ -54,6 +56,7 @@ export default function App() {
           <Route path="master/bom" element={<BomPage />} />
           <Route path="master/units" element={<UnitsPage />} />
           <Route path="master/categories" element={<CategoriesPage />} />
+          <Route path="master/warehouses" element={<WarehousesPage />} />
 
           {/* Stakeholders */}
           <Route path="stakeholders/vendors" element={<SuppliersPage />} />
@@ -77,9 +80,11 @@ export default function App() {
           <Route path="procurement/purchase-invoices" element={<PurchaseInvoicesPage />} />
           <Route path="procurement/goods-receipts" element={<GoodsReceiptsPage />} />
 
-          {/* Manufacturing */}
+          {/* Manufacturing & Inventory */}
           <Route path="manufacturing/production-orders" element={<ProductionOrdersPage />} />
           <Route path="manufacturing/fg-inventory" element={<StockReportPage />} />
+          <Route path="manufacturing/transfers" element={<WarehouseTransfersPage />} />
+          <Route path="inventory/transfers" element={<WarehouseTransfersPage />} />
 
           {/* Sales */}
           <Route path="sales/quotations" element={<QuotationsPage />} />

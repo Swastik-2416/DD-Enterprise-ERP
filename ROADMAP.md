@@ -75,8 +75,7 @@
 - [x] **Item Categories** — Full Create, Read, Update, Delete (CRUD) wired to Supabase
 - [x] **Units of Measurement** — Full CRUD wired to Supabase
 - [x] **Items / SKUs** — Full CRUD with real-time form validation (HSN code, GST rate, purchase/selling rate, etc.)
-- [x] **Bill of Materials (BOM)** — Create multi-line BOM, link raw materials to finished goods, set wastage %
-- [ ] **Warehouses** — Add support for named warehouses (currently defaulting to a placeholder ID)
+- [x] **Warehouses** — Add support for named storage yards (Main Plant FG Yard, Curing Shed B, Durgapur Bypass Depot, Raw Material Store)
 
 ---
 
@@ -124,8 +123,7 @@
 - [x] **Stock Ledger** — View all stock movements per item (purchase, sale, production, adjustment)
 - [x] **Current Stock Report** — Live view of quantity on hand for all items across all warehouses
 - [x] **Stock Adjustment** — Manual entry to correct stock discrepancies with a reason/notes field
-- [x] **Low Stock Alerts** — Highlight items that have fallen below their defined `min_stock_level`
-- [ ] **Warehouse Transfer** — Move stock from one warehouse to another with a movement record
+- [x] **Warehouse Transfer** — Move stock from one warehouse to another with movement records, inter-yard dispatch, and printable Gate Pass
 
 ---
 

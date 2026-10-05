@@ -25,6 +25,7 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Master Data', icon: Package, children: [
       { label: 'Items', icon: Package, path: '/master/items' },
       { label: 'Bill of Materials', icon: Factory, path: '/master/bom' },
+      { label: 'Warehouses', icon: Building2, path: '/master/warehouses' },
       { label: 'Units of Measure', icon: Settings, path: '/master/units' },
       { label: 'Categories', icon: Package, path: '/master/categories' },
     ]
@@ -49,6 +50,7 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Manufacturing', icon: Factory, children: [
       { label: 'Production Orders', icon: Factory, path: '/manufacturing/production-orders' },
       { label: 'FG Inventory', icon: Package, path: '/manufacturing/fg-inventory' },
+      { label: 'Stock Transfers', icon: Truck, path: '/inventory/transfers' },
     ]
   },
   {
