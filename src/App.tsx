@@ -43,13 +43,12 @@ export default function App() {
           <Route path="master/categories" element={<CategoriesPage />} />
 
           {/* Stakeholders */}
-          <Route path="stakeholders/vendors" element={<SuppliersPage />} />
           <Route path="stakeholders/suppliers" element={<SuppliersPage />} />
           <Route path="stakeholders/customers" element={<CustomersPage />} />
-          {/* <Route
+          <Route
             path="stakeholders/employees"
             element={<PlaceholderPage title="Employee Management" subtitle="Staff records, daily wages & monthly payroll registry" />}
-          /> */}
+          />
           <Route
             path="stakeholders/labour"
             element={<PlaceholderPage title="Labour Contractors" subtitle="Contractor records, piece-rate tracking and daily muster" />}
@@ -65,7 +64,10 @@ export default function App() {
             element={<PlaceholderPage title="Purchase Orders" subtitle="Raw material POs, cement & aggregate supply contracts" />}
           />
           <Route path="procurement/purchase-invoices" element={<PurchaseInvoicesPage />} />
-          <Route path="procurement/goods-receipts" element={<GoodsReceiptsPage />} />
+          <Route
+            path="procurement/goods-receipts"
+            element={<PlaceholderPage title="Goods Receipts (MRN)" subtitle="Gate entry inspection, weighbridge slips & inward delivery verification" />}
+          />
 
           {/* Manufacturing */}
           <Route path="manufacturing/production-orders" element={<ProductionOrdersPage />} />
@@ -85,10 +87,10 @@ export default function App() {
             path="sales/delivery-challans"
             element={<PlaceholderPage title="Delivery Challans" subtitle="Dispatch gate passes, truck load slips & customer sign-offs" />}
           />
-          <Route
+          {/* <Route
             path="sales/credit-notes"
             element={<PlaceholderPage title="Credit Notes" subtitle="Sales returns, rate adjustments & breakage allowances" />}
-          />
+          /> */}
 
           {/* Payments */}
           <Route path="payments/inward" element={<PaymentsPage defaultType="inward" />} />
@@ -99,10 +101,10 @@ export default function App() {
             path="hr/attendance"
             element={<PlaceholderPage title="Daily Attendance" subtitle="Factory labour attendance muster and overtime hours tracking" />}
           />
-          <Route
+          {/* <Route
             path="hr/payroll"
             element={<PlaceholderPage title="Payroll Register" subtitle="Monthly salary slips, wage calculations & cash advances" />}
-          />
+          /> */}
 
           {/* Transport */}
           <Route
@@ -116,7 +118,6 @@ export default function App() {
 
           {/* Finance */}
           <Route path="finance/customer-ledger" element={<PartyLedgerPage partyType="customer" />} />
-          <Route path="finance/vendor-ledger" element={<PartyLedgerPage partyType="supplier" />} />
           <Route path="finance/supplier-ledger" element={<PartyLedgerPage partyType="supplier" />} />
           <Route path="finance/aging" element={<AgingReportPage />} />
           <Route

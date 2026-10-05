@@ -54,7 +54,7 @@ const NAV_ITEMS: NavItem[] = [
       { label: 'Sales Orders', icon: ShoppingBag, path: '/sales/orders' },
       { label: 'Invoices', icon: ShoppingBag, path: '/sales/invoices' },
       { label: 'Delivery Challans', icon: Truck, path: '/sales/delivery-challans' },
-      { label: 'Credit Notes', icon: ShoppingBag, path: '/sales/credit-notes' },
+      // { label: 'Credit Notes', icon: ShoppingBag, path: '/sales/credit-notes' },
     ]
   },
   {
@@ -66,7 +66,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: 'HR & Payroll', icon: UserCheck, children: [
       { label: 'Attendance', icon: UserCheck, path: '/hr/attendance' },
-      { label: 'Payroll', icon: CreditCard, path: '/hr/payroll' },
+      // { label: 'Payroll', icon: CreditCard, path: '/hr/payroll' },
     ]
   },
   {
