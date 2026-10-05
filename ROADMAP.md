@@ -65,9 +65,9 @@
 ---
 
 ### 2.2 — Company & Settings
-- [ ] **Company settings page** — Update GSTIN, address, logo, and contact info from inside the app
-- [ ] **Logo upload** — Store company logo in Supabase Storage and display it on invoices
-- [ ] **Financial year setting** — Set the current financial year for filtering reports correctly
+- [x] **Company settings page** — Update GSTIN, address, logo, and contact info from inside the app
+- [x] **Logo upload** — Store company logo in Supabase Storage and display it on invoices
+- [x] **Financial year setting** — Set the current financial year for filtering reports correctly
 
 ---
 

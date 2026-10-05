@@ -23,6 +23,7 @@ import { PurchaseRegisterPage } from '@/pages/reports/PurchaseRegisterPage'
 import { PartyLedgerPage } from '@/pages/finance/PartyLedgerPage'
 import { ProfitLossPage } from '@/pages/finance/ProfitLossPage'
 import { AgingReportPage } from '@/pages/finance/AgingReportPage'
+import { SettingsPage } from '@/pages/settings/SettingsPage'
 import { PlaceholderPage } from '@/pages/common/PlaceholderPage'
 
 export default function App() {
@@ -136,10 +137,7 @@ export default function App() {
           <Route path="reports/gst" element={<GstReportPage />} />
 
           {/* Settings */}
-          <Route
-            path="settings"
-            element={<PlaceholderPage title="Business Settings" subtitle="Company profile, GSTIN, bank accounts, and user access roles" />}
-          />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Route>
 

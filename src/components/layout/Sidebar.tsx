@@ -8,6 +8,7 @@ import {
 import { cn } from '@/lib/cn'
 import { APP_NAME } from '@/lib/constants'
 import { useAuth } from '@/contexts/AuthContext'
+import { useCompany } from '@/contexts/CompanyContext'
 
 interface NavItem {
   label: string
@@ -154,6 +155,7 @@ interface SidebarProps {
 
 export function Sidebar({ open, onClose }: SidebarProps) {
   const { user } = useAuth()
+  const { company } = useCompany()
 
   return (
     <>
@@ -176,16 +178,34 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       >
         {/* Logo */}
         <div className="flex items-center justify-between h-16 px-4 border-b border-outline-variant shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <Factory className="h-4 w-4 text-white" />
-            </div>
-            <div>
-              <div className="text-sm font-bold text-on-surface leading-none">DD Enterprise</div>
-              <div className="text-xs text-outline">ERP System</div>
+          <div className="flex items-center gap-2.5 min-w-0">
+            {company.logo_url ? (
+              <img
+                src={company.logo_url}
+                alt={company.name}
+                className="h-8 w-8 object-contain rounded-lg border border-outline-variant shrink-0 bg-white p-0.5"
+                onError={e => {
+                  ;(e.target as HTMLElement).style.display = 'none'
+                }}
+              />
+            ) : (
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
+                <Factory className="h-4 w-4 text-white" />
+              </div>
+            )}
+            <div className="min-w-0">
+              <div className="text-sm font-bold text-on-surface leading-none truncate">
+                {company.name}
+              </div>
+              <div className="flex items-center gap-1.5 mt-1">
+                <span className="text-[10px] text-outline truncate">ERP System</span>
+                <span className="text-[9px] px-1.5 py-0.2 bg-primary/10 text-primary font-semibold rounded">
+                  FY {company.active_fy.replace('20', '').replace('-20', '-')}
+                </span>
+              </div>
             </div>
           </div>
-          <button onClick={onClose} className="lg:hidden p-1 hover:bg-surface-container rounded">
+          <button onClick={onClose} className="lg:hidden p-1 hover:bg-surface-container rounded shrink-0">
             <X className="h-4 w-4" />
           </button>
         </div>

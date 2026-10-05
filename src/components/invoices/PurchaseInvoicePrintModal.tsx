@@ -2,6 +2,7 @@ import { useState, useMemo, useRef, useEffect } from 'react'
 import { Printer, Copy, Check, X, ChevronDown, ChevronUp, Maximize2, Minimize2 } from 'lucide-react'
 import { formatDate, amountInWords } from '@/lib/formatters'
 import { StatusBadge } from '@/components/shared/StatusBadge'
+import { useCompany } from '@/contexts/CompanyContext'
 import type { PurchaseInvoice, PurchaseInvoiceLine, Supplier, Item } from '@/types/database.types'
 
 interface PurchaseInvoicePrintModalProps {
@@ -11,6 +12,7 @@ interface PurchaseInvoicePrintModalProps {
 }
 
 export function PurchaseInvoicePrintModal({ invoice, lines, onClose }: PurchaseInvoicePrintModalProps) {
+  const { company } = useCompany()
   const [copied, setCopied] = useState(false)
   const [fitToScreen, setFitToScreen] = useState(false)
   const [showMetaFields, setShowMetaFields] = useState(false)
@@ -199,29 +201,29 @@ export function PurchaseInvoicePrintModal({ invoice, lines, onClose }: PurchaseI
                 <div className="col-span-7 p-2.5 flex items-start gap-3 border-r border-black">
                   <div className="shrink-0 w-20 flex flex-col items-center justify-start pt-1">
                     <img
-                      src="/logo.png"
-                      alt="DD ENTERPRISE"
+                      src={company.logo_url || '/logo.png'}
+                      alt={company.name}
                       className="w-20 h-auto object-contain"
                       onError={e => { (e.target as HTMLElement).style.display = 'none' }}
                     />
                   </div>
                   <div className="space-y-0.5 flex-1 min-w-0">
                     <h2 className="text-xs font-black tracking-wider uppercase text-black leading-none mb-0.5">
-                      D. D. ENTERPRISE
+                      {company.name}
                     </h2>
                     <p className="text-[9px] text-black leading-tight">
-                      Khelia, Arkhali, Amdanga, Beside NH-34 (12)<br />
-                      North 24 Parganas, West Bengal - 743221
+                      {company.address}<br />
+                      {company.city}, {company.state} - {company.pincode}
                     </p>
                     <p className="font-bold text-[9.5px] text-black pt-0.5">
-                      GSTIN : <span className="font-mono">19AFDPD4677G1ZD</span>
+                      GSTIN : <span className="font-mono">{company.gstin}</span>
                     </p>
                     <p className="text-[8.5px]">
-                      <span className="font-semibold">Name:</span> TAPAN DEY ·{' '}
-                      <span className="font-semibold">Phone:</span> 9433393977
+                      {company.contact_person && <><span className="font-semibold">Name:</span> {company.contact_person} ·{' '}</>}
+                      <span className="font-semibold">Phone:</span> {company.phone}
                     </p>
                     <p className="text-[8.5px]">
-                      <span className="font-semibold">Email:</span> info@ddenterprisepaverblock.co.in
+                      <span className="font-semibold">Email:</span> {company.email}
                     </p>
                   </div>
                 </div>
@@ -465,7 +467,7 @@ export function PurchaseInvoicePrintModal({ invoice, lines, onClose }: PurchaseI
               <div className="grid grid-cols-12 bg-white min-h-[140px]">
                 <div className="col-span-7 p-2.5 space-y-1 border-r border-black text-[8px] leading-snug flex flex-col justify-between">
                   <div>
-                    <p className="font-bold text-[8.5px] uppercase">TERMS AND CONDITIONS :- D. D. ENTERPRISE</p>
+                    <p className="font-bold text-[8.5px] uppercase">TERMS AND CONDITIONS :- {company.name}</p>
                     {termsDetail ? (
                       <p className="text-black/90 whitespace-pre-line mt-0.5">{termsDetail}</p>
                     ) : (
@@ -482,7 +484,7 @@ export function PurchaseInvoicePrintModal({ invoice, lines, onClose }: PurchaseI
                   </div>
                   <div className="pt-2">
                     <p className="font-bold text-[8px] uppercase text-black">
-                      D. D. ENTERPRISE — Paver Block, Chequered Tile &amp; Roof Tile
+                      {company.name} — {company.trade_name || 'Paver Block, Chequered Tile & Roof Tile'}
                     </p>
                   </div>
                 </div>

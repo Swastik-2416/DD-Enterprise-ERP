@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import { formatCurrency, formatDate, amountInWords } from '@/lib/formatters'
 import { StatusBadge } from '@/components/shared/StatusBadge'
+import { useCompany } from '@/contexts/CompanyContext'
 import type { Invoice, InvoiceLine, Customer, Item } from '@/types/database.types'
 
 interface DDInvoicePrintModalProps {
@@ -39,6 +40,8 @@ export function DDInvoicePrintModal({
   isPosting,
   isUpdating
 }: DDInvoicePrintModalProps) {
+  const { company } = useCompany()
+
   // Copy Type State (Dropdown)
   const [copyType, setCopyType] = useState<InvoiceCopy>('ORIGINAL FOR RECIPIENT')
 
@@ -449,41 +452,47 @@ export function DDInvoicePrintModal({
                 <div className="col-span-7 p-2.5 flex items-start gap-3 border-r border-black">
                   <div className="shrink-0 w-20 flex flex-col items-center justify-start pt-1">
                     <img
-                      src="/logo.png"
-                      alt="DD PAVER"
+                      src={company.logo_url || '/logo.png'}
+                      alt={company.name}
                       className="w-20 h-auto object-contain"
                       onError={e => {
                         ;(e.target as HTMLElement).style.display = 'none'
                       }}
                     />
-                    <span className="text-[6.5px] text-center font-bold tracking-tighter text-blue-900 mt-1 uppercase leading-tight">
-                      STRONGER BASE, BETTER SPACE
-                    </span>
+                    {company.tagline && (
+                      <span className="text-[6.5px] text-center font-bold tracking-tighter text-blue-900 mt-1 uppercase leading-tight">
+                        {company.tagline}
+                      </span>
+                    )}
                   </div>
 
                   <div className="space-y-0.5 flex-1 min-w-0">
                     <h2 className="text-xs font-black tracking-wider uppercase text-black leading-none mb-0.5">
-                      D. D. ENTERPRISE
+                      {company.name}
                     </h2>
                     <p className="text-[9px] text-black leading-tight">
-                      Khelia, Arkhali, Amdanga, Beside NH-34 (12)<br />
-                      North 24 Parganas, West Bengal - 743221
+                      {company.address}<br />
+                      {company.city}, {company.state} - {company.pincode}
                     </p>
                     <p className="font-bold text-[9.5px] text-black pt-0.5">
-                      GSTIN : <span className="font-mono">19AFDPD4677G1ZD</span>
+                      GSTIN : <span className="font-mono">{company.gstin}</span>
                     </p>
                     <p className="text-[8.5px]">
-                      <span className="font-semibold">UDYAM:</span> UDYAM-WB-14-0057640 · <span className="font-semibold">BIS Lic:</span> CM/L-5100295395
+                      {company.udyam_reg && <><span className="font-semibold">UDYAM:</span> {company.udyam_reg} · </>}
+                      {company.bis_license && <><span className="font-semibold">BIS Lic:</span> {company.bis_license}</>}
                     </p>
                     <p className="text-[8.5px]">
-                      <span className="font-semibold">Name:</span> TAPAN DEY · <span className="font-semibold">Phone:</span> 9433393977
+                      {company.contact_person && <><span className="font-semibold">Name:</span> {company.contact_person} · </>}
+                      <span className="font-semibold">Phone:</span> {company.phone}
                     </p>
                     <p className="text-[8.5px]">
-                      <span className="font-semibold">Email:</span> info@ddenterprisepaverblock.co.in
+                      <span className="font-semibold">Email:</span> {company.email}
                     </p>
-                    <p className="text-[8.5px]">
-                      <span className="font-semibold">Website:</span> www.ddpaver.co.in
-                    </p>
+                    {company.website && (
+                      <p className="text-[8.5px]">
+                        <span className="font-semibold">Website:</span> {company.website.replace(/^https?:\/\//, '')}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -817,18 +826,24 @@ export function DDInvoicePrintModal({
               <div className="grid grid-cols-12 bg-white min-h-[140px]">
                 <div className="col-span-7 p-2.5 space-y-1 border-r border-black text-[8px] leading-snug flex flex-col justify-between">
                   <div>
-                    <p className="font-bold text-[8.5px] uppercase">TERMS AND CONDITIONS :- D. D. ENTERPRISE</p>
-                    <ol className="list-decimal pl-3 space-y-0.5 text-black/90">
-                      <li>Subject to our home Jurisdiction.</li>
-                      <li>Our Responsibility Ceases as soon as goods leaves our Factory.</li>
-                      <li>Goods once sold will not taken back.</li>
-                      <li>Delivery Ex-Premises.</li>
-                    </ol>
+                    <p className="font-bold text-[8.5px] uppercase">TERMS AND CONDITIONS :- {company.name}</p>
+                    {company.terms_conditions ? (
+                      <div className="text-black/90 space-y-0.5 whitespace-pre-line text-[8px]">
+                        {company.terms_conditions}
+                      </div>
+                    ) : (
+                      <ol className="list-decimal pl-3 space-y-0.5 text-black/90">
+                        <li>Subject to our home Jurisdiction.</li>
+                        <li>Our Responsibility Ceases as soon as goods leave our Factory.</li>
+                        <li>Goods once sold will not be taken back.</li>
+                        <li>Delivery Ex-Premises.</li>
+                      </ol>
+                    )}
                   </div>
                   <div className="pt-2">
                     <p className="font-bold text-[8px] text-blue-900">Review our Product & Services on Google</p>
                     <p className="font-bold text-[8px] uppercase text-black">
-                      D. D. ENTERPRISE - Paver Block, Chequered Tile & Roof Tile
+                      {company.name} — {company.trade_name || 'Paver Block, Chequered Tile & Roof Tile'}
                     </p>
                   </div>
                 </div>
@@ -837,8 +852,9 @@ export function DDInvoicePrintModal({
                   <span className="text-[7.5px] text-black/60">(E & O.E.)</span>
                   <div className="pt-14 pb-1">
                     <p className="font-bold text-[9px] uppercase tracking-wider text-black border-t border-black pt-1">
-                      AUTHORISED SIGNATORY
+                      FOR {company.name}
                     </p>
+                    <p className="text-[7.5px] text-black/70">AUTHORISED SIGNATORY</p>
                   </div>
                 </div>
               </div>
