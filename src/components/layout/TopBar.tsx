@@ -1,4 +1,4 @@
-import { Menu, Bell, LogOut, User, Settings, ShieldCheck } from 'lucide-react'
+import { Menu, Bell, LogOut, User } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useNavigate, Link } from 'react-router-dom'
 import { useState } from 'react'
@@ -99,24 +99,6 @@ export function TopBar({ onMenuClick, title }: TopBarProps) {
                   >
                     <User className="h-4 w-4 text-primary" />
                     <span>My Profile & Security</span>
-                  </Link>
-
-                  <Link
-                    to="/settings"
-                    onClick={() => setDropdownOpen(false)}
-                    className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-on-surface hover:bg-surface-container transition-colors"
-                  >
-                    <Settings className="h-4 w-4 text-outline" />
-                    <span>Company Settings</span>
-                  </Link>
-
-                  <Link
-                    to="/settings/audit-logs"
-                    onClick={() => setDropdownOpen(false)}
-                    className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-on-surface hover:bg-surface-container transition-colors"
-                  >
-                    <ShieldCheck className="h-4 w-4 text-outline" />
-                    <span>Audit Trail Logs</span>
                   </Link>
                 </div>
 
