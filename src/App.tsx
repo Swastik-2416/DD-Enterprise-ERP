@@ -22,6 +22,7 @@ import { FreightRegisterPage } from '@/pages/transport/FreightRegisterPage'
 import { TransporterPaymentsPage } from '@/pages/transport/TransporterPaymentsPage'
 import { PaymentsPage } from '@/pages/payments/PaymentsPage'
 import { ProductionOrdersPage } from '@/pages/manufacturing/ProductionOrdersPage'
+import { ProductionReportPage } from '@/pages/reports/ProductionReportPage'
 import { StockReportPage } from '@/pages/reports/StockReportPage'
 import { GstReportPage } from '@/pages/reports/GstReportPage'
 import { SalesRegisterPage } from '@/pages/reports/SalesRegisterPage'
@@ -119,7 +120,7 @@ export default function App() {
           <Route path="reports/sales" element={<SalesRegisterPage />} />
           <Route path="reports/aging" element={<AgingReportPage />} />
           <Route path="reports/stock" element={<StockReportPage />} />
-          <Route path="reports/production" element={<ProductionOrdersPage />} />
+          <Route path="reports/production" element={<ProductionReportPage />} />
           <Route path="reports/gst" element={<GstReportPage />} />
 
           {/* Settings */}
