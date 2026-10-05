@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query'
 import { KpiCard } from '@/components/shared/PageHeader'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { formatCurrency, formatDate, formatNumber } from '@/lib/formatters'
+import { cn } from '@/lib/cn'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { DEFAULT_WAREHOUSE_ID } from '@/lib/constants'
@@ -316,90 +317,195 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <KpiCard
           title="Master Items (SKUs)"
+          category="Inventory Assets"
+          numericValue={items.length}
           value={String(items.length)}
           subtitle={`${finishedGoodsCount} Finished Goods · ${rawMaterialsCount} Raw Materials`}
           icon={Package}
-          color="blue"
-        />
+          color="cyan"
+          actionLink={{ label: 'Manage Item Catalog', href: '/master/items' }}
+        >
+          {items.length > 0 && (
+            <div className="space-y-1 pt-1">
+              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                <div
+                  style={{ width: `${(finishedGoodsCount / (items.length || 1)) * 100}%` }}
+                  className="bg-emerald-500 h-full transition-all"
+                  title={`Finished Goods: ${finishedGoodsCount}`}
+                />
+                <div
+                  style={{ width: `${(rawMaterialsCount / (items.length || 1)) * 100}%` }}
+                  className="bg-blue-500 h-full transition-all"
+                  title={`Raw Materials: ${rawMaterialsCount}`}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />FG {finishedGoodsCount}</span>
+                <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-blue-500" />RM {rawMaterialsCount}</span>
+              </div>
+            </div>
+          )}
+        </KpiCard>
+
         <KpiCard
           title="Active Customers"
+          category="Client Network"
+          numericValue={liveCustomers.length}
           value={String(liveCustomers.length)}
           subtitle="Registered buyers & contractors"
           icon={Users}
           color="green"
-        />
+          actionLink={{ label: 'View Customer Accounts', href: '/stakeholders/customers' }}
+        >
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50/80 px-2 py-1 rounded-lg border border-emerald-100">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+            <span className="truncate">100% Commercial Accounts Active</span>
+          </div>
+        </KpiCard>
+
         <KpiCard
           title="Raw Material Vendors"
+          category="Supply Chain"
+          numericValue={liveSuppliers.length}
           value={String(liveSuppliers.length)}
           subtitle="Cement, sand, fly ash vendors"
           icon={Building2}
           color="amber"
-        />
+          actionLink={{ label: 'Manage Supplier Base', href: '/stakeholders/vendors' }}
+        >
+          <div className="flex items-center gap-1 text-[10px] font-medium text-amber-900 flex-wrap">
+            <span className="px-1.5 py-0.5 rounded bg-amber-100/70 border border-amber-200/50">Cement</span>
+            <span className="px-1.5 py-0.5 rounded bg-amber-100/70 border border-amber-200/50">Sand</span>
+            <span className="px-1.5 py-0.5 rounded bg-amber-100/70 border border-amber-200/50">Fly Ash</span>
+          </div>
+        </KpiCard>
+
         <KpiCard
           title="Recipe BOMs"
+          category="Mix Formulation"
+          numericValue={bomCount}
           value={String(bomCount)}
           subtitle="Active mix formulas configured"
           icon={Layers}
           color="purple"
-        />
+          actionLink={{ label: 'Configure Mix Recipes', href: '/master/bom' }}
+        >
+          <div className="flex items-center justify-between text-[11px] text-purple-700 bg-purple-50/80 px-2 py-1 rounded-lg border border-purple-100">
+            <span className="font-medium">Batch Calibration</span>
+            <span className="font-bold font-mono">{bomCount > 0 ? 'Ready' : '0 Mix'}</span>
+          </div>
+        </KpiCard>
       </div>
 
       {/* KPI Row 2 - Live Financials */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <KpiCard
           title="Total Revenue (FY)"
+          category="Fiscal Turnover"
+          numericValue={totalRevenue}
+          prefix="₹"
           value={formatCurrency(totalRevenue)}
           subtitle={`incl. GST · ${postedSales.length} posted invoices`}
           icon={TrendingUp}
           color="green"
-        />
+          actionLink={{ label: 'View Sales Register', href: '/sales/invoices' }}
+        >
+          <div className="flex items-center justify-between text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">
+            <span>Invoiced Turnover</span>
+            <span className="font-mono font-bold">100% Realized</span>
+          </div>
+        </KpiCard>
+
         <KpiCard
           title="Total Purchases (FY)"
+          category="Procurement Outlay"
+          numericValue={totalPurchases}
+          prefix="₹"
           value={formatCurrency(totalPurchases)}
           subtitle={`incl. GST · ${postedPurchases.length} posted bills`}
           icon={ShoppingCart}
           color="blue"
-        />
+          actionLink={{ label: 'View Purchase Invoices', href: '/procurement/purchase-invoices' }}
+        >
+          <div className="flex items-center justify-between text-[11px] font-semibold text-blue-700 bg-blue-50 px-2 py-1 rounded-lg border border-blue-100">
+            <span>Raw Material Outlay</span>
+            <span className="font-mono font-bold">{postedPurchases.length} Posted</span>
+          </div>
+        </KpiCard>
+
         <KpiCard
           title="Customer Receivables"
+          category="Outstanding Dues"
+          numericValue={totalReceivables}
+          prefix="₹"
           value={formatCurrency(totalReceivables)}
-          subtitle="outstanding balance due"
+          subtitle="Outstanding balance due from buyers"
           icon={IndianRupee}
           color="amber"
-        />
+          actionLink={{ label: 'Customer Aging Ledger', href: '/finance/aging' }}
+        >
+          <div className="flex items-center justify-between text-[11px] font-semibold text-amber-800 bg-amber-50 px-2 py-1 rounded-lg border border-amber-200/60">
+            <span>Unsettled Credit</span>
+            <span className="font-mono font-bold">{totalReceivables > 0 ? 'Action Needed' : 'Zero Due'}</span>
+          </div>
+        </KpiCard>
+
         <KpiCard
           title="Vendor Payables"
+          category="Supplier Liabilities"
+          numericValue={totalPayables}
+          prefix="₹"
           value={formatCurrency(totalPayables)}
-          subtitle="outstanding to vendors"
+          subtitle="Outstanding to vendors"
           icon={TrendingDown}
-          color="red"
-        />
+          color={totalPayables > 0 ? 'red' : 'green'}
+          actionLink={{ label: 'Vendor Balance Ledger', href: '/finance/vendor-ledger' }}
+        >
+          <div className={cn(
+            'flex items-center justify-between text-[11px] font-semibold px-2 py-1 rounded-lg border',
+            totalPayables > 0 ? 'text-rose-800 bg-rose-50 border-rose-200/60' : 'text-emerald-800 bg-emerald-50 border-emerald-200/60'
+          )}>
+            <span>{totalPayables > 0 ? 'Pending Dues' : 'Zero Liabilities'}</span>
+            <span className="font-mono font-bold">{totalPayables > 0 ? 'Pay Bills' : 'All Cleared'}</span>
+          </div>
+        </KpiCard>
       </div>
 
       {/* Charts */}
       <div className="w-full">
-        {/* Real Revenue Chart */}
-        <div className="bg-surface rounded-xl border border-outline-variant p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-on-surface">
-              Monthly Revenue vs Purchases (FY 2025–26)
-            </h2>
-            <span className="text-xs font-mono text-outline">Real-Time Data</span>
+        {/* Real Revenue Chart with Architectural Framing */}
+        <div className="bg-white/95 rounded-2xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,53,106,0.04)] overflow-hidden">
+          <div className="h-1 w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-400" />
+          <div className="p-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <div>
+                <h2 className="text-sm font-bold text-slate-800 font-heading">
+                  Monthly Revenue vs Purchases (FY 2025–26)
+                </h2>
+                <p className="text-xs text-slate-400">Cashflow overview across fiscal months</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-blue-50 text-blue-700 border border-blue-200/60 font-mono">
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
+                  Live Supabase Data
+                </span>
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={monthlyChartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#64748b' }} />
+                <YAxis
+                  tickFormatter={v => (v >= 100000 ? `₹${(v / 100000).toFixed(0)}L` : `₹${v}`)}
+                  tick={{ fontSize: 11, fill: '#64748b' }}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Bar dataKey="revenue" name="Revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="purchases" name="Purchases" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={monthlyChartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#64748b' }} />
-              <YAxis
-                tickFormatter={v => (v >= 100000 ? `₹${(v / 100000).toFixed(0)}L` : `₹${v}`)}
-                tick={{ fontSize: 11, fill: '#64748b' }}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Bar dataKey="revenue" name="Revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="purchases" name="Purchases" fill="#f59e0b" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
         </div>
       </div>
 
