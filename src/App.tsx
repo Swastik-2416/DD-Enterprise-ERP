@@ -15,6 +15,9 @@ import { PurchaseOrdersPage } from '@/pages/procurement/PurchaseOrdersPage'
 import { PurchaseInvoicesPage } from '@/pages/procurement/PurchaseInvoicesPage'
 import { GoodsReceiptsPage } from '@/pages/procurement/GoodsReceiptsPage'
 import { InvoicesPage } from '@/pages/sales/InvoicesPage'
+import { DeliveryChallansPage } from '@/pages/sales/DeliveryChallansPage'
+import { FreightRegisterPage } from '@/pages/transport/FreightRegisterPage'
+import { TransporterPaymentsPage } from '@/pages/transport/TransporterPaymentsPage'
 import { PaymentsPage } from '@/pages/payments/PaymentsPage'
 import { ProductionOrdersPage } from '@/pages/manufacturing/ProductionOrdersPage'
 import { StockReportPage } from '@/pages/reports/StockReportPage'
@@ -80,10 +83,7 @@ export default function App() {
             element={<PlaceholderPage title="Sales Orders" subtitle="Confirmed orders, production commitments & booking advances" />}
           />
           <Route path="sales/invoices" element={<InvoicesPage />} />
-          <Route
-            path="sales/delivery-challans"
-            element={<PlaceholderPage title="Delivery Challans" subtitle="Dispatch gate passes, truck load slips & customer sign-offs" />}
-          />
+          <Route path="sales/delivery-challans" element={<DeliveryChallansPage />} />
           {/* <Route
             path="sales/credit-notes"
             element={<PlaceholderPage title="Credit Notes" subtitle="Sales returns, rate adjustments & breakage allowances" />}
@@ -104,14 +104,8 @@ export default function App() {
           /> */}
 
           {/* Transport */}
-          <Route
-            path="transport/freight"
-            element={<PlaceholderPage title="Freight Register" subtitle="Trip logs, per-ton / per-trip freight costs and transit challans" />}
-          />
-          <Route
-            path="transport/payments"
-            element={<PlaceholderPage title="Transporter Payments" subtitle="Lorry freight settlements & fuel advances" />}
-          />
+          <Route path="transport/freight" element={<FreightRegisterPage />} />
+          <Route path="transport/payments" element={<TransporterPaymentsPage />} />
 
           {/* Finance */}
           <Route path="finance/customer-ledger" element={<PartyLedgerPage partyType="customer" />} />
