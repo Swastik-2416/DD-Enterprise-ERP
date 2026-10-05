@@ -1,6 +1,6 @@
-import { Menu, Bell, LogOut, User } from 'lucide-react'
+import { Menu, Bell, LogOut, User, Settings, ShieldCheck } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useState } from 'react'
 import { cn } from '@/lib/cn'
 import { useNotifications } from '@/contexts/NotificationContext'
@@ -78,19 +78,57 @@ export function TopBar({ onMenuClick, title }: TopBarProps) {
             <>
               <div className="fixed inset-0 z-10" onClick={() => setDropdownOpen(false)} />
               <div className={cn(
-                'absolute right-0 top-full mt-1 w-48 bg-surface rounded-lg shadow-ambient border border-outline-variant z-20 py-1'
+                'absolute right-0 top-full mt-1 w-56 bg-surface rounded-xl shadow-ambient border border-outline-variant z-20 py-1.5 overflow-hidden animate-in fade-in-50 zoom-in-95'
               )}>
-                <div className="px-4 py-2 border-b border-slate-100">
-                  <p className="text-sm font-medium text-on-surface">{user?.full_name}</p>
-                  <p className="text-xs text-outline">{user?.email}</p>
+                <div className="px-4 py-2.5 border-b border-outline-variant bg-surface-container/30">
+                  <p className="text-sm font-bold text-on-surface">{user?.full_name}</p>
+                  <p className="text-xs text-outline truncate">{user?.email}</p>
+                  <span className={cn(
+                    'inline-block text-[10px] px-2 py-0.5 rounded-full mt-1 font-semibold uppercase tracking-wider',
+                    user?.role === 'manager' ? 'bg-primary/10 text-primary' : 'bg-amber-100 text-amber-700'
+                  )}>
+                    {user?.role === 'manager' ? 'Manager' : 'Accountant'}
+                  </span>
                 </div>
-                <button
-                  onClick={handleSignOut}
-                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-error hover:bg-error-container transition-colors"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Sign Out
-                </button>
+
+                <div className="py-1">
+                  <Link
+                    to="/profile"
+                    onClick={() => setDropdownOpen(false)}
+                    className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-on-surface hover:bg-surface-container transition-colors"
+                  >
+                    <User className="h-4 w-4 text-primary" />
+                    <span>My Profile & Security</span>
+                  </Link>
+
+                  <Link
+                    to="/settings"
+                    onClick={() => setDropdownOpen(false)}
+                    className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-on-surface hover:bg-surface-container transition-colors"
+                  >
+                    <Settings className="h-4 w-4 text-outline" />
+                    <span>Company Settings</span>
+                  </Link>
+
+                  <Link
+                    to="/settings/audit-logs"
+                    onClick={() => setDropdownOpen(false)}
+                    className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-on-surface hover:bg-surface-container transition-colors"
+                  >
+                    <ShieldCheck className="h-4 w-4 text-outline" />
+                    <span>Audit Trail Logs</span>
+                  </Link>
+                </div>
+
+                <div className="border-t border-outline-variant pt-1">
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </button>
+                </div>
               </div>
             </>
           )}

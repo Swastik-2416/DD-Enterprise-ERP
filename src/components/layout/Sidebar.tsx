@@ -216,17 +216,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           </button>
         </div>
 
-        {/* Company info */}
-        <div className="px-4 py-2 bg-background border-b border-outline-variant shrink-0">
-          <p className="text-xs text-outline">Logged in as</p>
-          <p className="text-xs font-semibold text-on-surface truncate">{user?.full_name}</p>
-          <span className={cn(
-            'inline-block text-xs px-2 py-0.5 rounded-full mt-0.5 font-medium',
-            user?.role === 'manager' ? 'bg-primary/10 text-primary' : 'bg-amber-100 text-amber-700'
-          )}>
-            {user?.role === 'manager' ? 'Manager' : 'Accountant (Read-only)'}
-          </span>
-        </div>
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-0.5">

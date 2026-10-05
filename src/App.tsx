@@ -38,6 +38,7 @@ import { ProfitLossPage } from '@/pages/finance/ProfitLossPage'
 import { AgingReportPage } from '@/pages/finance/AgingReportPage'
 import { ExecutiveAnalyticsPage } from '@/pages/analytics/ExecutiveAnalyticsPage'
 import { SettingsPage } from '@/pages/settings/SettingsPage'
+import { ProfilePage } from '@/pages/settings/ProfilePage'
 import { AuditLogPage } from '@/pages/settings/AuditLogPage'
 import { PlaceholderPage } from '@/pages/common/PlaceholderPage'
 
@@ -133,8 +134,10 @@ export default function App() {
           <Route path="reports/production" element={<ProductionReportPage />} />
           <Route path="reports/gst" element={<GstReportPage />} />
 
-          {/* Settings & Security */}
+          {/* Settings & User Profile */}
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="settings/profile" element={<ProfilePage />} />
+          <Route path="profile" element={<ProfilePage />} />
           <Route path="settings/audit-logs" element={<AuditLogPage />} />
           <Route path="audit-logs" element={<AuditLogPage />} />
         </Route>

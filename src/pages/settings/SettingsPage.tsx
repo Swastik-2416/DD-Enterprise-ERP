@@ -18,7 +18,8 @@ import {
   Mail,
   Globe,
   ShieldCheck,
-  Briefcase
+  Briefcase,
+  User
 } from 'lucide-react'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { useCompany, DEFAULT_COMPANY_SETTINGS, type CompanySettings } from '@/contexts/CompanyContext'
@@ -128,8 +129,16 @@ export function SettingsPage() {
         actions={
           <div className="flex items-center gap-2">
             <Link
-              to="/settings/audit-logs"
+              to="/profile"
               className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-primary hover:text-primary-hover bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors border border-primary/20"
+              title="Edit My Profile & Security"
+            >
+              <User className="h-3.5 w-3.5" />
+              <span>My Profile</span>
+            </Link>
+            <Link
+              to="/settings/audit-logs"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-outline hover:text-on-surface bg-surface-container hover:bg-surface-container-high rounded-lg transition-colors border border-outline-variant"
               title="Inspect System Audit Trail & Security Logs"
             >
               <ShieldCheck className="h-3.5 w-3.5" />
