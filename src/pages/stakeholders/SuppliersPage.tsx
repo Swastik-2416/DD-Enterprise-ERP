@@ -280,7 +280,7 @@ export function SuppliersPage() {
 
               <div className="mt-4 pt-3 border-t border-outline-variant/40 flex items-center justify-between">
                 <Link
-                  to="/finance/supplier-ledger"
+                  to="/finance/vendor-ledger"
                   className="text-xs text-primary font-semibold hover:underline flex items-center gap-1"
                 >
                   Statement / Ledger <ArrowRight className="h-3 w-3" />

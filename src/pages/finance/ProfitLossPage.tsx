@@ -8,6 +8,12 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { formatCurrency, formatDate } from '@/lib/formatters'
 import type { Invoice, PurchaseInvoice, ProductionOrder, Company } from '@/types/database.types'
+import {
+  type ExpenseRecord,
+  type OtherIncomeRecord,
+  SEED_EXPENSES,
+  SEED_OTHER_INCOME
+} from '@/types/finance.types'
 
 function getFYDefaults() {
   const today = new Date()
@@ -116,6 +122,7 @@ export function ProfitLossPage() {
   })
 
   // 5. Calculations
+  // 5. Calculations
   const metrics = useMemo(() => {
     // Net Revenue (Taxable amount of sales invoices - GST is a pass-through liability)
     const netSalesTurnover = salesInvoices.reduce((sum, inv) => sum + (Number(inv.taxable_amount) || 0), 0)
@@ -134,6 +141,28 @@ export function ProfitLossPage() {
     const grossProfit = netSalesTurnover - directMaterialPurchases
     const grossMarginPct = netSalesTurnover > 0 ? (grossProfit / netSalesTurnover) * 100 : 0
 
+    // Indirect Expenses from localStorage
+    let allExpenses: ExpenseRecord[] = SEED_EXPENSES
+    try {
+      const stored = localStorage.getItem('dd_expenses_list')
+      if (stored) allExpenses = JSON.parse(stored)
+    } catch {}
+    const periodExpenses = allExpenses.filter(e => (!fromDate || e.date >= fromDate) && (!toDate || e.date <= toDate))
+    const totalIndirectExpenses = periodExpenses.reduce((s, e) => s + (Number(e.amount) || 0), 0)
+
+    // Other Income from localStorage
+    let allIncome: OtherIncomeRecord[] = SEED_OTHER_INCOME
+    try {
+      const stored = localStorage.getItem('dd_other_income_list')
+      if (stored) allIncome = JSON.parse(stored)
+    } catch {}
+    const periodIncome = allIncome.filter(i => (!fromDate || i.date >= fromDate) && (!toDate || i.date <= toDate))
+    const totalOtherIncome = periodIncome.reduce((s, i) => s + (Number(i.amount) || 0), 0)
+
+    // Net Operating Profit
+    const netOperatingProfit = grossProfit + totalOtherIncome - totalIndirectExpenses
+    const netMarginPct = netSalesTurnover > 0 ? (netOperatingProfit / netSalesTurnover) * 100 : 0
+
     return {
       netSalesTurnover,
       grossSalesWithTax,
@@ -147,8 +176,14 @@ export function ProfitLossPage() {
       productionCount: productionOrders.length,
       grossProfit,
       grossMarginPct,
+      totalIndirectExpenses,
+      expenseCount: periodExpenses.length,
+      totalOtherIncome,
+      incomeCount: periodIncome.length,
+      netOperatingProfit,
+      netMarginPct
     }
-  }, [salesInvoices, purchaseInvoices, productionOrders])
+  }, [salesInvoices, purchaseInvoices, productionOrders, fromDate, toDate])
 
   // CSV Export
   const handleExportCSV = () => {
@@ -157,23 +192,30 @@ export function ProfitLossPage() {
       ['Period', `${fromDate} to ${toDate}`],
       [''],
       ['PARTICULARS', 'AMOUNT (INR)'],
-      ['INCOME / OPERATING REVENUE', ''],
+      ['1. INCOME / OPERATING REVENUE', ''],
       ['  Gross Sales Invoices (Incl. GST)', metrics.grossSalesWithTax.toFixed(2)],
       ['  Less: Output GST Collected', `-${metrics.outputGst.toFixed(2)}`],
-      ['  Net Sales Turnover (Operating Revenue)', metrics.netSalesTurnover.toFixed(2)],
+      ['  Net Sales Turnover (Operating Revenue) [A]', metrics.netSalesTurnover.toFixed(2)],
       [''],
-      ['COST OF GOODS SOLD (COGS)', ''],
-      ['  Direct Raw Material Purchases (Taxable)', metrics.directMaterialPurchases.toFixed(2)],
-      ['  Total Direct Material Cost', metrics.directMaterialPurchases.toFixed(2)],
+      ['2. COST OF GOODS SOLD (COGS)', ''],
+      ['  Direct Raw Material Purchases (Taxable) [B]', metrics.directMaterialPurchases.toFixed(2)],
       [''],
-      ['TRADING PROFIT / GROSS SURPLUS', ''],
-      ['  Gross Profit', metrics.grossProfit.toFixed(2)],
-      ['  Gross Margin %', `${metrics.grossMarginPct.toFixed(2)}%`],
+      ['3. GROSS TRADING PROFIT [A - B]', metrics.grossProfit.toFixed(2)],
+      ['  Gross Trading Margin %', `${metrics.grossMarginPct.toFixed(2)}%`],
+      [''],
+      ['4. OTHER / NON-OPERATING INCOME [C]', metrics.totalOtherIncome.toFixed(2)],
+      [''],
+      ['5. INDIRECT & OVERHEAD EXPENSES [D]', metrics.totalIndirectExpenses.toFixed(2)],
+      [''],
+      ['6. NET OPERATING PROFIT [A - B + C - D]', metrics.netOperatingProfit.toFixed(2)],
+      ['  Net Profit Margin %', `${metrics.netMarginPct.toFixed(2)}%`],
       [''],
       ['PLANT OPERATIONAL METRICS', ''],
       ['  Sales Invoices Posted', metrics.salesCount.toString()],
       ['  Purchase Consignments Posted', metrics.purchasesCount.toString()],
       ['  Finished Paver Blocks Produced (pcs)', metrics.totalPaversProduced.toString()],
+      ['  Indirect Expense Vouchers Logged', metrics.expenseCount.toString()],
+      ['  Other Income Receipts Logged', metrics.incomeCount.toString()],
     ]
 
     const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(r => r.join(',')).join('\n')
@@ -281,39 +323,53 @@ export function ProfitLossPage() {
       </div>
 
       {/* Top Executive KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-surface rounded-2xl border border-outline-variant p-4 shadow-xs">
-          <span className="text-xs font-semibold uppercase text-outline">Net Sales Turnover</span>
-          <p className="text-xl font-bold text-blue-700 mt-1">
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
+        <div className="bg-surface rounded-2xl border border-outline-variant p-3.5 shadow-xs">
+          <span className="text-[11px] font-semibold uppercase text-outline">Operating Turnover</span>
+          <p className="text-lg font-bold text-blue-700 mt-1">
             {formatCurrency(metrics.netSalesTurnover)}
           </p>
-          <span className="text-xs text-outline">{metrics.salesCount} Invoices Dispatched</span>
+          <span className="text-[11px] text-outline">{metrics.salesCount} Invoices</span>
         </div>
 
-        <div className="bg-surface rounded-2xl border border-outline-variant p-4 shadow-xs">
-          <span className="text-xs font-semibold uppercase text-outline">Direct Raw Materials</span>
-          <p className="text-xl font-bold text-amber-700 mt-1">
+        <div className="bg-surface rounded-2xl border border-outline-variant p-3.5 shadow-xs">
+          <span className="text-[11px] font-semibold uppercase text-outline">Direct Materials (COGS)</span>
+          <p className="text-lg font-bold text-amber-700 mt-1">
             {formatCurrency(metrics.directMaterialPurchases)}
           </p>
-          <span className="text-xs text-outline">{metrics.purchasesCount} Material Bills</span>
+          <span className="text-[11px] text-outline">{metrics.purchasesCount} Material Bills</span>
         </div>
 
-        <div className="bg-surface rounded-2xl border border-outline-variant p-4 shadow-xs">
-          <span className="text-xs font-semibold uppercase text-outline">Gross Trading Profit</span>
-          <p className={`text-xl font-bold mt-1 ${metrics.grossProfit >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>
+        <div className="bg-surface rounded-2xl border border-outline-variant p-3.5 shadow-xs">
+          <span className="text-[11px] font-semibold uppercase text-outline">Gross Trading Profit</span>
+          <p className={`text-lg font-bold mt-1 ${metrics.grossProfit >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>
             {formatCurrency(metrics.grossProfit)}
           </p>
-          <span className="text-xs text-outline">Turnover minus Material Cost</span>
+          <span className="text-[11px] text-outline">Margin: {metrics.grossMarginPct.toFixed(1)}%</span>
         </div>
 
-        <div className="bg-surface rounded-2xl border border-outline-variant p-4 shadow-xs">
-          <span className="text-xs font-semibold uppercase text-outline">Gross Margin %</span>
-          <p className={`text-xl font-bold mt-1 ${metrics.grossMarginPct >= 0 ? 'text-primary' : 'text-red-600'}`}>
-            {metrics.grossMarginPct.toFixed(1)}%
+        <div className="bg-surface rounded-2xl border border-outline-variant p-3.5 shadow-xs">
+          <span className="text-[11px] font-semibold uppercase text-outline">Other Income</span>
+          <p className="text-lg font-bold text-emerald-600 mt-1">
+            +{formatCurrency(metrics.totalOtherIncome)}
           </p>
-          <span className="text-xs text-outline">
-            {metrics.totalPaversProduced.toLocaleString('en-IN')} pcs produced
-          </span>
+          <span className="text-[11px] text-outline">{metrics.incomeCount} Scrap/Sundry Receipts</span>
+        </div>
+
+        <div className="bg-surface rounded-2xl border border-outline-variant p-3.5 shadow-xs">
+          <span className="text-[11px] font-semibold uppercase text-outline">Indirect Expenses</span>
+          <p className="text-lg font-bold text-red-600 mt-1">
+            -{formatCurrency(metrics.totalIndirectExpenses)}
+          </p>
+          <span className="text-[11px] text-outline">{metrics.expenseCount} Overhead Vouchers</span>
+        </div>
+
+        <div className="bg-surface rounded-2xl border border-outline-variant p-3.5 shadow-xs bg-surface-container/30">
+          <span className="text-[11px] font-semibold uppercase text-outline">Net Operating Profit</span>
+          <p className={`text-lg font-bold mt-1 ${metrics.netOperatingProfit >= 0 ? 'text-primary' : 'text-red-600'}`}>
+            {formatCurrency(metrics.netOperatingProfit)}
+          </p>
+          <span className="text-[11px] font-semibold text-outline">Net Margin: {metrics.netMarginPct.toFixed(1)}%</span>
         </div>
       </div>
 
@@ -323,8 +379,8 @@ export function ProfitLossPage() {
         <div className="border-b border-outline-variant/60 pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-primary">Financial Statement</span>
-            <h2 className="text-xl font-bold text-on-surface mt-0.5">Trading and Operating Profit & Loss Account</h2>
-            <p className="text-xs text-outline">{company?.name || 'DD Enterprise'} · Paver Block Plant</p>
+            <h2 className="text-xl font-bold text-on-surface mt-0.5">Comprehensive Profit &amp; Loss Statement</h2>
+            <p className="text-xs text-outline">{company?.name || 'DD Enterprise'} · Paver Block &amp; Concrete Products Factory</p>
           </div>
           <div className="text-left sm:text-right text-xs text-outline space-y-0.5">
             <p className="font-semibold text-on-surface">For the Period: {formatDate(fromDate)} to {formatDate(toDate)}</p>
@@ -383,7 +439,7 @@ export function ProfitLossPage() {
           </div>
 
           {/* Section 3: Gross Trading Profit */}
-          <div className={`border rounded-xl p-5 ${
+          <div className={`border rounded-xl p-4 ${
             metrics.grossProfit >= 0
               ? 'border-emerald-200 bg-emerald-50/40 dark:bg-emerald-950/20'
               : 'border-red-200 bg-red-50/40 dark:bg-red-950/20'
@@ -394,15 +450,73 @@ export function ProfitLossPage() {
                   3. Gross Trading Margin / Operating Surplus (A - B)
                 </span>
                 <p className="text-xs text-outline mt-0.5">
-                  Operating revenue remaining after raw material costs to cover plant labor, electricity & administrative overheads
+                  Gross contribution generated from finished paver deliveries over raw material procurement
                 </p>
               </div>
               <div className="text-left sm:text-right">
-                <p className={`text-2xl font-bold font-mono ${metrics.grossProfit >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>
+                <p className={`text-xl font-bold font-mono ${metrics.grossProfit >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>
                   {formatCurrency(metrics.grossProfit)}
                 </p>
                 <p className="text-xs font-semibold text-outline">
-                  Margin: <span className="text-on-surface">{metrics.grossMarginPct.toFixed(1)}%</span>
+                  Trading Margin: <span className="text-on-surface">{metrics.grossMarginPct.toFixed(1)}%</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 4: Other / Non-Operating Income */}
+          <div className="border border-outline-variant/80 rounded-xl overflow-hidden">
+            <div className="bg-emerald-50/50 dark:bg-emerald-950/20 px-4 py-2.5 border-b border-outline-variant/80 flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
+                4. Other / Non-Operating Income (+ C)
+              </span>
+              <span className="text-xs text-emerald-700 font-semibold">{metrics.incomeCount} Receipts</span>
+            </div>
+            <div className="divide-y divide-outline-variant/40 text-sm">
+              <div className="flex items-center justify-between py-2.5 px-4">
+                <span className="text-on-surface">Factory By-Product Receipts (Cement Bags Re-sale, Scrap Rubble, Pallets, Bank Interest)</span>
+                <span className="font-mono text-emerald-700 font-semibold">+{formatCurrency(metrics.totalOtherIncome)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 5: Indirect & Factory Overhead Expenses */}
+          <div className="border border-outline-variant/80 rounded-xl overflow-hidden">
+            <div className="bg-red-50/50 dark:bg-red-950/20 px-4 py-2.5 border-b border-outline-variant/80 flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-red-800 dark:text-red-300">
+                5. Indirect Factory &amp; Administrative Overheads (- D)
+              </span>
+              <span className="text-xs text-red-700 font-semibold">{metrics.expenseCount} Vouchers</span>
+            </div>
+            <div className="divide-y divide-outline-variant/40 text-sm">
+              <div className="flex items-center justify-between py-2.5 px-4">
+                <span className="text-on-surface">Electricity &amp; Power, DG Generator Diesel, Plant Repairs, Mould Maintenance, Land Lease</span>
+                <span className="font-mono text-red-600 font-semibold">-{formatCurrency(metrics.totalIndirectExpenses)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 6: Net Operating Profit */}
+          <div className={`border-2 rounded-xl p-5 ${
+            metrics.netOperatingProfit >= 0
+              ? 'border-primary/40 bg-primary/5 dark:bg-primary/10'
+              : 'border-red-300 bg-red-50/50 dark:bg-red-950/30'
+          }`}>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                  6. Net Operating Profit Before Tax (A - B + C - D)
+                </span>
+                <p className="text-xs text-outline mt-0.5">
+                  Net bottom-line factory surplus after accounting for all material costs, factory overheads, and sundry revenues
+                </p>
+              </div>
+              <div className="text-left sm:text-right">
+                <p className={`text-2xl font-black font-mono ${metrics.netOperatingProfit >= 0 ? 'text-primary' : 'text-red-600'}`}>
+                  {formatCurrency(metrics.netOperatingProfit)}
+                </p>
+                <p className="text-xs font-semibold text-outline">
+                  Net Margin: <span className="text-on-surface">{metrics.netMarginPct.toFixed(1)}%</span>
                 </p>
               </div>
             </div>

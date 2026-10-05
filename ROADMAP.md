@@ -110,11 +110,13 @@
 
 ---
 
-### 2.7 — Payments
+### 2.7 — Payments & Factory Financials
 - [x] **Record Inward Payment** — Record payments received from customers with mode (Cash, Cheque, NEFT, UPI, etc.)
 - [x] **Record Outward Payment** — Record payments made to suppliers
 - [x] **Invoice Allocation** — Link a payment to one or more invoices to accurately track outstanding balance
-- [x] **Ledger View** — Customer/Supplier account statement: chronological list of all invoices and payments
+- [x] **Ledger View** — Customer/Supplier account statement: chronological list of all invoices and payments with opening balance
+- [x] **Indirect & Factory Expenses** — Manage power, DG set diesel, machinery maintenance, mould hardfacing, and land lease with A5 payment debit vouchers
+- [x] **Other / Sundry Income** — Track scrap paver rubble, empty cement bag re-sales, pallet deposits, and bank interest with money receipts
 
 ---
 

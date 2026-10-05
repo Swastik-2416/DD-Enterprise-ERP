@@ -27,6 +27,8 @@ import { GstReportPage } from '@/pages/reports/GstReportPage'
 import { SalesRegisterPage } from '@/pages/reports/SalesRegisterPage'
 import { PurchaseRegisterPage } from '@/pages/reports/PurchaseRegisterPage'
 import { PartyLedgerPage } from '@/pages/finance/PartyLedgerPage'
+import { ExpensesPage } from '@/pages/finance/ExpensesPage'
+import { OtherIncomePage } from '@/pages/finance/OtherIncomePage'
 import { ProfitLossPage } from '@/pages/finance/ProfitLossPage'
 import { AgingReportPage } from '@/pages/finance/AgingReportPage'
 import { SettingsPage } from '@/pages/settings/SettingsPage'
@@ -105,16 +107,11 @@ export default function App() {
 
           {/* Finance */}
           <Route path="finance/customer-ledger" element={<PartyLedgerPage partyType="customer" />} />
+          <Route path="finance/vendor-ledger" element={<PartyLedgerPage partyType="supplier" />} />
           <Route path="finance/supplier-ledger" element={<PartyLedgerPage partyType="supplier" />} />
           <Route path="finance/aging" element={<AgingReportPage />} />
-          <Route
-            path="finance/expenses"
-            element={<PlaceholderPage title="Indirect Expenses" subtitle="Electricity, diesel for DG sets, machine repairs & factory maintenance" />}
-          />
-          <Route
-            path="finance/other-income"
-            element={<PlaceholderPage title="Other Income" subtitle="Scrap sales, pallet deposits & miscellaneous receipts" />}
-          />
+          <Route path="finance/expenses" element={<ExpensesPage />} />
+          <Route path="finance/other-income" element={<OtherIncomePage />} />
           <Route path="finance/pl-report" element={<ProfitLossPage />} />
 
           {/* Reports */}
