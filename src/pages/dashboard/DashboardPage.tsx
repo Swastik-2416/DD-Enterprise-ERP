@@ -277,11 +277,21 @@ export function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-on-surface">Factory Overview Dashboard</h1>
-        <p className="text-sm text-outline mt-0.5">
-          DD Enterprise Paver Block Plant · Live Database · As of {formatDate(new Date())}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-on-surface">Factory Overview Dashboard</h1>
+          <p className="text-sm text-outline mt-0.5">
+            DD Enterprise Paver Block Plant · Live Database · As of {formatDate(new Date())}
+          </p>
+        </div>
+        <Link
+          to="/analytics"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl text-xs font-semibold hover:bg-primary-hover transition-colors shadow-xs self-start sm:self-auto"
+        >
+          <TrendingUp className="h-4 w-4" />
+          <span>Executive BI Analytics</span>
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
 
       {/* Low stock alert banner */}

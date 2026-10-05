@@ -19,6 +19,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
+  { label: 'Executive Analytics', icon: TrendingUp, path: '/analytics' },
   {
     label: 'Master Data', icon: Package, children: [
       { label: 'Items', icon: Package, path: '/master/items' },
@@ -88,6 +89,7 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     label: 'Reports', icon: BarChart3, children: [
+      { label: 'Executive BI', icon: TrendingUp, path: '/analytics' },
       { label: 'Sales Register', icon: BarChart3, path: '/reports/sales' },
       { label: 'Purchase Register', icon: BarChart3, path: '/reports/purchases' },
       { label: 'Stock Report', icon: BarChart3, path: '/reports/stock' },

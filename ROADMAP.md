@@ -172,11 +172,11 @@
 ---
 
 ### 3.1 — Executive Analytics & Business Intelligence
-- [ ] **Interactive Visual Analytics** — Revenue vs Expenses breakdown, monthly sales growth trends
-- [ ] **Top Customers Ranking** — Ranked list of clients by revenue generated this month/quarter
-- [ ] **Top Selling Paver Products** — Best-selling concrete items ranked by volume (sq.ft / pcs) and gross value
-- [ ] **Plant Production Efficiency** — Planned vs actual production output and machine utilization trends
-- [ ] **Cash Flow Summary Widget** — Real-time inflow (customer collections) vs outflow (vendor disbursements)
+- [x] **Interactive Visual Analytics** — Revenue vs Expenses breakdown, monthly sales growth trends, profit margins
+- [x] **Top Customers Ranking** — Ranked list of clients by revenue generated, volume (Sq.Ft), and payment discipline
+- [x] **Top Selling Paver Products** — Best-selling concrete items ranked by volume (sq.ft / pcs), avg realization, and gross value
+- [x] **Plant Production Efficiency** — Planned vs actual production output, batch yield rate %, and machine utilization trends
+- [x] **Executive Briefing & Printout** — Formal A4 performance briefing sheet with management sign-off and CSV export
 
 ---
 

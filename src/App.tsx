@@ -33,6 +33,7 @@ import { ExpensesPage } from '@/pages/finance/ExpensesPage'
 import { OtherIncomePage } from '@/pages/finance/OtherIncomePage'
 import { ProfitLossPage } from '@/pages/finance/ProfitLossPage'
 import { AgingReportPage } from '@/pages/finance/AgingReportPage'
+import { ExecutiveAnalyticsPage } from '@/pages/analytics/ExecutiveAnalyticsPage'
 import { SettingsPage } from '@/pages/settings/SettingsPage'
 import { PlaceholderPage } from '@/pages/common/PlaceholderPage'
 
@@ -113,7 +114,9 @@ export default function App() {
           <Route path="finance/other-income" element={<OtherIncomePage />} />
           <Route path="finance/pl-report" element={<ProfitLossPage />} />
 
-          {/* Reports */}
+          {/* Reports & Analytics */}
+          <Route path="analytics" element={<ExecutiveAnalyticsPage />} />
+          <Route path="reports/analytics" element={<ExecutiveAnalyticsPage />} />
           <Route path="reports/purchases" element={<PurchaseRegisterPage />} />
           <Route path="reports/sales" element={<SalesRegisterPage />} />
           <Route path="reports/aging" element={<AgingReportPage />} />
