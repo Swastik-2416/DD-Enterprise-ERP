@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, Factory, ShoppingBag,
   CreditCard, Users, UserCheck, TrendingUp, Truck, BarChart3,
   ChevronDown, ChevronRight, Building2, Settings, Menu, X, Clock,
-  ShieldCheck
+  ShieldCheck, RotateCcw
 } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { APP_NAME } from '@/lib/constants'
@@ -44,6 +44,7 @@ const NAV_ITEMS: NavItem[] = [
       { label: 'Purchase Orders', icon: ShoppingCart, path: '/procurement/purchase-orders' },
       { label: 'Purchase Invoices', icon: ShoppingCart, path: '/procurement/purchase-invoices' },
       { label: 'Goods Receipts', icon: Package, path: '/procurement/goods-receipts' },
+      { label: 'Purchase Returns', icon: RotateCcw, path: '/procurement/returns' },
     ]
   },
   {

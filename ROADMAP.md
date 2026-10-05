@@ -93,7 +93,7 @@
 - [x] **Submit → Approve workflow** — Status flow: `Draft → Submitted → Approved → Posted`
 - [x] **Post Invoice** — Posting must automatically trigger a stock IN movement (increase stock balance)
 - [x] **Cancel Invoice** — Cancelling must automatically reverse the stock movement
-- [ ] **Purchase Returns** — Create a purchase return against an existing posted invoice to reduce stock
+- [x] **Purchase Returns** — Create a purchase return against an existing posted invoice to reduce stock (Vendor GST Debit Note, stock deduction, and return reason logging)
 
 ---
 

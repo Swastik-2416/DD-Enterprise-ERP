@@ -16,6 +16,7 @@ import { CustomersPage } from '@/pages/stakeholders/CustomersPage'
 import { PurchaseOrdersPage } from '@/pages/procurement/PurchaseOrdersPage'
 import { PurchaseInvoicesPage } from '@/pages/procurement/PurchaseInvoicesPage'
 import { GoodsReceiptsPage } from '@/pages/procurement/GoodsReceiptsPage'
+import { PurchaseReturnsPage } from '@/pages/procurement/PurchaseReturnsPage'
 import { InvoicesPage } from '@/pages/sales/InvoicesPage'
 import { DeliveryChallansPage } from '@/pages/sales/DeliveryChallansPage'
 import { QuotationsPage } from '@/pages/sales/QuotationsPage'
@@ -79,6 +80,8 @@ export default function App() {
           <Route path="procurement/purchase-orders" element={<PurchaseOrdersPage />} />
           <Route path="procurement/purchase-invoices" element={<PurchaseInvoicesPage />} />
           <Route path="procurement/goods-receipts" element={<GoodsReceiptsPage />} />
+          <Route path="procurement/returns" element={<PurchaseReturnsPage />} />
+          <Route path="procurement/purchase-returns" element={<PurchaseReturnsPage />} />
 
           {/* Manufacturing & Inventory */}
           <Route path="manufacturing/production-orders" element={<ProductionOrdersPage />} />
