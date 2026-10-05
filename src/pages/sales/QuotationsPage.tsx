@@ -8,7 +8,7 @@ import {
   TrendingUp, FileText, Check, X, Building2, Package
 } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { PageHeader } from '@/components/shared/PageHeader'
+import { PageHeader, KpiCard } from '@/components/shared/PageHeader'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { formatCurrency, formatDate, toInputDate } from '@/lib/formatters'
 import { supabase } from '@/lib/supabase'
@@ -241,47 +241,46 @@ export function QuotationsPage() {
 
       {/* Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-surface rounded-xl p-4 border border-outline-variant shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
-            <ShoppingBag className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-xs text-outline">Total Quotations Issued</p>
-            <p className="text-xl font-bold text-on-surface">{metrics.totalCount}</p>
-          </div>
-        </div>
+        <KpiCard
+          title="Total Quotations Issued"
+          category="Estimates Issued"
+          numericValue={metrics.totalCount}
+          value={String(metrics.totalCount)}
+          subtitle="Proposals generated"
+          icon={ShoppingBag}
+          color="blue"
+        />
 
-        <div className="bg-surface rounded-xl p-4 border border-outline-variant shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
-            <Clock className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-xs text-outline">Sent &amp; Awaiting Response</p>
-            <p className="text-xl font-bold text-on-surface">{metrics.activeSent}</p>
-          </div>
-        </div>
+        <KpiCard
+          title="Sent & Awaiting Response"
+          category="Client Review"
+          numericValue={metrics.activeSent}
+          value={String(metrics.activeSent)}
+          subtitle="Pending buyer decision"
+          icon={Clock}
+          color="amber"
+        />
 
-        <div className="bg-surface rounded-xl p-4 border border-outline-variant shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-600 shrink-0">
-            <CheckCircle2 className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-xs text-outline">Accepted / Confirmed</p>
-            <p className="text-xl font-bold text-on-surface">{metrics.acceptedCount}</p>
-          </div>
-        </div>
+        <KpiCard
+          title="Accepted / Confirmed"
+          category="Conversion"
+          numericValue={metrics.acceptedCount}
+          value={String(metrics.acceptedCount)}
+          subtitle="Converted to active orders"
+          icon={CheckCircle2}
+          color="green"
+        />
 
-        <div className="bg-surface rounded-xl p-4 border border-outline-variant shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0">
-            <TrendingUp className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-xs text-outline">Quoted Pipeline Value</p>
-            <p className="text-lg font-bold text-on-surface font-mono">
-              ₹{metrics.totalPipeline.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-            </p>
-          </div>
-        </div>
+        <KpiCard
+          title="Quoted Pipeline Value"
+          category="Estimated Pipeline"
+          numericValue={metrics.totalPipeline}
+          prefix="₹"
+          value={`₹${metrics.totalPipeline.toLocaleString('en-IN')}`}
+          subtitle="Active proposal values"
+          icon={TrendingUp}
+          color="purple"
+        />
       </div>
 
       {/* Filter and Search Bar */}

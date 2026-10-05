@@ -570,89 +570,69 @@ export function ExecutiveAnalyticsPage() {
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Gross Sales Turnover */}
-        <div className="bg-surface rounded-xl border border-outline-variant p-4 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-on-surface-variant">Gross Sales Turnover</span>
-            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
-              <TrendingUp className="h-4 w-4" />
-            </span>
+        <KpiCard
+          title="Gross Sales Turnover"
+          category="Fiscal Performance"
+          numericValue={metrics.grossRevenue}
+          prefix="₹"
+          value={formatCurrency(metrics.grossRevenue)}
+          subtitle="Realized invoiced revenue across all client dispatches"
+          icon={TrendingUp}
+          color="green"
+        >
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">
+            <ArrowUpRight className="h-3.5 w-3.5" />
+            <span>+{metrics.revenueGrowthMoM}% MoM Growth</span>
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-on-surface">
-              {formatCurrency(metrics.grossRevenue)}
-            </span>
-            <span className="text-xs font-semibold text-emerald-600 flex items-center">
-              <ArrowUpRight className="h-3 w-3" /> +{metrics.revenueGrowthMoM}%
-            </span>
-          </div>
-          <p className="text-[11px] text-on-surface-variant mt-1">
-            Realized invoiced revenue across all client dispatches
-          </p>
-        </div>
+        </KpiCard>
 
-        {/* Operating Net Profit & Margin */}
-        <div className="bg-surface rounded-xl border border-outline-variant p-4 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-on-surface-variant">Operating Net Profit</span>
-            <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
-              <DollarSign className="h-4 w-4" />
-            </span>
+        <KpiCard
+          title="Operating Net Profit"
+          category="Profitability"
+          numericValue={metrics.netOperatingProfit}
+          prefix="₹"
+          value={formatCurrency(metrics.netOperatingProfit)}
+          subtitle="After raw materials, power, diesel & labour overheads"
+          icon={DollarSign}
+          color="cyan"
+        >
+          <div className="flex items-center justify-between text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">
+            <span>Net Operating Margin</span>
+            <span>{metrics.netMarginPct.toFixed(1)}%</span>
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-emerald-600">
-              {formatCurrency(metrics.netOperatingProfit)}
-            </span>
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-              {metrics.netMarginPct.toFixed(1)}% Margin
-            </span>
-          </div>
-          <p className="text-[11px] text-on-surface-variant mt-1">
-            After raw materials, power, diesel & labour overheads
-          </p>
-        </div>
+        </KpiCard>
 
-        {/* Finished Goods Paver Output */}
-        <div className="bg-surface rounded-xl border border-outline-variant p-4 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-on-surface-variant">Plant Paver Output</span>
-            <span className="p-1.5 rounded-lg bg-purple-50 text-purple-600">
-              <Factory className="h-4 w-4" />
-            </span>
+        <KpiCard
+          title="Plant Paver Output"
+          category="Factory Yield"
+          numericValue={metrics.totalPaversProducedSqft}
+          suffix=" Sq.Ft"
+          value={`${formatNumber(metrics.totalPaversProducedSqft, 0)} Sq.Ft`}
+          subtitle="Total cured concrete units produced across all presses"
+          icon={Factory}
+          color="purple"
+        >
+          <div className="flex items-center justify-between text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-lg border border-purple-100">
+            <span>Plant Yield Factor</span>
+            <span>{metrics.plantYieldPct}%</span>
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-on-surface">
-              {formatNumber(metrics.totalPaversProducedSqft, 0)} <span className="text-sm font-normal text-on-surface-variant">Sq.Ft</span>
-            </span>
-            <span className="text-xs font-semibold text-purple-600">
-              {metrics.plantYieldPct}% Yield
-            </span>
-          </div>
-          <p className="text-[11px] text-on-surface-variant mt-1">
-            Total cured concrete units produced across all presses
-          </p>
-        </div>
+        </KpiCard>
 
-        {/* Receivables Due & DSO */}
-        <div className="bg-surface rounded-xl border border-outline-variant p-4 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-on-surface-variant">Outstanding Receivables</span>
-            <span className="p-1.5 rounded-lg bg-amber-50 text-amber-600">
-              <Clock className="h-4 w-4" />
-            </span>
+        <KpiCard
+          title="Outstanding Receivables"
+          category="Credit Control"
+          numericValue={metrics.totalReceivablesDue}
+          prefix="₹"
+          value={formatCurrency(metrics.totalReceivablesDue)}
+          subtitle={`Active credit ledger across ${metrics.activeCustomersCount} buyers`}
+          icon={Clock}
+          color="amber"
+        >
+          <div className="flex items-center justify-between text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200/60">
+            <span>Days Sales Outstanding</span>
+            <span>~{metrics.dsoDays} Days</span>
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-amber-600">
-              {formatCurrency(metrics.totalReceivablesDue)}
-            </span>
-            <span className="text-xs font-medium text-on-surface-variant">
-              ~{metrics.dsoDays} Days DSO
-            </span>
-          </div>
-          <p className="text-[11px] text-on-surface-variant mt-1">
-            Active credit ledger across {metrics.activeCustomersCount} registered buyers
-          </p>
-        </div>
+        </KpiCard>
       </div>
 
       {/* Strategic Insights Deck (AI / Rule-Based) */}

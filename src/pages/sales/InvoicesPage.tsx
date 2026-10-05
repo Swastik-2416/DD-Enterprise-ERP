@@ -3,10 +3,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   ShoppingBag, Plus, Search, Eye, Filter, Printer,
   FileText, Trash2, X, Check, Loader2, ArrowRight,
-  CheckCircle2, XCircle, Package, Sparkles, Building2, MapPin
+  CheckCircle2, XCircle, Package, Sparkles, Building2, MapPin,
+  TrendingUp, IndianRupee, CreditCard
 } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { PageHeader } from '@/components/shared/PageHeader'
+import { PageHeader, KpiCard } from '@/components/shared/PageHeader'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { DDInvoicePrintModal } from '@/components/invoices/DDInvoicePrintModal'
@@ -361,42 +362,46 @@ export function InvoicesPage() {
 
       {/* Summary KPI row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-surface border border-outline-variant rounded-xl p-4">
-          <div className="text-xs font-semibold text-outline uppercase tracking-wider">
-            Total Sales Invoiced
-          </div>
-          <div className="text-2xl font-bold text-on-surface mt-1">
-            {formatCurrency(totalSales)}
-          </div>
-          <div className="text-xs text-outline mt-1">{invoices.length} invoices generated</div>
-        </div>
-        <div className="bg-surface border border-outline-variant rounded-xl p-4">
-          <div className="text-xs font-semibold text-outline uppercase tracking-wider">
-            Payment Received
-          </div>
-          <div className="text-2xl font-bold text-emerald-600 mt-1">
-            {formatCurrency(totalCollected)}
-          </div>
-          <div className="text-xs text-emerald-500 mt-1">Cleared via Bank/Cheque</div>
-        </div>
-        <div className="bg-surface border border-outline-variant rounded-xl p-4">
-          <div className="text-xs font-semibold text-outline uppercase tracking-wider">
-            Pending Receivables
-          </div>
-          <div className="text-2xl font-bold text-amber-600 mt-1">
-            {formatCurrency(totalOutstanding)}
-          </div>
-          <div className="text-xs text-amber-500 mt-1">Customer balance due</div>
-        </div>
-        <div className="bg-surface border border-outline-variant rounded-xl p-4">
-          <div className="text-xs font-semibold text-outline uppercase tracking-wider">
-            GST Output Liability
-          </div>
-          <div className="text-2xl font-bold text-primary mt-1">
-            {formatCurrency(totalOutputGst)}
-          </div>
-          <div className="text-xs text-blue-500 mt-1">Eligible GST Output Tax</div>
-        </div>
+        <KpiCard
+          title="Total Sales Invoiced"
+          category="Gross Turnover"
+          numericValue={totalSales}
+          prefix="₹"
+          value={formatCurrency(totalSales)}
+          subtitle={`${invoices.length} invoices generated`}
+          icon={TrendingUp}
+          color="green"
+        />
+        <KpiCard
+          title="Payment Received"
+          category="Settled Collections"
+          numericValue={totalCollected}
+          prefix="₹"
+          value={formatCurrency(totalCollected)}
+          subtitle="Cleared via Bank/Cheque"
+          icon={CreditCard}
+          color="cyan"
+        />
+        <KpiCard
+          title="Pending Receivables"
+          category="Credit Outstanding"
+          numericValue={totalOutstanding}
+          prefix="₹"
+          value={formatCurrency(totalOutstanding)}
+          subtitle="Customer balance due"
+          icon={IndianRupee}
+          color="amber"
+        />
+        <KpiCard
+          title="GST Output Liability"
+          category="Tax Compliance"
+          numericValue={totalOutputGst}
+          prefix="₹"
+          value={formatCurrency(totalOutputGst)}
+          subtitle="Eligible GST Output Tax"
+          icon={FileText}
+          color="blue"
+        />
       </div>
 
       {/* Filters bar */}

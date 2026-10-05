@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { formatDate, formatNumber } from '@/lib/formatters'
 import { TransferGatePassModal } from '@/components/inventory/TransferGatePassModal'
+import { KpiCard } from '@/components/shared/PageHeader'
 import { logAuditEvent } from '@/lib/auditLogger'
 import type { Item } from '@/types/database.types'
 import {
@@ -379,35 +380,44 @@ export function WarehouseTransfersPage() {
       </div>
 
       {/* KPI Deck */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-surface rounded-xl border border-outline-variant p-4 shadow-xs">
-          <span className="text-xs font-medium text-on-surface-variant block">Total Transfers</span>
-          <span className="text-2xl font-bold font-mono text-on-surface mt-1 block">
-            {metrics.total}
-          </span>
-          <span className="text-[11px] text-on-surface-variant">Inter-yard dispatches</span>
-        </div>
-        <div className="bg-surface rounded-xl border border-outline-variant p-4 shadow-xs">
-          <span className="text-xs font-medium text-on-surface-variant block">In Transit Now</span>
-          <span className="text-2xl font-bold font-mono text-amber-600 mt-1 block">
-            {metrics.inTransit}
-          </span>
-          <span className="text-[11px] text-amber-600/90 font-medium">Awaiting yard receipt</span>
-        </div>
-        <div className="bg-surface rounded-xl border border-outline-variant p-4 shadow-xs">
-          <span className="text-xs font-medium text-on-surface-variant block">Completed</span>
-          <span className="text-2xl font-bold font-mono text-emerald-600 mt-1 block">
-            {metrics.completed}
-          </span>
-          <span className="text-[11px] text-emerald-600/90 font-medium">Safely received & stocked</span>
-        </div>
-        <div className="bg-surface rounded-xl border border-outline-variant p-4 shadow-xs">
-          <span className="text-xs font-medium text-on-surface-variant block">Total Units Shifted</span>
-          <span className="text-2xl font-bold font-mono text-primary mt-1 block">
-            {formatNumber(metrics.totalUnits, 0)}
-          </span>
-          <span className="text-[11px] text-on-surface-variant">Paver blocks & materials</span>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KpiCard
+          title="Total Transfers"
+          category="Logistics Movement"
+          numericValue={metrics.total}
+          value={String(metrics.total)}
+          subtitle="Inter-yard stock dispatches"
+          icon={Truck}
+          color="blue"
+        />
+        <KpiCard
+          title="In Transit Now"
+          category="Active Transport"
+          numericValue={metrics.inTransit}
+          value={String(metrics.inTransit)}
+          subtitle="Awaiting yard gate-in"
+          icon={Clock}
+          color="amber"
+        />
+        <KpiCard
+          title="Completed Transfers"
+          category="Yard Stocked"
+          numericValue={metrics.completed}
+          value={String(metrics.completed)}
+          subtitle="Safely received & stocked"
+          icon={CheckCircle2}
+          color="green"
+        />
+        <KpiCard
+          title="Total Units Shifted"
+          category="Dispatched Volume"
+          numericValue={metrics.totalUnits}
+          suffix=" Units"
+          value={`${formatNumber(metrics.totalUnits, 0)} Units`}
+          subtitle="Paver blocks & materials"
+          icon={Package}
+          color="purple"
+        />
       </div>
 
       {/* Filter Toolbar */}

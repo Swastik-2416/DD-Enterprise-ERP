@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { formatDate, formatCurrency, formatNumber } from '@/lib/formatters'
 import { PurchaseReturnPrintModal } from '@/components/procurement/PurchaseReturnPrintModal'
+import { KpiCard } from '@/components/shared/PageHeader'
 import { logAuditEvent } from '@/lib/auditLogger'
 import type { PurchaseInvoice, PurchaseInvoiceLine, Supplier, Item } from '@/types/database.types'
 import {
@@ -353,35 +354,44 @@ export function PurchaseReturnsPage() {
       </div>
 
       {/* KPI Scorecard */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-surface rounded-xl border border-outline-variant p-4 shadow-xs">
-          <span className="text-xs font-medium text-on-surface-variant block">Total Debit Notes</span>
-          <span className="text-2xl font-bold font-mono text-on-surface mt-1 block">
-            {metrics.totalCount}
-          </span>
-          <span className="text-[11px] text-on-surface-variant">Material rejections</span>
-        </div>
-        <div className="bg-surface rounded-xl border border-outline-variant p-4 shadow-xs">
-          <span className="text-xs font-medium text-on-surface-variant block">Total Debited Value</span>
-          <span className="text-2xl font-bold font-mono text-rose-600 mt-1 block">
-            {formatCurrency(metrics.totalDebitValue)}
-          </span>
-          <span className="text-[11px] text-rose-600/90 font-medium">Credited back against payables</span>
-        </div>
-        <div className="bg-surface rounded-xl border border-outline-variant p-4 shadow-xs">
-          <span className="text-xs font-medium text-on-surface-variant block">Posted & Settled</span>
-          <span className="text-2xl font-bold font-mono text-emerald-600 mt-1 block">
-            {metrics.postedCount}
-          </span>
-          <span className="text-[11px] text-emerald-600/90 font-medium">Stock deducted from inventory</span>
-        </div>
-        <div className="bg-surface rounded-xl border border-outline-variant p-4 shadow-xs">
-          <span className="text-xs font-medium text-on-surface-variant block">Pending Approvals</span>
-          <span className="text-2xl font-bold font-mono text-amber-600 mt-1 block">
-            {metrics.draftCount}
-          </span>
-          <span className="text-[11px] text-amber-600/90 font-medium">Draft return notes</span>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KpiCard
+          title="Total Debit Notes"
+          category="Return Register"
+          numericValue={metrics.totalCount}
+          value={String(metrics.totalCount)}
+          subtitle="Material rejection debit notes"
+          icon={RotateCcw}
+          color="blue"
+        />
+        <KpiCard
+          title="Total Debited Value"
+          category="Debit Recovery"
+          numericValue={metrics.totalDebitValue}
+          prefix="₹"
+          value={formatCurrency(metrics.totalDebitValue)}
+          subtitle="Credited back against payables"
+          icon={DollarSign}
+          color="red"
+        />
+        <KpiCard
+          title="Posted & Settled"
+          category="Stock Deducted"
+          numericValue={metrics.postedCount}
+          value={String(metrics.postedCount)}
+          subtitle="Deducted from raw inventory"
+          icon={CheckCircle2}
+          color="green"
+        />
+        <KpiCard
+          title="Pending Approvals"
+          category="Draft Inward"
+          numericValue={metrics.draftCount}
+          value={String(metrics.draftCount)}
+          subtitle="Draft return notes awaiting post"
+          icon={Clock}
+          color="amber"
+        />
       </div>
 
       {/* Filter Toolbar */}

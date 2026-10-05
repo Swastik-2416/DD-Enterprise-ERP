@@ -292,12 +292,11 @@ export function KpiCard({
         <div className="px-5 py-2.5 border-t border-slate-100 bg-slate-50/50 group-hover:bg-slate-50 transition-colors flex items-center justify-between text-xs relative z-10">
           <Link
             to={actionLink.href}
-            className={cn('font-semibold flex items-center gap-1.5 transition-colors', styles.link)}
+            className={cn('font-semibold flex items-center gap-1.5 transition-colors w-full justify-between', styles.link)}
           >
             <span>{actionLink.label}</span>
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
-          <span className="text-[10px] text-slate-400 font-mono">Real-time</span>
         </div>
       )}
     </div>

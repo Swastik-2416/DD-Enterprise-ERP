@@ -9,7 +9,7 @@ import {
   TrendingUp, CreditCard, Factory, IndianRupee
 } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { PageHeader } from '@/components/shared/PageHeader'
+import { PageHeader, KpiCard } from '@/components/shared/PageHeader'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { formatDate, toInputDate, formatCurrency } from '@/lib/formatters'
 import { supabase } from '@/lib/supabase'
@@ -647,50 +647,46 @@ export function SalesOrdersPage() {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-surface rounded-xl p-4 border border-outline-variant shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
-            <ShoppingBag className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-xs text-outline">Total Sales Orders</p>
-            <p className="text-xl font-bold text-on-surface">{metrics.totalCount}</p>
-          </div>
-        </div>
+        <KpiCard
+          title="Total Sales Orders"
+          category="Order Pipeline"
+          numericValue={metrics.totalCount}
+          value={String(metrics.totalCount)}
+          subtitle="Confirmed client contracts"
+          icon={ShoppingBag}
+          color="blue"
+        />
 
-        <div className="bg-surface rounded-xl p-4 border border-outline-variant shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
-            <Factory className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-xs text-outline">In Production (Curing/Casting)</p>
-            <p className="text-xl font-bold text-amber-600">{metrics.inProduction}</p>
-          </div>
-        </div>
+        <KpiCard
+          title="In Production"
+          category="Plant Batching"
+          numericValue={metrics.inProduction}
+          value={String(metrics.inProduction)}
+          subtitle="Curing & Casting batches"
+          icon={Factory}
+          color="amber"
+        />
 
-        <div className="bg-surface rounded-xl p-4 border border-outline-variant shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-600 shrink-0">
-            <Package className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-xs text-outline">Ready For Dispatch (Yard Stock)</p>
-            <p className="text-xl font-bold text-purple-600">{metrics.readyForDispatch}</p>
-          </div>
-        </div>
+        <KpiCard
+          title="Ready For Dispatch"
+          category="Yard Inventory"
+          numericValue={metrics.readyForDispatch}
+          value={String(metrics.readyForDispatch)}
+          subtitle="Cured & palletized pavers"
+          icon={Package}
+          color="purple"
+        />
 
-        <div className="bg-surface rounded-xl p-4 border border-outline-variant shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
-            <IndianRupee className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-xs text-outline">Order Book Value</p>
-            <p className="text-base font-bold text-on-surface font-mono">
-              ₹{metrics.totalOrderValue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-            </p>
-            <p className="text-[11px] text-outline">
-              Advance: <span className="text-emerald-700 font-semibold font-mono">₹{metrics.totalAdvanceCollected.toLocaleString('en-IN')}</span>
-            </p>
-          </div>
-        </div>
+        <KpiCard
+          title="Order Book Value"
+          category="Contract Value"
+          numericValue={metrics.totalOrderValue}
+          prefix="₹"
+          value={`₹${metrics.totalOrderValue.toLocaleString('en-IN')}`}
+          subtitle={`Advance: ₹${metrics.totalAdvanceCollected.toLocaleString('en-IN')}`}
+          icon={IndianRupee}
+          color="green"
+        />
       </div>
 
       {/* Filter and Search Bar */}
