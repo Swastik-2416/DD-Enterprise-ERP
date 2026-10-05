@@ -205,9 +205,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </div>
               <div className="flex items-center gap-1.5 mt-1">
                 <span className="text-[10px] text-outline truncate">ERP System</span>
-                <span className="text-[9px] px-1.5 py-0.2 bg-primary/10 text-primary font-semibold rounded">
-                  FY {company.active_fy.replace('20', '').replace('-20', '-')}
-                </span>
               </div>
             </div>
           </div>
